@@ -1,7 +1,7 @@
 {
-    "name": "@etsoo/notificationbase",
-    "version": "1.0.36",
-    "description": "TypeScript notification component for extending with all features described and partially implemented",
+    "name": "@etsoo/appscript",
+    "version": "1.0.0",
+    "description": "Applications shared TypeScript framework",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "scripts": {

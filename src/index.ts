@@ -1,2 +1,4 @@
-export * from './Notification';
-export * from './NotificationContainer';
+// bridges
+export * from './bridges/ElectronBridge';
+export * from './bridges/IAppData';
+export * from './bridges/IBridge';
