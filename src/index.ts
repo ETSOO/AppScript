@@ -1,6 +1,3 @@
-// app
-export * from './app/Language';
-export * from './app/User';
 
 // bridges
 export * from './bridges/ElectronBridge';
@@ -11,3 +8,8 @@ export * from './bridges/IBridge';
 export * from './result/ActionResult';
 export * from './result/ActionResultError';
 export * from './result/IActionResult';
+
+// state
+export * from './state/Language';
+export * from './state/State';
+export * from './state/User';

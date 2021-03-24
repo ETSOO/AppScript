@@ -1,4 +1,5 @@
 import { DataTypes } from "@etsoo/shared";
+import { IState } from "./State";
 
 /**
  * User data interface
@@ -38,7 +39,7 @@ export interface IUserData {
 /**
  * User interface
  */
-export interface IUser extends IUserData {
+export interface IUser extends IUserData, IState {
     /**
      * Authorized or not
      */

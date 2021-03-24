@@ -1,130 +1,61 @@
-# NotificationBase
-**TypeScript notification component for extending with all features described and partially implemented.**
+# AppScript
+**TypeScript application scripts shared by different frameworks.**
 
 ## Installing
 
 Using npm:
 
 ```bash
-$ npm install @etsoo/notificationbase
+$ npm install @etsoo/appscript
 ```
 
 Using yarn:
 
 ```bash
-$ yarn add @etsoo/notificationbase
+$ yarn add @etsoo/appscript
 ```
 
-## Notification
-Notification object to display.
+## Structure
 
-Properties:
+### app - Application related
 
-|Name|Description|
-|---:|---|
-|align|Readonly, display align|
-|content|Content to display|
-|id|Unique id|
-|inputProps|Input or additional control properties|
-|modal|Display as modal window or not|
-|onDismiss|Dismiss callback|
-|onReturn|Return value callback|
-|open|Is open or not|
-|showIcon|Show icon or not|
-|timespan|Seconds to auto dismiss|
-|title|Title|
-|type|Notification type|
+### bridges - Works with Electron
 
-Methods:
+#### ElectronBridge.ts ####
+-   AppRuntime - Action result to error type.
 
-```ts
-    /**
-     * Constructor
-     * @param type Type
-     * @param content Content
-     * @param title Title
-     * @param align Align
-     */
-    constructor(
-        type: NotificationType,
-        content: string | NotificationCreator<UI>,
-        title?: string | NotificationCreator<UI>,
-        align?: NotificationAlign
-    )
+#### IAppData.ts ####
+-   IAppData - App data interface.
 
-    /**
-     * Dismiss it
-     * @param delaySeconds Delay seconds
-     * @returns Is delayed or not
-     */
-    dismiss(delaySeconds: number = 0): boolean
+#### IBridge.ts ####
+-   IBridgeUnsubscribe - Bridge unsubscribe interface.
+-   IBridgeListener - Bridge listener interface.
+-   IBridge - Bridge interface.
 
-    /**
-     * Dispose it
-     */
-    dispose()
+### result - API action result
 
-    /**
-     * Render method
-     * @param className Style class name
-     */
-    abstract render(className?: string): UI;
-```
+#### ActionResult.ts ####
+-   ActionResult - API call action result extends IActionResult.
 
+#### ActionResultError.ts ####
+-   ActionResultError - Action result to error type.
 
-## NotificationContainer
-NotificationContainer is a global instance of NotificationContainerClass to provide global access of properties and methods.
+#### IActionResult.ts ####
+-   IResultData - Result data interface.
+-   IdResultData - extends IResultData for 'id' included return data.
+-   IResultErrors - Result errors interface.
+-   IActionResult - Action result interface.
 
-Properties:
+### state - State management
 
-|Name|Description|
-|---:|---|
-|notifications|Readonly. Notification collection to display|
-|isLoading|Is loading bar showing|
-|isModeling|Is model window showing|
+#### Language.ts ####
+-   LanguageLabels - Language labels, indexable, for simple i18n solution.
+-   ILanguage - extends IState for language state.
 
-Methods:
+#### State.ts ####
+-   IState - state interface.
+-   IAction - state action interface.
 
-```ts
-    /**
-     * Add notification
-     * @param notification Notification
-     * @param top Is insert top
-     */
-    add(notification: Notification<any>, top: boolean = false): void
-
-    /**
-     * Align all notification count
-     * @param align Align
-     */
-    alignCount(align: NotificationAlign)
-
-    /**
-     * Align open notification count
-     * @param align Align
-     */
-    alignOpenCount(align: NotificationAlign)
-
-    /**
-     * Remove all closed notification
-     */
-    clear(): void
-
-    /**
-     * Dispose all notifications
-     */
-    dispose(): void
-
-    /**
-     * Get notification with align and id
-     * @param align Align
-     * @param id Notification id
-     */
-    get(align: NotificationAlign, id: string): Notification<any> | undefined
-
-    /**
-     * Register component action
-     * @param update Update action
-     */
-    register(update: NotificationAction): void
-```
+#### User.ts ####
+-   IUserData - User basic data.
+-   IUser - extends IState for user state.

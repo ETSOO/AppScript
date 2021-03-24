@@ -1,3 +1,5 @@
+import { IState } from "./State";
+
 /**
  * Language labels, simple i18n solution
  * For premium solution: https://www.i18next.com/
@@ -10,7 +12,7 @@
 /**
  * Language state
  */
-export interface ILanguage {
+export interface ILanguage extends IState {
     /**
      * Labels of the language
      */
