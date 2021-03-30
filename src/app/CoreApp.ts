@@ -1,12 +1,11 @@
-import { IApi } from "@etsoo/restclient";
-import { IAppSettings } from "./AppSettings";
-import { ICoreApp } from "./ICoreApp";
-import { INotification } from "./Notification";
+import { INotification } from '@etsoo/notificationbase';
+import { IApi } from '@etsoo/restclient';
+import { IAppSettings } from './AppSettings';
 
 /**
  * Core application
  */
-export abstract class CoreApp<S extends IAppSettings> implements ICoreApp {
+export abstract class CoreApp<S extends IAppSettings, N> {
     /**
      * Settings
      */
@@ -20,7 +19,7 @@ export abstract class CoreApp<S extends IAppSettings> implements ICoreApp {
     /**
      * Notification
      */
-    public readonly notification: INotification;
+    public readonly notification: INotification<N>;
 
     /**
      * Search input element
@@ -33,7 +32,11 @@ export abstract class CoreApp<S extends IAppSettings> implements ICoreApp {
      * @param api API
      * @param notification Notification
      */
-    protected constructor(settings: S, api: IApi, notification: INotification) {
+    protected constructor(
+        settings: S,
+        api: IApi,
+        notification: INotification<N>
+    ) {
         this.settings = settings;
         this.api = api;
         this.notification = notification;
@@ -43,8 +46,7 @@ export abstract class CoreApp<S extends IAppSettings> implements ICoreApp {
      * Get label
      * @param name Label name
      */
-    public getLabel(name: string)
-    {
+    public getLabel(name: string) {
         return this.settings.currentLanguage.labels[name] ?? name;
     }
 }
