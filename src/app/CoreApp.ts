@@ -1,4 +1,4 @@
-import { INotification } from '@etsoo/notificationbase';
+import { INotifier } from '@etsoo/notificationbase';
 import { IApi } from '@etsoo/restclient';
 import { IAppSettings } from './AppSettings';
 
@@ -17,9 +17,9 @@ export abstract class CoreApp<S extends IAppSettings, N> {
     public readonly api: IApi;
 
     /**
-     * Notification
+     * Notifier
      */
-    public readonly notification: INotification<N>;
+    public readonly notifier: INotifier<N>;
 
     /**
      * Search input element
@@ -30,16 +30,12 @@ export abstract class CoreApp<S extends IAppSettings, N> {
      * Protected constructor
      * @param settings Settings
      * @param api API
-     * @param notification Notification
+     * @param notifier Notifier
      */
-    protected constructor(
-        settings: S,
-        api: IApi,
-        notification: INotification<N>
-    ) {
+    protected constructor(settings: S, api: IApi, notifier: INotifier<N>) {
         this.settings = settings;
         this.api = api;
-        this.notification = notification;
+        this.notifier = notifier;
     }
 
     /**
