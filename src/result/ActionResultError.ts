@@ -1,19 +1,18 @@
-import { IActionResult } from "./IActionResult";
+import { IActionResult } from './IActionResult';
 
 /**
  * Action result error
  */
- export class ActionResultError extends Error {
+export class ActionResultError extends Error {
     /**
      * Format the result to a meaningful string
      * @param result Result
      */
-    public static format(result: IActionResult) {
+    static format(result: IActionResult) {
         // Additional data
         var addtions = [];
-        if(result.status != null)
-            addtions.push(result.status);
-        if(result.type && result.type != 'about:blank')
+        if (result.status != null) addtions.push(result.status);
+        if (result.type && result.type != 'about:blank')
             addtions.push(result.type);
 
         var add = addtions.length > 0 ? `(${addtions.join(', ')})` : '';
@@ -24,7 +23,7 @@ import { IActionResult } from "./IActionResult";
     /**
      * Related result
      */
-    public readonly result: IActionResult;
+    readonly result: IActionResult;
 
     /**
      * Constructor

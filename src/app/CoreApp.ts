@@ -1,30 +1,69 @@
 import { INotifier } from '@etsoo/notificationbase';
 import { IApi } from '@etsoo/restclient';
+import { DataTypes } from '@etsoo/shared';
 import { IAppSettings } from './AppSettings';
 
 /**
- * Core application
+ * Core application interface
  */
-export abstract class CoreApp<S extends IAppSettings, N> {
+export interface ICoreApp<S extends IAppSettings, N> {
     /**
      * Settings
      */
-    public readonly settings: S;
+    readonly settings: S;
 
     /**
      * API
      */
-    public readonly api: IApi;
+    readonly api: IApi;
 
     /**
      * Notifier
      */
-    public readonly notifier: INotifier<N>;
+    readonly notifier: INotifier<N>;
 
     /**
      * Search input element
      */
-    public searchInput?: HTMLInputElement;
+    searchInput?: HTMLInputElement;
+
+    /**
+     * Change language
+     * @param language New lnguage definition
+     */
+    changeLanguage(language: DataTypes.LanguageDefinition): void;
+
+    /**
+     * Get label
+     * @param name Label name
+     */
+    getLabel(name: string): string;
+}
+
+/**
+ * Core application
+ */
+export abstract class CoreApp<S extends IAppSettings, N>
+    implements ICoreApp<S, N> {
+    /**
+     * Settings
+     */
+    readonly settings: S;
+
+    /**
+     * API
+     */
+    readonly api: IApi;
+
+    /**
+     * Notifier
+     */
+    readonly notifier: INotifier<N>;
+
+    /**
+     * Search input element
+     */
+    searchInput?: HTMLInputElement;
 
     /**
      * Protected constructor
@@ -39,10 +78,16 @@ export abstract class CoreApp<S extends IAppSettings, N> {
     }
 
     /**
+     * Change language
+     * @param language New lnguage definition
+     */
+    abstract changeLanguage(language: DataTypes.LanguageDefinition): void;
+
+    /**
      * Get label
      * @param name Label name
      */
-    public getLabel(name: string) {
+    getLabel(name: string) {
         return this.settings.currentLanguage.labels[name] ?? name;
     }
 }
