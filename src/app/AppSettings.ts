@@ -1,5 +1,5 @@
-import { DataTypes } from "@etsoo/shared";
-import { IExternalSettings } from "./ExternalSettings";
+import { DataTypes } from '@etsoo/shared';
+import { IExternalSettings } from './ExternalSettings';
 
 /**
  * API settings interface
@@ -11,12 +11,12 @@ export interface IAppSettings extends IExternalSettings {
     readonly languages: DataTypes.LanguageDefinition[];
 
     /**
-     * Current language
-     */
-    readonly currentLanguage: DataTypes.LanguageDefinition;
-
-    /**
      * Detected language
      */
     readonly detectedLanguage: string;
+
+    /**
+     * Current language
+     */
+    currentLanguage: DataTypes.LanguageDefinition;
 }

@@ -1,6 +1,6 @@
 import { INotifier } from '@etsoo/notificationbase';
 import { IApi } from '@etsoo/restclient';
-import { DataTypes } from '@etsoo/shared';
+import { DataTypes, DomUtils } from '@etsoo/shared';
 import { IAppSettings } from './AppSettings';
 
 /**
@@ -81,7 +81,10 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * Change language
      * @param language New lnguage definition
      */
-    abstract changeLanguage(language: DataTypes.LanguageDefinition): void;
+    changeLanguage(language: DataTypes.LanguageDefinition): void {
+        DomUtils.saveLanguage(language.name);
+        this.settings.currentLanguage = language;
+    }
 
     /**
      * Get label
