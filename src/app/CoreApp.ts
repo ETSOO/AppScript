@@ -38,6 +38,13 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * @param name Label name
      */
     getLabel(name: string): string;
+
+    /**
+     * Transform URL
+     * @param url URL
+     * @returns Transformed url
+     */
+    transformUrl(url: string): string;
 }
 
 /**
@@ -92,5 +99,30 @@ export abstract class CoreApp<S extends IAppSettings, N>
      */
     getLabel(name: string) {
         return this.settings.currentLanguage.labels[name] ?? name;
+    }
+
+    /**
+     * Transform URL
+     * @param url URL
+     * @returns Transformed url
+     */
+    transformUrl(url: string) {
+        // Home page for the router
+        const home = this.settings.homepage;
+
+        // Default, just leave it
+        if (home === '') return url;
+
+        // From relative root, like home:/react/, url: /about => /react/about
+        if (url.startsWith('/')) return home + url.substr(1);
+
+        const pathname = window.location.pathname;
+
+        // Relative
+        const pos = pathname.indexOf(home);
+        if (pos == -1) return url;
+
+        // To /a/b/../ => /a
+        return pathname.endsWith('/') ? pathname + url : pathname + '/' + url;
     }
 }
