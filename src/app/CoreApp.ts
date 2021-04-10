@@ -45,9 +45,7 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * @param key Label key
      * @returns Setting
      */
-    getSetting<T extends DataTypes.SimpleType>(
-        key: string
-    ): T | null | undefined;
+    getSetting<T extends DataTypes.SimpleType>(key: string): T | undefined;
 
     /**
      * Transform URL
@@ -119,10 +117,10 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * @param key Label key
      * @returns Setting
      */
-    getSetting<T extends DataTypes.SimpleType>(
-        key: string
-    ): T | null | undefined {
-        return this.settings.currentLanguage.labels[key] as T;
+    getSetting<T extends DataTypes.SimpleType>(key: string): T | undefined {
+        const value = this.settings.currentLanguage.labels[key];
+        if (value == null) return undefined;
+        return value as T;
     }
 
     /**
