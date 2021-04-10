@@ -34,12 +34,6 @@ export interface ICoreApp<S extends IAppSettings, N> {
     changeLanguage(language: DataTypes.LanguageDefinition): void;
 
     /**
-     * Get label
-     * @param name Label name
-     */
-    getLabel(name: string): string;
-
-    /**
      * Transform URL
      * @param url URL
      * @returns Transformed url
@@ -91,14 +85,6 @@ export abstract class CoreApp<S extends IAppSettings, N>
     changeLanguage(language: DataTypes.LanguageDefinition): void {
         DomUtils.saveLanguage(language.name);
         this.settings.currentLanguage = language;
-    }
-
-    /**
-     * Get label
-     * @param name Label name
-     */
-    getLabel(name: string) {
-        return this.settings.currentLanguage.labels[name] ?? name;
     }
 
     /**
