@@ -41,6 +41,15 @@ export interface ICoreApp<S extends IAppSettings, N> {
     getLabel(key: string): string | undefined;
 
     /**
+     * Get setting
+     * @param key Label key
+     * @returns Setting
+     */
+    getSetting<T extends DataTypes.SimpleType>(
+        key: string
+    ): T | null | undefined;
+
+    /**
      * Transform URL
      * @param url URL
      * @returns Transformed url
@@ -103,6 +112,17 @@ export abstract class CoreApp<S extends IAppSettings, N>
         var label = this.settings.currentLanguage.labels[key];
         if (label == null) return undefined;
         return label.toString();
+    }
+
+    /**
+     * Get setting
+     * @param key Label key
+     * @returns Setting
+     */
+    getSetting<T extends DataTypes.SimpleType>(
+        key: string
+    ): T | null | undefined {
+        return this.settings.currentLanguage.labels[key] as T;
     }
 
     /**
