@@ -6,17 +6,17 @@ import { IExternalSettings } from './ExternalSettings';
  */
 export interface IAppSettings extends IExternalSettings {
     /**
-     * Supported languages
+     * Supported cultures
      */
-    readonly languages: DataTypes.LanguageDefinition[];
+    readonly cultures: DataTypes.CultureDefinition[];
 
     /**
-     * Detected language
+     * Detected culture
      */
-    readonly detectedLanguage: string;
+    readonly detectedCulture: string;
 
     /**
-     * Current language
+     * Current culture
      */
-    currentLanguage: DataTypes.LanguageDefinition;
+    currentCulture: DataTypes.CultureDefinition;
 }

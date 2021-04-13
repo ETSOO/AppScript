@@ -28,24 +28,17 @@ export interface ICoreApp<S extends IAppSettings, N> {
     searchInput?: HTMLInputElement;
 
     /**
-     * Change language
-     * @param language New lnguage definition
+     * Change culture
+     * @param culture New culture definition
      */
-    changeLanguage(language: DataTypes.LanguageDefinition): void;
+    changeCulture(culture: DataTypes.CultureDefinition): void;
 
     /**
-     * Get label
-     * @param key Label key
-     * @returns Label
+     * Get culture resource
+     * @param key key
+     * @returns Resource
      */
-    getLabel(key: string): string | undefined;
-
-    /**
-     * Get setting
-     * @param key Label key
-     * @returns Setting
-     */
-    getSetting<T extends DataTypes.SimpleType>(key: string): T | undefined;
+    get<T extends DataTypes.SimpleType = string>(key: string): T | undefined;
 
     /**
      * Transform URL
@@ -87,38 +80,48 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * @param notifier Notifier
      */
     protected constructor(settings: S, api: IApi, notifier: INotifier<N>) {
+        // onRequest, show loading or not, rewrite the property to override default action
+        api.onRequest = (data) => {
+            if (data.showLoading == null || data.showLoading) {
+                notifier.showLoading();
+            }
+        };
+
+        // onComplete, hide loading, rewrite the property to override default action
+        api.onComplete = (data) => {
+            if (data.showLoading == null || data.showLoading) {
+                notifier.hideLoading();
+            }
+        };
+
         this.settings = settings;
         this.api = api;
         this.notifier = notifier;
     }
 
     /**
-     * Change language
-     * @param language New lnguage definition
+     * Change culture
+     * @param culture New culture definition
      */
-    changeLanguage(language: DataTypes.LanguageDefinition): void {
-        DomUtils.saveLanguage(language.name);
-        this.settings.currentLanguage = language;
+    changeCulture(culture: DataTypes.CultureDefinition) {
+        // Save the cultrue to local storage
+        DomUtils.saveCulture(culture.name);
+
+        // Change the API's Content-Language header
+        // .net 5 API, UseRequestLocalization, ApplyCurrentCultureToResponseHeaders
+        this.api.setContentLanguage(culture.name);
+
+        // Hold the current resources
+        this.settings.currentCulture = culture;
     }
 
     /**
-     * Get label
-     * @param key Label key
-     * @returns Label
+     * Get culture resource
+     * @param key key
+     * @returns Resource
      */
-    getLabel(key: string) {
-        var label = this.settings.currentLanguage.labels[key];
-        if (label == null) return undefined;
-        return label.toString();
-    }
-
-    /**
-     * Get setting
-     * @param key Label key
-     * @returns Setting
-     */
-    getSetting<T extends DataTypes.SimpleType>(key: string): T | undefined {
-        const value = this.settings.currentLanguage.labels[key];
+    get<T extends DataTypes.SimpleType = string>(key: string): T | undefined {
+        const value = this.settings.currentCulture.resources[key];
         if (value == null) return undefined;
         return value as T;
     }
