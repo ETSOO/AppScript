@@ -108,7 +108,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
         DomUtils.saveCulture(culture.name);
 
         // Change the API's Content-Language header
-        // .net 5 API, UseRequestLocalization, ApplyCurrentCultureToResponseHeaders
+        // .net 5 API, UseRequestLocalization, RequestCultureProviders, ContentLanguageHeaderRequestCultureProvider
         this.api.setContentLanguage(culture.name);
 
         // Hold the current resources

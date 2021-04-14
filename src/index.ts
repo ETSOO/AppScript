@@ -14,6 +14,6 @@ export * from './result/ActionResultError';
 export * from './result/IActionResult';
 
 // state
-export * from './state/Language';
+export * from './state/Culture';
 export * from './state/State';
 export * from './state/User';
