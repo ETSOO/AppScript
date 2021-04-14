@@ -41,7 +41,7 @@ export interface ICoreApp<S extends IAppSettings, N> {
     /**
      * Detect IP data, call only one time
      */
-    detectIP(): void;
+    detectIP(): Promise<IPData>;
 
     /**
      * Get culture resource
@@ -134,9 +134,23 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * Detect IP data, call only one time
      */
     detectIP() {
-        if (this.ipData == null) {
-            this.api.detectIP().then((data) => (this.ipData = data));
-        }
+        return new Promise<IPData>((resolve, reject) => {
+            if (this.ipData != null) {
+                resolve(this.ipData);
+            } else {
+                this.api.detectIP().then(
+                    (data) => {
+                        if (data != null) {
+                            this.ipData = data;
+                            resolve(data);
+                        } else {
+                            reject('No Data');
+                        }
+                    },
+                    (reason) => reject(reason)
+                );
+            }
+        });
     }
 
     /**
