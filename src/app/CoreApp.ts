@@ -1,5 +1,5 @@
 import { INotifier } from '@etsoo/notificationbase';
-import { IApi } from '@etsoo/restclient';
+import { IApi, IPData } from '@etsoo/restclient';
 import { DataTypes, DomUtils } from '@etsoo/shared';
 import { IAppSettings } from './AppSettings';
 
@@ -23,6 +23,11 @@ export interface ICoreApp<S extends IAppSettings, N> {
     readonly notifier: INotifier<N>;
 
     /**
+     * IP data
+     */
+    ipData?: IPData;
+
+    /**
      * Search input element
      */
     searchInput?: HTMLInputElement;
@@ -32,6 +37,11 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * @param culture New culture definition
      */
     changeCulture(culture: DataTypes.CultureDefinition): void;
+
+    /**
+     * Detect IP data, call only one time
+     */
+    detectIP(): void;
 
     /**
      * Get culture resource
@@ -67,6 +77,11 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * Notifier
      */
     readonly notifier: INotifier<N>;
+
+    /**
+     * IP data
+     */
+    ipData?: IPData;
 
     /**
      * Search input element
@@ -113,6 +128,15 @@ export abstract class CoreApp<S extends IAppSettings, N>
 
         // Hold the current resources
         this.settings.currentCulture = culture;
+    }
+
+    /**
+     * Detect IP data, call only one time
+     */
+    detectIP() {
+        if (this.ipData == null) {
+            this.api.detectIP().then((data) => (this.ipData = data));
+        }
     }
 
     /**
