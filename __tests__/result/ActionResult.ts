@@ -1,6 +1,5 @@
-import { ApiError } from "@etsoo/restclient";
-import { ActionResult, ActionResultError } from "../../src";
-
+import { ApiError } from '@etsoo/restclient';
+import { ActionResult, ActionResultError } from '../../src';
 
 // Arrange
 var message = 'Not Found';
