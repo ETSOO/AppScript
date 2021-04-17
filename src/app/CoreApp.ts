@@ -23,6 +23,11 @@ export interface ICoreApp<S extends IAppSettings, N> {
     readonly notifier: INotifier<N>;
 
     /**
+     * Culture
+     */
+    readonly culture: string | undefined;
+
+    /**
      * IP data
      */
     ipData?: IPData;
@@ -78,6 +83,15 @@ export abstract class CoreApp<S extends IAppSettings, N>
      */
     readonly notifier: INotifier<N>;
 
+    private _culture?: string;
+
+    /**
+     * Culture
+     */
+    get culture() {
+        return this._culture;
+    }
+
     /**
      * IP data
      */
@@ -119,12 +133,18 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * @param culture New culture definition
      */
     changeCulture(culture: DataTypes.CultureDefinition) {
+        // Name
+        const { name } = culture;
+
         // Save the cultrue to local storage
-        DomUtils.saveCulture(culture.name);
+        DomUtils.saveCulture(name);
 
         // Change the API's Content-Language header
         // .net 5 API, UseRequestLocalization, RequestCultureProviders, ContentLanguageHeaderRequestCultureProvider
-        this.api.setContentLanguage(culture.name);
+        this.api.setContentLanguage(name);
+
+        // Set the culture
+        this._culture = name;
 
         // Hold the current resources
         this.settings.currentCulture = culture;
