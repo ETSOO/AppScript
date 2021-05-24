@@ -45,6 +45,7 @@ $ yarn add @etsoo/appscript
 -   IdResultData - extends IResultData for 'id' included return data.
 -   IResultErrors - Result errors interface.
 -   IActionResult - Action result interface.
+-   ActionResultId - Action result with id data
 
 ### state - State management
 

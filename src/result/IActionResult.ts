@@ -68,3 +68,8 @@ export interface IActionResult<D extends IResultData = IResultData> {
      */
     readonly success: boolean;
 }
+
+/**
+ * Action result with id data
+ */
+export type ActionResultId = IActionResult<IdResultData>;
