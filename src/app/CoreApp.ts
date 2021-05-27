@@ -38,6 +38,12 @@ export interface ICoreApp<S extends IAppSettings, N> {
     searchInput?: HTMLInputElement;
 
     /**
+     * Change country by id
+     * @param countryId New country id
+     */
+    changeCountryId(countryId: string): void;
+
+    /**
      * Change country
      * @param country New country definition
      */
@@ -136,6 +142,19 @@ export abstract class CoreApp<S extends IAppSettings, N>
     }
 
     /**
+     * Change country by id
+     * @param countryId New country id
+     */
+    changeCountryId(countryId: string) {
+        if (this.settings.currentCountry.id === countryId) return;
+
+        var country = this.settings.countries.find((c) => c.id === countryId);
+        if (country == null) return;
+
+        this.changeCountry(country);
+    }
+
+    /**
      * Change country
      * @param country New country definition
      */
@@ -170,6 +189,11 @@ export abstract class CoreApp<S extends IAppSettings, N>
 
         // Hold the current resources
         this.settings.currentCulture = culture;
+
+        // Update countries' names
+        this.settings.countries.forEach(
+            (c) => (c.name = this.get<string>('country' + c.id))
+        );
     }
 
     /**
@@ -183,7 +207,13 @@ export abstract class CoreApp<S extends IAppSettings, N>
                 this.api.detectIP().then(
                     (data) => {
                         if (data != null) {
+                            // Hold the data
                             this.ipData = data;
+
+                            // Update country
+                            this.changeCountryId(data.countryCode);
+
+                            // Resolve data
                             resolve(data);
                         } else {
                             reject('No Data');
