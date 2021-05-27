@@ -6,6 +6,11 @@ import { IExternalSettings } from './ExternalSettings';
  */
 export interface IAppSettings extends IExternalSettings {
     /**
+     * Supported countries
+     */
+    readonly countries: DataTypes.Country[];
+
+    /**
      * Supported cultures
      */
     readonly cultures: DataTypes.CultureDefinition[];
@@ -14,6 +19,11 @@ export interface IAppSettings extends IExternalSettings {
      * Detected culture
      */
     readonly detectedCulture: string;
+
+    /**
+     * Current country
+     */
+    currentCountry: DataTypes.Country;
 
     /**
      * Current culture

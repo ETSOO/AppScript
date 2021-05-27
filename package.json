@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.0.34",
+    "version": "1.0.35",
     "description": "Applications shared TypeScript framework",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -42,7 +42,7 @@
     "dependencies": {
         "@etsoo/notificationbase": "^1.0.63",
         "@etsoo/restclient": "^1.0.33",
-        "@etsoo/shared": "^1.0.12",
+        "@etsoo/shared": "^1.0.13",
         "typescript": "^4.2.4"
     },
     "devDependencies": {

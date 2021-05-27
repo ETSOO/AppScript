@@ -38,6 +38,12 @@ export interface ICoreApp<S extends IAppSettings, N> {
     searchInput?: HTMLInputElement;
 
     /**
+     * Change country
+     * @param country New country definition
+     */
+    changeCountry(country: DataTypes.Country): void;
+
+    /**
      * Change culture
      * @param culture New culture definition
      */
@@ -67,7 +73,8 @@ export interface ICoreApp<S extends IAppSettings, N> {
  * Core application
  */
 export abstract class CoreApp<S extends IAppSettings, N>
-    implements ICoreApp<S, N> {
+    implements ICoreApp<S, N>
+{
     /**
      * Settings
      */
@@ -126,6 +133,21 @@ export abstract class CoreApp<S extends IAppSettings, N>
         this.settings = settings;
         this.api = api;
         this.notifier = notifier;
+    }
+
+    /**
+     * Change country
+     * @param country New country definition
+     */
+    changeCountry(country: DataTypes.Country) {
+        // Id
+        const { id } = country;
+
+        // Save the id to local storage
+        DomUtils.saveCountry(id);
+
+        // Hold the current country
+        this.settings.currentCountry = country;
     }
 
     /**
