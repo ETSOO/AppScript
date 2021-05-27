@@ -23,7 +23,7 @@ export interface IAppSettings extends IExternalSettings {
     /**
      * Current country
      */
-    currentCountry: DataTypes.Country;
+    currentCountry?: DataTypes.Country;
 
     /**
      * Current culture

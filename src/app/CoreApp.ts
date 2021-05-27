@@ -4,6 +4,13 @@ import { DataTypes, DomUtils } from '@etsoo/shared';
 import { IAppSettings } from './AppSettings';
 
 /**
+ * Detect IP callback interface
+ */
+export interface IDetectIPCallback {
+    (): void;
+}
+
+/**
  * Core application interface
  */
 export interface ICoreApp<S extends IAppSettings, N> {
@@ -57,8 +64,9 @@ export interface ICoreApp<S extends IAppSettings, N> {
 
     /**
      * Detect IP data, call only one time
+     * @param callback Callback will be called when the IP is ready
      */
-    detectIP(): Promise<IPData>;
+    detectIP(callback?: IDetectIPCallback): void;
 
     /**
      * Get culture resource
@@ -110,6 +118,9 @@ export abstract class CoreApp<S extends IAppSettings, N>
      */
     ipData?: IPData;
 
+    // IP detect ready callbacks
+    private ipDetectCallbacks?: IDetectIPCallback[];
+
     /**
      * Search input element
      */
@@ -146,8 +157,6 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * @param countryId New country id
      */
     changeCountryId(countryId: string) {
-        if (this.settings.currentCountry.id === countryId) return;
-
         var country = this.settings.countries.find((c) => c.id === countryId);
         if (country == null) return;
 
@@ -161,6 +170,9 @@ export abstract class CoreApp<S extends IAppSettings, N>
     changeCountry(country: DataTypes.Country) {
         // Id
         const { id } = country;
+
+        // Same?
+        if (id === this.settings.currentCountry?.id) return;
 
         // Save the id to local storage
         DomUtils.saveCountry(id);
@@ -198,31 +210,42 @@ export abstract class CoreApp<S extends IAppSettings, N>
 
     /**
      * Detect IP data, call only one time
+     * @param callback Callback will be called when the IP is ready
      */
-    detectIP() {
-        return new Promise<IPData>((resolve, reject) => {
-            if (this.ipData != null) {
-                resolve(this.ipData);
-            } else {
-                this.api.detectIP().then(
-                    (data) => {
-                        if (data != null) {
-                            // Hold the data
-                            this.ipData = data;
+    detectIP(callback?: IDetectIPCallback) {
+        if (this.ipData != null) {
+            if (callback != null) callback();
+            return;
+        }
 
-                            // Update country
-                            this.changeCountryId(data.countryCode);
+        // First time
+        if (this.ipDetectCallbacks == null) {
+            // Init
+            this.ipDetectCallbacks = [];
 
-                            // Resolve data
-                            resolve(data);
-                        } else {
-                            reject('No Data');
-                        }
-                    },
-                    (reason) => reject(reason)
-                );
-            }
-        });
+            // Call the API
+            this.api.detectIP().then(
+                (data) => {
+                    if (data != null) {
+                        // Hold the data
+                        this.ipData = data;
+                    }
+
+                    this.detectIPCallbacks();
+                },
+                (_reason) => this.detectIPCallbacks()
+            );
+        }
+
+        if (callback != null) {
+            // Push the callback to the collection
+            this.ipDetectCallbacks.push(callback);
+        }
+    }
+
+    // Detect IP callbacks
+    private detectIPCallbacks() {
+        this.ipDetectCallbacks?.forEach((f) => f());
     }
 
     /**
