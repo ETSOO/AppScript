@@ -21,6 +21,11 @@ export interface IAppSettings extends IExternalSettings {
     readonly detectedCulture: string;
 
     /**
+     * Time zone
+     */
+    readonly timeZone?: string;
+
+    /**
      * Current country
      */
     currentCountry?: DataTypes.Country;
