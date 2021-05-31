@@ -6,6 +6,11 @@ import { IExternalSettings } from './ExternalSettings';
  */
 export interface IAppSettings extends IExternalSettings {
     /**
+     * Authorization scheme
+     */
+    readonly authScheme: string;
+
+    /**
      * Supported countries
      */
     readonly countries: DataTypes.Country[];

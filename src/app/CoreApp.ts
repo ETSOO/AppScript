@@ -1,6 +1,7 @@
 import { INotifier } from '@etsoo/notificationbase';
 import { IApi, IPData } from '@etsoo/restclient';
 import { DataTypes, DomUtils } from '@etsoo/shared';
+import { IUserData } from '../state/User';
 import { IAppSettings } from './AppSettings';
 
 /**
@@ -81,6 +82,17 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * @returns Transformed url
      */
     transformUrl(url: string): string;
+
+    /**
+     * User login
+     * @param user User data
+     */
+    userLogin(user: IUserData): void;
+
+    /**
+     * User logout
+     */
+    userLogout(): void;
 }
 
 /**
@@ -282,5 +294,20 @@ export abstract class CoreApp<S extends IAppSettings, N>
 
         // To /a/b/../ => /a
         return pathname.endsWith('/') ? pathname + url : pathname + '/' + url;
+    }
+
+    /**
+     * User login
+     * @param user User data
+     */
+    userLogin(user: IUserData) {
+        this.api.authorize(this.settings.authScheme, user.token);
+    }
+
+    /**
+     * User logout
+     */
+    userLogout() {
+        this.api.authorize(this.settings.authScheme, undefined);
     }
 }
