@@ -1,3 +1,4 @@
+import { ApiAuthorizationScheme } from '@etsoo/restclient';
 import { DataTypes } from '@etsoo/shared';
 import { IExternalSettings } from './ExternalSettings';
 
@@ -8,7 +9,7 @@ export interface IAppSettings extends IExternalSettings {
     /**
      * Authorization scheme
      */
-    readonly authScheme: string;
+    readonly authScheme: ApiAuthorizationScheme | string;
 
     /**
      * Supported countries
