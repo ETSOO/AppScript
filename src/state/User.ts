@@ -1,5 +1,5 @@
-import { DataTypes } from "@etsoo/shared";
-import { IState } from "./State";
+import { DataTypes } from '@etsoo/shared';
+import { IState } from './State';
 
 /**
  * User data interface
@@ -28,7 +28,12 @@ export interface IUserData {
     /**
      * Access token
      */
-    readonly token:string;
+    readonly token: string;
+
+    /**
+     * Device id
+     */
+    readonly deviceId?: DataTypes.IdType;
 
     /**
      * User universal id
@@ -43,5 +48,5 @@ export interface IUser extends IUserData, IState {
     /**
      * Authorized or not
      */
-     authorized: boolean;
+    authorized: boolean;
 }
