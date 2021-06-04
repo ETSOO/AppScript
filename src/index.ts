@@ -12,6 +12,7 @@ export * from './bridges/IBridge';
 export * from './result/ActionResult';
 export * from './result/ActionResultError';
 export * from './result/IActionResult';
+export * from './result/RefreshTokenResult';
 
 // state
 export * from './state/Culture';
