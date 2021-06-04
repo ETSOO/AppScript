@@ -46,6 +46,12 @@ export interface ICoreApp<S extends IAppSettings, N> {
     searchInput?: HTMLInputElement;
 
     /**
+     * Authorize
+     * @param token New token
+     */
+    authorize(token?: string): void;
+
+    /**
      * Change country by id
      * @param countryId New country id
      */
@@ -162,6 +168,14 @@ export abstract class CoreApp<S extends IAppSettings, N>
         this.settings = settings;
         this.api = api;
         this.notifier = notifier;
+    }
+
+    /**
+     * Authorize
+     * @param token New token
+     */
+    authorize(token?: string) {
+        this.api.authorize(this.settings.authScheme, token);
     }
 
     /**
@@ -301,13 +315,13 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * @param user User data
      */
     userLogin(user: IUserData) {
-        this.api.authorize(this.settings.authScheme, user.token);
+        this.authorize(user.token);
     }
 
     /**
      * User logout
      */
     userLogout() {
-        this.api.authorize(this.settings.authScheme, undefined);
+        this.authorize(undefined);
     }
 }
