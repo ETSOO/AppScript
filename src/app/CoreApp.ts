@@ -1,6 +1,6 @@
 import { INotifier } from '@etsoo/notificationbase';
 import { IApi, IPData } from '@etsoo/restclient';
-import { DataTypes, DomUtils } from '@etsoo/shared';
+import { DataTypes, DomUtils, StorageUtils } from '@etsoo/shared';
 import { IUserData } from '../state/User';
 import { IAppSettings } from './AppSettings';
 
@@ -48,8 +48,9 @@ export interface ICoreApp<S extends IAppSettings, N> {
     /**
      * Authorize
      * @param token New token
+     * @param refreshToken Refresh token
      */
-    authorize(token?: string): void;
+    authorize(token?: string, refreshToken?: string): void;
 
     /**
      * Change country by id
@@ -83,6 +84,19 @@ export interface ICoreApp<S extends IAppSettings, N> {
     get<T extends DataTypes.SimpleType = string>(key: string): T | undefined;
 
     /**
+     * Get cached token
+     * @returns Cached token
+     */
+    getCacheToken(): string | null;
+
+    /**
+     * Get refresh token from response headers
+     * @param rawResponse Raw response from API call
+     * @returns response refresh token
+     */
+    getResponseToken(rawResponse: any): string | null;
+
+    /**
      * Transform URL
      * @param url URL
      * @returns Transformed url
@@ -92,8 +106,9 @@ export interface ICoreApp<S extends IAppSettings, N> {
     /**
      * User login
      * @param user User data
+     * @param refreshToken Refresh token
      */
-    userLogin(user: IUserData): void;
+    userLogin(user: IUserData, refreshToken?: string): void;
 
     /**
      * User logout
@@ -136,6 +151,11 @@ export abstract class CoreApp<S extends IAppSettings, N>
      */
     ipData?: IPData;
 
+    /**
+     * Response token header field name
+     */
+    headerTokenField = 'SmartERPRefreshToken';
+
     // IP detect ready callbacks
     private ipDetectCallbacks?: IDetectIPCallback[];
 
@@ -173,9 +193,13 @@ export abstract class CoreApp<S extends IAppSettings, N>
     /**
      * Authorize
      * @param token New token
+     * @param refreshToken Refresh token
      */
-    authorize(token?: string) {
+    authorize(token?: string, refreshToken?: string) {
         this.api.authorize(this.settings.authScheme, token);
+
+        StorageUtils.setSessionData(this.headerTokenField, refreshToken);
+        StorageUtils.setLocalData(this.headerTokenField, refreshToken);
     }
 
     /**
@@ -286,6 +310,33 @@ export abstract class CoreApp<S extends IAppSettings, N>
     }
 
     /**
+     * Get cached token
+     * @returns Cached token
+     */
+    getCacheToken(): string | null {
+        let refreshToken = StorageUtils.getLocalData(this.headerTokenField, '');
+        if (refreshToken === '')
+            refreshToken = StorageUtils.getSessionData(
+                this.headerTokenField,
+                ''
+            );
+
+        if (refreshToken === '') return null;
+
+        return refreshToken;
+    }
+
+    /**
+     * Get refresh token from response headers
+     * @param rawResponse Raw response from API call
+     * @returns response refresh token
+     */
+    getResponseToken(rawResponse: any): string | null {
+        const response = this.api.transformResponse(rawResponse);
+        return this.api.getHeaderValue(response.headers, this.headerTokenField);
+    }
+
+    /**
      * Transform URL
      * @param url URL
      * @returns Transformed url
@@ -313,15 +364,16 @@ export abstract class CoreApp<S extends IAppSettings, N>
     /**
      * User login
      * @param user User data
+     * @param refreshToken Refresh token
      */
-    userLogin(user: IUserData) {
-        this.authorize(user.token);
+    userLogin(user: IUserData, refreshToken?: string) {
+        this.authorize(user.token, refreshToken);
     }
 
     /**
      * User logout
      */
     userLogout() {
-        this.authorize(undefined);
+        this.authorize(undefined, undefined);
     }
 }
