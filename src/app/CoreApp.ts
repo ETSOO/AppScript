@@ -49,8 +49,9 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * Authorize
      * @param token New token
      * @param refreshToken Refresh token
+     * @param keep Keep in local storage or not
      */
-    authorize(token?: string, refreshToken?: string): void;
+    authorize(token?: string, refreshToken?: string, keep?: boolean): void;
 
     /**
      * Change country by id
@@ -107,8 +108,9 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * User login
      * @param user User data
      * @param refreshToken Refresh token
+     * @param keep Keep in local storage or not
      */
-    userLogin(user: IUserData, refreshToken?: string): void;
+    userLogin(user: IUserData, refreshToken?: string, keep?: boolean): void;
 
     /**
      * User logout
@@ -194,12 +196,20 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * Authorize
      * @param token New token
      * @param refreshToken Refresh token
+     * @param keep Keep in local storage or not
      */
-    authorize(token?: string, refreshToken?: string) {
+    authorize(token?: string, refreshToken?: string, keep: boolean = false) {
         this.api.authorize(this.settings.authScheme, token);
 
-        StorageUtils.setSessionData(this.headerTokenField, refreshToken);
-        StorageUtils.setLocalData(this.headerTokenField, refreshToken);
+        // Cover the current value
+        StorageUtils.setLocalData(
+            this.headerTokenField,
+            keep ? refreshToken : undefined
+        );
+        StorageUtils.setSessionData(
+            this.headerTokenField,
+            keep ? undefined : refreshToken
+        );
     }
 
     /**
@@ -365,9 +375,10 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * User login
      * @param user User data
      * @param refreshToken Refresh token
+     * @param keep Keep in local storage or not
      */
-    userLogin(user: IUserData, refreshToken?: string) {
-        this.authorize(user.token, refreshToken);
+    userLogin(user: IUserData, refreshToken?: string, keep?: boolean) {
+        this.authorize(user.token, refreshToken, keep);
     }
 
     /**

@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.0.45",
+    "version": "1.0.46",
     "description": "Applications shared TypeScript framework",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
