@@ -1,15 +1,9 @@
-import { DataTypes } from '@etsoo/shared';
 import { IState } from './State';
 
 /**
  * User data interface
  */
 export interface IUserData {
-    /**
-     * User id
-     */
-    readonly id: DataTypes.IdType;
-
     /**
      * User name
      */
@@ -29,16 +23,6 @@ export interface IUserData {
      * Access token
      */
     readonly token: string;
-
-    /**
-     * Device id
-     */
-    readonly deviceId?: DataTypes.IdType;
-
-    /**
-     * User universal id
-     */
-    readonly uid?: DataTypes.IdType;
 }
 
 /**
