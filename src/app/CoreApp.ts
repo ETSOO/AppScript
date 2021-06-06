@@ -1,7 +1,7 @@
 import { INotifier } from '@etsoo/notificationbase';
 import { IApi, IPData } from '@etsoo/restclient';
 import { DataTypes, DomUtils, StorageUtils } from '@etsoo/shared';
-import { IUserData } from '../state/User';
+import { IUser, IUserData } from '../state/User';
 import { IAppSettings } from './AppSettings';
 
 /**
@@ -39,6 +39,11 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * IP data
      */
     ipData?: IPData;
+
+    /**
+     * User data
+     */
+    userData?: IUserData;
 
     /**
      * Search input element
@@ -154,6 +159,11 @@ export abstract class CoreApp<S extends IAppSettings, N>
     ipData?: IPData;
 
     /**
+     * User data
+     */
+    userData?: IUserData;
+
+    /**
      * Response token header field name
      */
     headerTokenField = 'SmartERPRefreshToken';
@@ -232,7 +242,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
         const { id } = country;
 
         // Same?
-        if (id === this.settings.currentCountry?.id) return;
+        if (id === this.settings.currentCountry.id) return;
 
         // Save the id to local storage
         DomUtils.saveCountry(id);
@@ -378,6 +388,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * @param keep Keep in local storage or not
      */
     userLogin(user: IUserData, refreshToken?: string, keep?: boolean) {
+        this.userData = user;
         this.authorize(user.token, refreshToken, keep);
     }
 
