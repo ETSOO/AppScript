@@ -344,12 +344,8 @@ export abstract class CoreApp<S extends IAppSettings, N>
         timeZone?: string
     ) {
         const { currentCulture, timeZone: defaultTimeZone } = this.settings;
-        return DateUtils.format(
-            currentCulture.name,
-            input,
-            options,
-            timeZone ?? defaultTimeZone
-        );
+        timeZone ??= defaultTimeZone;
+        return DateUtils.format(currentCulture.name, input, options, timeZone);
     }
 
     /**
