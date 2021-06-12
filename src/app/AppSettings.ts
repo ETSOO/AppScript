@@ -29,7 +29,7 @@ export interface IAppSettings extends IExternalSettings {
     /**
      * Time zone
      */
-    readonly timeZone?: string;
+    timeZone?: string;
 
     /**
      * Current country

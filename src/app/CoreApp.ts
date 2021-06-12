@@ -1,7 +1,7 @@
 import { INotifier } from '@etsoo/notificationbase';
 import { IApi, IPData } from '@etsoo/restclient';
-import { DataTypes, DomUtils, StorageUtils } from '@etsoo/shared';
-import { IUser, IUserData } from '../state/User';
+import { DataTypes, DateUtils, DomUtils, StorageUtils } from '@etsoo/shared';
+import { IUserData } from '../state/User';
 import { IAppSettings } from './AppSettings';
 
 /**
@@ -81,6 +81,19 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * @param callback Callback will be called when the IP is ready
      */
     detectIP(callback?: IDetectIPCallback): void;
+
+    /**
+     * Format date to string
+     * @param input Input date
+     * @param options Options
+     * @param timeZone Time zone
+     * @returns string
+     */
+    formatDate(
+        input?: Date | string,
+        options?: DateUtils.FormatOptions,
+        timeZone?: string
+    ): string | undefined;
 
     /**
      * Get culture resource
@@ -316,6 +329,27 @@ export abstract class CoreApp<S extends IAppSettings, N>
     // Detect IP callbacks
     private detectIPCallbacks() {
         this.ipDetectCallbacks?.forEach((f) => f());
+    }
+
+    /**
+     * Format date to string
+     * @param input Input date
+     * @param options Options
+     * @param timeZone Time zone
+     * @returns string
+     */
+    formatDate(
+        input?: Date | string,
+        options?: DateUtils.FormatOptions,
+        timeZone?: string
+    ) {
+        const { currentCulture, timeZone: defaultTimeZone } = this.settings;
+        return DateUtils.format(
+            currentCulture.name,
+            input,
+            options,
+            timeZone ?? defaultTimeZone
+        );
     }
 
     /**
