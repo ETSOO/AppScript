@@ -10,6 +10,11 @@ export interface IUserData {
     readonly name: string;
 
     /**
+     * User avatar
+     */
+    readonly avatar?: string;
+
+    /**
      * Organization id
      */
     readonly organization?: number;
