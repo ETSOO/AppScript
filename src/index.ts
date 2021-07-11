@@ -9,7 +9,7 @@ export * from './bridges/IAppData';
 export * from './bridges/IBridge';
 
 // dto
-export * from './dto/idLabelDto';
+export * from './dto/IdLabelDto';
 
 // result
 export * from './result/ActionResult';
