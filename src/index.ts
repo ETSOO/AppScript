@@ -8,6 +8,9 @@ export * from './bridges/ElectronBridge';
 export * from './bridges/IAppData';
 export * from './bridges/IBridge';
 
+// dto
+export * from './dto/idLabelDto';
+
 // result
 export * from './result/ActionResult';
 export * from './result/ActionResultError';
