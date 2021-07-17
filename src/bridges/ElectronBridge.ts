@@ -5,4 +5,4 @@ import { IBridge } from './IBridge';
  * copes with preload.js, contextBridge.exposeInMainWorld
  * BrowserWindow.webPreferences, contextIsolation: true
  */
-export const AppRuntime = (window as any).appRuntime as IBridge;
+export const AppRuntime = (globalThis as any).appRuntime as IBridge;
