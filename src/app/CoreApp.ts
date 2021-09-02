@@ -213,6 +213,9 @@ export abstract class CoreApp<S extends IAppSettings, N>
         this.settings = settings;
         this.api = api;
         this.notifier = notifier;
+
+        // Setup callback
+        this.setup();
     }
 
     /**
@@ -385,6 +388,11 @@ export abstract class CoreApp<S extends IAppSettings, N>
         const response = this.api.transformResponse(rawResponse);
         return this.api.getHeaderValue(response.headers, this.headerTokenField);
     }
+
+    /**
+     * Setup callback
+     */
+    setup() {}
 
     /**
      * Transform URL

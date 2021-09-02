@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.0.76",
+    "version": "1.0.77",
     "description": "Applications shared TypeScript framework",
     "main": "lib/cjs/index.js",
     "module": "lib/mjs/index.js",
@@ -52,19 +52,19 @@
         "@etsoo/shared": "^1.0.39"
     },
     "devDependencies": {
-        "@babel/cli": "^7.14.5",
-        "@babel/core": "^7.14.5",
-        "@babel/plugin-transform-runtime": "^7.14.5",
-        "@babel/preset-env": "^7.14.5",
-        "@babel/runtime-corejs3": "^7.14.5",
-        "@types/jest": "^26.0.23",
-        "@typescript-eslint/eslint-plugin": "^4.26.1",
-        "@typescript-eslint/parser": "^4.26.1",
-        "eslint": "^7.28.0",
+        "@babel/cli": "^7.14.8",
+        "@babel/core": "^7.15.0",
+        "@babel/plugin-transform-runtime": "^7.15.0",
+        "@babel/preset-env": "^7.15.0",
+        "@babel/runtime-corejs3": "^7.15.3",
+        "@types/jest": "^27.0.1",
+        "@typescript-eslint/eslint-plugin": "^4.30.0",
+        "@typescript-eslint/parser": "^4.30.0",
+        "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
-        "eslint-plugin-import": "^2.23.4",
-        "jest": "^27.0.4",
-        "ts-jest": "^27.0.3",
-        "typescript": "^4.3.5"
+        "eslint-plugin-import": "^2.24.2",
+        "jest": "^27.1.0",
+        "ts-jest": "^27.0.5",
+        "typescript": "^4.4.2"
     }
 }
