@@ -1,5 +1,5 @@
 import { INotifier } from '@etsoo/notificationbase';
-import { IApi, IPData } from '@etsoo/restclient';
+import { ApiDataError, ApiError, IApi, IPData } from '@etsoo/restclient';
 import { DataTypes, DateUtils, DomUtils, StorageUtils } from '@etsoo/shared';
 import { IUserData } from '../state/User';
 import { IAppSettings } from './AppSettings';
@@ -210,6 +210,22 @@ export abstract class CoreApp<S extends IAppSettings, N>
             }
         };
 
+        // Global API error handler
+        api.onError = (error: ApiDataError) => {
+            // Error code
+            const status = error.response
+                ? api.transformResponse(error.response).status
+                : undefined;
+
+            if (status === 401) {
+                // When status is equal to 401, unauthorized, try login
+                this.tryLogin();
+            } else {
+                // Report the error
+                notifier.alert(this.formatError(error));
+            }
+        };
+
         this.settings = settings;
         this.api = api;
         this.notifier = notifier;
@@ -352,6 +368,15 @@ export abstract class CoreApp<S extends IAppSettings, N>
     }
 
     /**
+     * Format error
+     * @param error Error
+     * @returns Error message
+     */
+    formatError(error: ApiDataError) {
+        return error.toString();
+    }
+
+    /**
      * Get culture resource
      * @param key key
      * @returns Resource
@@ -418,6 +443,11 @@ export abstract class CoreApp<S extends IAppSettings, N>
         // To /a/b/../ => /a
         return pathname.endsWith('/') ? pathname + url : pathname + '/' + url;
     }
+
+    /**
+     * Try login
+     */
+    abstract tryLogin(): void;
 
     /**
      * User login
