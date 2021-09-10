@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.0.78",
+    "version": "1.0.79",
     "description": "Applications shared TypeScript framework",
     "main": "lib/cjs/index.js",
     "module": "lib/mjs/index.js",
@@ -47,23 +47,23 @@
     },
     "homepage": "https://github.com/ETSOO/NotificationBase#readme",
     "dependencies": {
-        "@etsoo/notificationbase": "^1.0.75",
-        "@etsoo/restclient": "^1.0.50",
-        "@etsoo/shared": "^1.0.39"
+        "@etsoo/notificationbase": "^1.0.76",
+        "@etsoo/restclient": "^1.0.51",
+        "@etsoo/shared": "^1.0.41"
     },
     "devDependencies": {
-        "@babel/cli": "^7.14.8",
-        "@babel/core": "^7.15.0",
+        "@babel/cli": "^7.15.4",
+        "@babel/core": "^7.15.5",
         "@babel/plugin-transform-runtime": "^7.15.0",
-        "@babel/preset-env": "^7.15.0",
-        "@babel/runtime-corejs3": "^7.15.3",
+        "@babel/preset-env": "^7.15.6",
+        "@babel/runtime-corejs3": "^7.15.4",
         "@types/jest": "^27.0.1",
-        "@typescript-eslint/eslint-plugin": "^4.30.0",
-        "@typescript-eslint/parser": "^4.30.0",
+        "@typescript-eslint/eslint-plugin": "^4.31.0",
+        "@typescript-eslint/parser": "^4.31.0",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-plugin-import": "^2.24.2",
-        "jest": "^27.1.0",
+        "jest": "^27.1.1",
         "ts-jest": "^27.0.5",
         "typescript": "^4.4.2"
     }
