@@ -1,6 +1,8 @@
 import { INotifier } from '@etsoo/notificationbase';
-import { ApiDataError, ApiError, IApi, IPData } from '@etsoo/restclient';
+import { ApiDataError, IApi, IPData } from '@etsoo/restclient';
 import { DataTypes, DateUtils, DomUtils, StorageUtils } from '@etsoo/shared';
+import { ActionResultError } from '../result/ActionResultError';
+import { IActionResult } from '../result/IActionResult';
 import { IUserData } from '../state/User';
 import { IAppSettings } from './AppSettings';
 
@@ -49,6 +51,12 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * Search input element
      */
     searchInput?: HTMLInputElement;
+
+    /**
+     * Alert action result
+     * @param result Action result
+     */
+    alertResult(result: IActionResult): void;
 
     /**
      * Authorize
@@ -232,6 +240,14 @@ export abstract class CoreApp<S extends IAppSettings, N>
 
         // Setup callback
         this.setup();
+    }
+
+    /**
+     * Alert action result
+     * @param result Action result
+     */
+    alertResult(result: IActionResult) {
+        this.notifier.alert(ActionResultError.format(result));
     }
 
     /**
