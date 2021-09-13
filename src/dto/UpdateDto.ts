@@ -1,14 +1,9 @@
-import { DataTypes } from '@etsoo/shared';
+import { IdDto } from './IdDto';
 
 /**
  * Update Dto
  */
-export type UpdateDto = {
-    /**
-     * Id
-     */
-    id: DataTypes.IdType;
-
+export type UpdateDto<T = number> = IdDto<T> & {
     /**
      * Changed fields
      */
