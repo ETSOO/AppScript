@@ -10,6 +10,7 @@ export * from './bridges/IBridge';
 
 // dto
 export * from './dto/IdLabelDto';
+export * from './dto/UpdateDto';
 
 // result
 export * from './result/ActionResult';
