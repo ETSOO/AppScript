@@ -111,6 +111,12 @@ export interface ICoreApp<S extends IAppSettings, N> {
     get<T extends DataTypes.SimpleType = string>(key: string): T | undefined;
 
     /**
+     * Get multiple culture labels
+     * @param keys Keys
+     */
+    getLables<T extends string>(...keys: T[]): { [K in T]: string | undefined };
+
+    /**
      * Get cached token
      * @returns Cached token
      */
@@ -122,6 +128,11 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * @returns response refresh token
      */
     getResponseToken(rawResponse: any): string | null;
+
+    /**
+     * Callback where exit a page
+     */
+    pageExit(): void;
 
     /**
      * Transform URL
@@ -404,6 +415,20 @@ export abstract class CoreApp<S extends IAppSettings, N>
     }
 
     /**
+     * Get multiple culture labels
+     * @param keys Keys
+     */
+    getLables<T extends string>(
+        ...keys: T[]
+    ): { [K in T]: string | undefined } {
+        const init: any = {};
+        return keys.reduce(
+            (a, v) => ({ ...a, [v]: this.get<string>(v) }),
+            init
+        );
+    }
+
+    /**
      * Get cached token
      * @returns Cached token
      */
@@ -429,6 +454,11 @@ export abstract class CoreApp<S extends IAppSettings, N>
         const response = this.api.transformResponse(rawResponse);
         return this.api.getHeaderValue(response.headers, this.headerTokenField);
     }
+
+    /**
+     * Callback where exit a page
+     */
+    pageExit() {}
 
     /**
      * Setup callback
