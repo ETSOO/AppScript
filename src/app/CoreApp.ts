@@ -114,7 +114,7 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * Get multiple culture labels
      * @param keys Keys
      */
-    getLables<T extends string>(...keys: T[]): { [K in T]: string };
+    getLabels<T extends string>(...keys: T[]): { [K in T]: string };
 
     /**
      * Get cached token
@@ -418,7 +418,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * Get multiple culture labels
      * @param keys Keys
      */
-    getLables<T extends string>(...keys: T[]): { [K in T]: string } {
+    getLabels<T extends string>(...keys: T[]): { [K in T]: string } {
         const init: any = {};
         return keys.reduce(
             (a, v) => ({ ...a, [v]: this.get<string>(v) ?? '' }),
