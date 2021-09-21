@@ -130,6 +130,12 @@ export interface ICoreApp<S extends IAppSettings, N> {
     getResponseToken(rawResponse: any): string | null;
 
     /**
+     * Get time zone
+     * @returns Time zone
+     */
+    getTimeZone(): string | undefined;
+
+    /**
      * Callback where exit a page
      */
     pageExit(): void;
@@ -451,6 +457,15 @@ export abstract class CoreApp<S extends IAppSettings, N>
     getResponseToken(rawResponse: any): string | null {
         const response = this.api.transformResponse(rawResponse);
         return this.api.getHeaderValue(response.headers, this.headerTokenField);
+    }
+
+    /**
+     * Get time zone
+     * @returns Time zone
+     */
+    getTimeZone(): string | undefined {
+        // settings.timeZone = Utils.getTimeZone()
+        return this.settings.timeZone ?? this.ipData?.timezone;
     }
 
     /**
