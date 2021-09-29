@@ -7,3 +7,10 @@ import { IState } from './State';
  * Indexable type
  */
 export interface ICulture extends DataTypes.CultureDefinition, IState {}
+
+/**
+ * Culture get delegate
+ */
+export interface ICultureGet {
+    (key: string): string | undefined;
+}
