@@ -8,6 +8,10 @@ export * from './bridges/ElectronBridge';
 export * from './bridges/IAppData';
 export * from './bridges/IBridge';
 
+// business
+export * from './business/ProductUnit';
+export * from './business/Utils';
+
 // dto
 export * from './dto/IdLabelDto';
 export * from './dto/UpdateDto';
