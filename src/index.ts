@@ -9,8 +9,8 @@ export * from './bridges/IAppData';
 export * from './bridges/IBridge';
 
 // business
+export * from './business/BusinessUtils';
 export * from './business/ProductUnit';
-export * from './business/Utils';
 
 // dto
 export * from './dto/IdLabelDto';
