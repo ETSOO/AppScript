@@ -7,6 +7,23 @@ import { ProductUnit } from './ProductUnit';
  * Business utils
  */
 export namespace BusinessUtils {
+    /**
+     * Add blank item to id/label data array
+     * @param input Input array
+     * @param copy Copy or change the current inpu
+     * @returns Items with blank item
+     */
+    export function addIdLabelBlankItem(
+        input: IdLabelDto[],
+        copy: boolean = false
+    ) {
+        const blankItem: IdLabelDto = { id: '', label: '---' };
+        if (copy) return [blankItem, ...input];
+
+        input.unshift(blankItem);
+        return input;
+    }
+
     // Get unit label by key
     function getUnitLabelByKey(func: ICultureGet, key: string) {
         return func('unit' + key) ?? key;
