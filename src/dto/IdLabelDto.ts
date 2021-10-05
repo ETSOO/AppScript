@@ -7,7 +7,7 @@ export type IdLabelDto = {
     /**
      * Id
      */
-    id: DataTypes.IdType;
+    readonly id: DataTypes.IdType;
 
     /**
      * Label

@@ -1,6 +1,7 @@
 import { INotifier } from '@etsoo/notificationbase';
 import { ApiDataError, IApi, IPData } from '@etsoo/restclient';
 import { DataTypes, DateUtils, DomUtils, StorageUtils } from '@etsoo/shared';
+import { AddressRegion } from '../address/AddressRegion';
 import { ActionResultError } from '../result/ActionResultError';
 import { IActionResult } from '../result/IActionResult';
 import { IUserData } from '../state/User';
@@ -67,16 +68,10 @@ export interface ICoreApp<S extends IAppSettings, N> {
     authorize(token?: string, refreshToken?: string, keep?: boolean): void;
 
     /**
-     * Change country by id
-     * @param countryId New country id
+     * Change country or region
+     * @param regionId New country or region id
      */
-    changeCountryId(countryId: string): void;
-
-    /**
-     * Change country
-     * @param country New country definition
-     */
-    changeCountry(country: DataTypes.Country): void;
+    changeRegion(regionId: string): void;
 
     /**
      * Change culture
@@ -121,6 +116,12 @@ export interface ICoreApp<S extends IAppSettings, N> {
      * @returns Cached token
      */
     getCacheToken(): string | null;
+
+    /**
+     * Get all regions
+     * @returns Regions
+     */
+    getRegions(): AddressRegion[];
 
     /**
      * Get refresh token from response headers
@@ -288,32 +289,25 @@ export abstract class CoreApp<S extends IAppSettings, N>
     }
 
     /**
-     * Change country by id
-     * @param countryId New country id
+     * Change country or region
+     * @param regionId New country or region id
      */
-    changeCountryId(countryId: string) {
-        var country = this.settings.countries.find((c) => c.id === countryId);
-        if (country == null) return;
-
-        this.changeCountry(country);
-    }
-
-    /**
-     * Change country
-     * @param country New country definition
-     */
-    changeCountry(country: DataTypes.Country) {
-        // Id
-        const { id } = country;
-
+    changeRegion(regionId: string) {
         // Same?
-        if (id === this.settings.currentCountry.id) return;
+        if (regionId === this.settings.currentRegion.id) return;
+
+        // Exists in settings
+        if (!this.settings.regions.includes(regionId)) return;
+
+        // Region
+        const region = AddressRegion.getById(regionId);
+        if (region == null) return;
 
         // Save the id to local storage
-        DomUtils.saveCountry(id);
+        DomUtils.saveCountry(regionId);
 
-        // Hold the current country
-        this.settings.currentCountry = country;
+        // Hold the current country or region
+        this.settings.currentRegion = region;
     }
 
     /**
@@ -336,11 +330,6 @@ export abstract class CoreApp<S extends IAppSettings, N>
 
         // Hold the current resources
         this.settings.currentCulture = culture;
-
-        // Update countries' names
-        this.settings.countries.forEach(
-            (c) => (c.name = this.get<string>('country' + c.id))
-        );
     }
 
     /**
@@ -447,6 +436,19 @@ export abstract class CoreApp<S extends IAppSettings, N>
         if (refreshToken === '') return null;
 
         return refreshToken;
+    }
+
+    /**
+     * Get all regions
+     * @returns Regions
+     */
+    getRegions() {
+        return this.settings.regions.map((id) => {
+            const region = AddressRegion.getById(id)!;
+            const label = this.get<string>('country' + id);
+            if (label) region.name = label;
+            return region;
+        });
     }
 
     /**

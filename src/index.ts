@@ -1,3 +1,8 @@
+// address
+export * from './address/AddressContinent';
+export * from './address/AddressRegion';
+export * from './address/AddressUtils';
+
 // app
 export * from './app/AppSettings';
 export * from './app/CoreApp';
@@ -13,6 +18,7 @@ export * from './business/BusinessUtils';
 export * from './business/ProductUnit';
 
 // dto
+export * from './dto/IdDto';
 export * from './dto/IdLabelDto';
 export * from './dto/UpdateDto';
 

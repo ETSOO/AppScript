@@ -5,5 +5,5 @@ export type IdDto<T = number> = {
     /**
      * Id
      */
-    id: T;
+    readonly id: T;
 };

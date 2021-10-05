@@ -3,75 +3,75 @@
  * See com.etsoo.CoreFramework.Business.ProductUnit
  */
 export enum ProductUnit {
-    /// <summary>
-    /// Picese
-    /// 件
-    /// </summary>
+    /**
+     * Picese
+     * 件
+     */
     PC = 0,
 
-    /// <summary>
-    /// Set
-    /// 套
-    /// </summary>
+    /**
+     * Set
+     * 套
+     */
     SET = 1,
 
-    /// <summary>
-    /// Year
-    /// 年
-    /// </summary>
+    /**
+     * Year
+     * 年
+     */
     YEAR = 10,
 
-    /// <summary>
-    /// Quater
-    /// 季
-    /// </summary>
+    /**
+     * Quater
+     * 季
+     */
     QUATER = 11,
 
-    /// <summary>
-    /// Month
-    /// 月
-    /// </summary>
+    /**
+     * Month
+     * 月
+     */
     MONTH = 12,
 
-    /// <summary>
-    /// Fortnight
-    /// 两周
-    /// </summary>
+    /**
+     * Fortnight
+     * 两周
+     */
     FORNIGHT = 13,
 
-    /// <summary>
-    /// Week
-    /// 周
-    /// </summary>
+    /**
+     * Week
+     * 周
+     */
     WEEK = 14,
 
-    /// <summary>
-    /// Day
-    /// 天
-    /// </summary>
+    /**
+     * Day
+     * 天
+     */
     DAY = 15,
 
-    /// <summary>
-    /// Hour
-    /// 小时
-    /// </summary>
+    /**
+     * Hour
+     * 小时
+     */
     HOUR = 16,
 
-    /// <summary>
-    /// Ton
-    /// 吨
-    /// </summary>
+    /**
+     * Ton
+     * 吨
+     */
     TON = 31,
 
-    /// <summary>
-    /// Kilogram
-    /// 千克
-    /// </summary>
+    /**
+     * Kilogram
+     * 千克
+     */
     KILOGRAM = 32,
 
-    /// <summary>
-    /// Gram
-    /// 克
-    /// </summary>
+    /**
+     * Gram
+     * 克
+     */
     GRAM = 33
 }

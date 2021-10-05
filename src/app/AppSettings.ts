@@ -1,5 +1,6 @@
 import { ApiAuthorizationScheme } from '@etsoo/restclient';
 import { DataTypes } from '@etsoo/shared';
+import { AddressRegion } from '../address/AddressRegion';
 import { IExternalSettings } from './ExternalSettings';
 
 /**
@@ -12,9 +13,9 @@ export interface IAppSettings extends IExternalSettings {
     readonly authScheme: ApiAuthorizationScheme | string;
 
     /**
-     * Supported countries
+     * Supported country/region ids
      */
-    readonly countries: DataTypes.Country[];
+    readonly regions: string[];
 
     /**
      * Supported cultures
@@ -32,9 +33,9 @@ export interface IAppSettings extends IExternalSettings {
     timeZone?: string;
 
     /**
-     * Current country
+     * Current country or region
      */
-    currentCountry: DataTypes.Country;
+    currentRegion: AddressRegion;
 
     /**
      * Current culture
