@@ -1,6 +1,12 @@
 import { INotifier } from '@etsoo/notificationbase';
 import { ApiDataError, IApi, IPData } from '@etsoo/restclient';
-import { DataTypes, DateUtils, DomUtils, StorageUtils } from '@etsoo/shared';
+import {
+    DataTypes,
+    DateUtils,
+    DomUtils,
+    NumberUtils,
+    StorageUtils
+} from '@etsoo/shared';
 import { AddressRegion } from '../address/AddressRegion';
 import { ActionResultError } from '../result/ActionResultError';
 import { IActionResult } from '../result/IActionResult';
@@ -96,6 +102,30 @@ export interface ICoreApp<S extends IAppSettings, N> {
         input?: Date | string,
         options?: DateUtils.FormatOptions,
         timeZone?: string
+    ): string | undefined;
+
+    /**
+     * Format money number
+     * @param input Input money number
+     * @param isInteger Is integer
+     * @param options Options
+     * @returns Result
+     */
+    formatMoney(
+        input?: number | bigint,
+        isInteger?: boolean,
+        options?: Intl.NumberFormatOptions
+    ): string | undefined;
+
+    /**
+     * Format number
+     * @param input Input number
+     * @param options Options
+     * @returns Result
+     */
+    formatNumber(
+        input?: number | bigint,
+        options?: Intl.NumberFormatOptions
     ): string | undefined;
 
     /**
@@ -397,7 +427,42 @@ export abstract class CoreApp<S extends IAppSettings, N>
     ) {
         const { currentCulture, timeZone: defaultTimeZone } = this.settings;
         timeZone ??= defaultTimeZone;
-        return DateUtils.format(currentCulture.name, input, options, timeZone);
+        return DateUtils.format(input, currentCulture.name, options, timeZone);
+    }
+
+    /**
+     * Format money number
+     * @param input Input money number
+     * @param isInteger Is integer
+     * @param options Options
+     * @returns Result
+     */
+    formatMoney(
+        input?: number | bigint,
+        isInteger: boolean = false,
+        options?: Intl.NumberFormatOptions
+    ) {
+        return NumberUtils.formatMoney(
+            input,
+            this.settings.currentRegion.id,
+            this.settings.currentCulture.name,
+            isInteger,
+            options
+        );
+    }
+
+    /**
+     * Format number
+     * @param input Input number
+     * @param options Options
+     * @returns Result
+     */
+    formatNumber(input?: number | bigint, options?: Intl.NumberFormatOptions) {
+        return NumberUtils.format(
+            input,
+            this.settings.currentCulture.name,
+            options
+        );
     }
 
     /**
