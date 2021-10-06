@@ -158,17 +158,6 @@ export interface ICoreApp<S extends IAppSettings, N> {
     getCacheToken(): string | null;
 
     /**
-     * Get region id
-     * @param regionId Country or region id
-     * @param culture Culture, like zh-CN
-     * @returns Matched region id
-     */
-    getRegion(
-        regionId: string | undefined | null,
-        culture: string | undefined | null
-    ): string;
-
-    /**
      * Get all regions
      * @returns Regions
      */
@@ -552,33 +541,6 @@ export abstract class CoreApp<S extends IAppSettings, N>
         if (refreshToken === '') return null;
 
         return refreshToken;
-    }
-
-    /**
-     * Get region id
-     * @param regionId Country or region id
-     * @param culture Culture, like zh-CN
-     * @returns Matched region id
-     */
-    getRegion(
-        regionId: string | undefined | null,
-        culture: string | undefined | null
-    ) {
-        // Exactly match
-        if (regionId && this.settings.regions.includes(regionId)) {
-            return regionId;
-        }
-
-        // Match with language
-        if (culture) {
-            const region = this.settings.regions
-                .map((id) => AddressRegion.getById(id)!)
-                .find((item) => item.languages.includes(culture));
-            if (region) return region.id;
-        }
-
-        // Default
-        return this.settings.regions[0];
     }
 
     /**
