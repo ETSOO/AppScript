@@ -90,7 +90,7 @@ export class AddressRegion implements IAddressRegion {
         '001',
         '852',
         'HKD',
-        ['zh-HK']
+        ['zh-HK', 'en-HK']
     );
 
     /**
@@ -105,7 +105,7 @@ export class AddressRegion implements IAddressRegion {
         '000',
         '65',
         'SGD',
-        ['zh-SG']
+        ['zh-SG', 'en-SG']
     );
 
     /**
