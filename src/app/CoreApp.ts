@@ -40,9 +40,19 @@ export interface ICoreApp<S extends IAppSettings, N> {
     readonly notifier: INotifier<N>;
 
     /**
-     * Culture
+     * Culture, like zh-CN
      */
     readonly culture: string | undefined;
+
+    /**
+     * Currency, like USD for US dollar
+     */
+    readonly currency: string | undefined;
+
+    /**
+     * Country or region, like CN
+     */
+    readonly region: string | undefined;
 
     /**
      * IP data
@@ -227,10 +237,28 @@ export abstract class CoreApp<S extends IAppSettings, N>
     private _culture?: string;
 
     /**
-     * Culture
+     * Culture, like zh-CN
      */
     get culture() {
         return this._culture;
+    }
+
+    private _currency?: string;
+
+    /**
+     * Currency, like USD for US dollar
+     */
+    get currency() {
+        return this._currency;
+    }
+
+    private _region?: string;
+
+    /**
+     * Country or region, like CN
+     */
+    get region() {
+        return this._region;
     }
 
     /**
@@ -335,7 +363,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
      */
     changeRegion(regionId: string) {
         // Same?
-        if (regionId === this.settings.currentRegion.id) return;
+        if (regionId === this._region) return;
 
         // Exists in settings
         if (!this.settings.regions.includes(regionId)) return;
@@ -346,6 +374,10 @@ export abstract class CoreApp<S extends IAppSettings, N>
 
         // Save the id to local storage
         DomUtils.saveCountry(regionId);
+
+        // Set the currency and culture
+        this._culture = region.currency;
+        this._region = regionId;
 
         // Hold the current country or region
         this.settings.currentRegion = region;
@@ -444,8 +476,8 @@ export abstract class CoreApp<S extends IAppSettings, N>
     ) {
         return NumberUtils.formatMoney(
             input,
-            this.settings.currentRegion.id,
-            this.settings.currentCulture.name,
+            this.region,
+            this.culture,
             isInteger,
             options
         );
@@ -458,11 +490,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * @returns Result
      */
     formatNumber(input?: number | bigint, options?: Intl.NumberFormatOptions) {
-        return NumberUtils.format(
-            input,
-            this.settings.currentCulture.name,
-            options
-        );
+        return NumberUtils.format(input, this.culture, options);
     }
 
     /**
