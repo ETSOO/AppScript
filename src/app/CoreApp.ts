@@ -42,17 +42,17 @@ export interface ICoreApp<S extends IAppSettings, N> {
     /**
      * Culture, like zh-CN
      */
-    readonly culture: string | undefined;
+    readonly culture: string;
 
     /**
      * Currency, like USD for US dollar
      */
-    readonly currency: string | undefined;
+    readonly currency: string;
 
     /**
      * Country or region, like CN
      */
-    readonly region: string | undefined;
+    readonly region: string;
 
     /**
      * IP data
@@ -85,9 +85,9 @@ export interface ICoreApp<S extends IAppSettings, N> {
 
     /**
      * Change country or region
-     * @param regionId New country or region id
+     * @param region New country or region
      */
-    changeRegion(regionId: string): void;
+    changeRegion(region: string | AddressRegion): void;
 
     /**
      * Change culture
@@ -234,8 +234,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
      */
     readonly notifier: INotifier<N>;
 
-    private _culture?: string;
-
+    private _culture!: string;
     /**
      * Culture, like zh-CN
      */
@@ -243,8 +242,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
         return this._culture;
     }
 
-    private _currency?: string;
-
+    private _currency!: string;
     /**
      * Currency, like USD for US dollar
      */
@@ -252,8 +250,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
         return this._currency;
     }
 
-    private _region?: string;
-
+    private _region!: string;
     /**
      * Country or region, like CN
      */
@@ -325,6 +322,10 @@ export abstract class CoreApp<S extends IAppSettings, N>
         this.api = api;
         this.notifier = notifier;
 
+        const { currentCulture, currentRegion } = settings;
+        this.changeCulture(currentCulture);
+        this.changeRegion(currentRegion);
+
         // Setup callback
         this.setup();
     }
@@ -359,28 +360,36 @@ export abstract class CoreApp<S extends IAppSettings, N>
 
     /**
      * Change country or region
-     * @param regionId New country or region id
+     * @param regionId New country or region
      */
-    changeRegion(regionId: string) {
-        // Same?
+    changeRegion(region: string | AddressRegion) {
+        // Get data
+        let regionId: string;
+        let regionItem: AddressRegion | undefined;
+        if (typeof region === 'string') {
+            regionId = region;
+            regionItem = AddressRegion.getById(region);
+        } else {
+            regionId = region.id;
+            regionItem = region;
+        }
+
+        // Same
         if (regionId === this._region) return;
 
-        // Exists in settings
-        if (!this.settings.regions.includes(regionId)) return;
-
-        // Region
-        const region = AddressRegion.getById(regionId);
-        if (region == null) return;
+        // Not included
+        if (regionItem == null || !this.settings.regions.includes(regionId))
+            return;
 
         // Save the id to local storage
         DomUtils.saveCountry(regionId);
 
         // Set the currency and culture
-        this._culture = region.currency;
+        this._currency = regionItem.currency;
         this._region = regionId;
 
         // Hold the current country or region
-        this.settings.currentRegion = region;
+        this.settings.currentRegion = regionItem;
     }
 
     /**
@@ -390,6 +399,9 @@ export abstract class CoreApp<S extends IAppSettings, N>
     changeCulture(culture: DataTypes.CultureDefinition) {
         // Name
         const { name } = culture;
+
+        // Same?
+        if (this._culture === name) return;
 
         // Save the cultrue to local storage
         DomUtils.saveCulture(name);
