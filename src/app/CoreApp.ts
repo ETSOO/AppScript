@@ -477,7 +477,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
     ) {
         return NumberUtils.formatMoney(
             input,
-            this.region,
+            this.currency,
             this.culture,
             isInteger,
             options
