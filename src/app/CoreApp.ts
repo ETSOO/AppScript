@@ -44,6 +44,13 @@ export interface ICoreApp<
     readonly notifier: INotifier<N, C>;
 
     /**
+     * Label delegate
+     */
+    readonly labelDelegate: <T extends DataTypes.SimpleType = string>(
+        key: string
+    ) => T | undefined;
+
+    /**
      * Culture, like zh-CN
      */
     readonly culture: string;
@@ -252,6 +259,13 @@ export abstract class CoreApp<
      */
     get region() {
         return this._region;
+    }
+
+    /**
+     * Label delegate
+     */
+    get labelDelegate() {
+        return this.get.bind(this);
     }
 
     /**
