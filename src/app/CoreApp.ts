@@ -1,4 +1,4 @@
-import { INotifier } from '@etsoo/notificationbase';
+import { INotifier, NotificationCallProps } from '@etsoo/notificationbase';
 import { ApiDataError, IApi, IPData } from '@etsoo/restclient';
 import {
     DataTypes,
@@ -23,7 +23,11 @@ export interface IDetectIPCallback {
 /**
  * Core application interface
  */
-export interface ICoreApp<S extends IAppSettings, N> {
+export interface ICoreApp<
+    S extends IAppSettings,
+    N,
+    C extends NotificationCallProps
+> {
     /**
      * Settings
      */
@@ -37,7 +41,7 @@ export interface ICoreApp<S extends IAppSettings, N> {
     /**
      * Notifier
      */
-    readonly notifier: INotifier<N>;
+    readonly notifier: INotifier<N, C>;
 
     /**
      * Culture, like zh-CN
@@ -205,8 +209,11 @@ export interface ICoreApp<S extends IAppSettings, N> {
 /**
  * Core application
  */
-export abstract class CoreApp<S extends IAppSettings, N>
-    implements ICoreApp<S, N>
+export abstract class CoreApp<
+    S extends IAppSettings,
+    N,
+    C extends NotificationCallProps
+> implements ICoreApp<S, N, C>
 {
     /**
      * Settings
@@ -221,7 +228,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
     /**
      * Notifier
      */
-    readonly notifier: INotifier<N>;
+    readonly notifier: INotifier<N, C>;
 
     private _culture!: string;
     /**
@@ -276,7 +283,7 @@ export abstract class CoreApp<S extends IAppSettings, N>
      * @param api API
      * @param notifier Notifier
      */
-    protected constructor(settings: S, api: IApi, notifier: INotifier<N>) {
+    protected constructor(settings: S, api: IApi, notifier: INotifier<N, C>) {
         // onRequest, show loading or not, rewrite the property to override default action
         api.onRequest = (data) => {
             if (data.showLoading == null || data.showLoading) {
