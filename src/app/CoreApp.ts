@@ -66,6 +66,11 @@ export interface ICoreApp<
     readonly region: string;
 
     /**
+     * Is current authorized
+     */
+    readonly authorized: boolean;
+
+    /**
      * IP data
      */
     ipData?: IPData;
@@ -200,6 +205,11 @@ export interface ICoreApp<
     transformUrl(url: string): string;
 
     /**
+     * Try login, returning false means is loading
+     */
+    tryLogin(): boolean;
+
+    /**
      * User login
      * @param user User data
      * @param refreshToken Refresh token
@@ -291,6 +301,20 @@ export abstract class CoreApp<
      */
     searchInput?: HTMLInputElement;
 
+    private _authorized: boolean = false;
+    /**
+     * Is current authorized
+     */
+    get authorized() {
+        return this._authorized;
+    }
+
+    private set authorized(value: boolean) {
+        this._authorized = value;
+    }
+
+    private _isTryingLogin = false;
+
     /**
      * Protected constructor
      * @param settings Settings
@@ -355,6 +379,10 @@ export abstract class CoreApp<
      * @param keep Keep in local storage or not
      */
     authorize(token?: string, refreshToken?: string, keep: boolean = false) {
+        // State, when token is null, means logout
+        this.authorized = token != null;
+
+        // Token
         this.api.authorize(this.settings.authScheme, token);
 
         // Cover the current value
@@ -366,6 +394,9 @@ export abstract class CoreApp<
             this.headerTokenField,
             keep ? undefined : refreshToken
         );
+
+        // Reset tryLogin state
+        this._isTryingLogin = false;
     }
 
     /**
@@ -632,9 +663,13 @@ export abstract class CoreApp<
     }
 
     /**
-     * Try login
+     * Try login, returning false means is loading
      */
-    abstract tryLogin(): void;
+    tryLogin() {
+        if (this._isTryingLogin) return false;
+        this._isTryingLogin = true;
+        return true;
+    }
 
     /**
      * User login
