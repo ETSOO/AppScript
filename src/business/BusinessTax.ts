@@ -46,6 +46,16 @@ export class BusinessTax implements IBusinessTax {
     static US = new BusinessTax('US', 'EIN', '00-0000000');
 
     /**
+     * CA, tax ID number (Business Number, BN)
+     */
+    static CA = new BusinessTax('CA', 'BN', '000000000');
+
+    /**
+     * HK, Business Registration Number (BRN)
+     */
+    static HK = new BusinessTax('HK', 'BRN', '00000000');
+
+    /**
      * All countries and regions
      */
     static all = [BusinessTax.CN, BusinessTax.NZ, BusinessTax.US];

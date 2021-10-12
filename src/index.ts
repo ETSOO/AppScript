@@ -14,6 +14,7 @@ export * from './bridges/IAppData';
 export * from './bridges/IBridge';
 
 // business
+export * from './business/BusinessTax';
 export * from './business/BusinessUtils';
 export * from './business/ProductUnit';
 
