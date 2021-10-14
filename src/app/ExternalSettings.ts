@@ -1,5 +1,5 @@
 /**
- * External settings
+ * External settings items
  */
 export interface IExternalSettings {
     /**

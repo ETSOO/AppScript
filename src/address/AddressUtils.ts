@@ -1,4 +1,4 @@
-import { Utils } from '@etsoo/shared';
+import { DataTypes } from '@etsoo/shared';
 import { AddressRegion } from '..';
 import { IdLabelDto } from '../dto/IdLabelDto';
 import { ICultureGet } from '../state/Culture';
@@ -18,7 +18,7 @@ export namespace AddressUtils {
         func: ICultureGet,
         isNumberKey: boolean = false
     ): IdLabelDto[] {
-        return Utils.getEnumKeys(AddressContinent).map((key) => ({
+        return DataTypes.getEnumKeys(AddressContinent).map((key) => ({
             id: isNumberKey
                 ? AddressContinent[key as keyof typeof AddressContinent]
                 : key,
@@ -27,7 +27,7 @@ export namespace AddressUtils {
     }
 
     /**
-     * Get region
+     * Get region from regions and detected region and language
      * @param regions Supported regions
      * @param detectedRegion Detected region
      * @param detectedLanguage Detected language

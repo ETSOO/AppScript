@@ -1,7 +1,7 @@
 import { DataTypes } from '@etsoo/shared';
 
 /**
- * Id & label data
+ * Dto with id and label field
  */
 export type IdLabelDto = {
     /**

@@ -1,4 +1,4 @@
-import { Utils } from '@etsoo/shared';
+import { DataTypes } from '@etsoo/shared';
 import { IdLabelDto } from '../dto/IdLabelDto';
 import { ICultureGet } from '../state/Culture';
 import { ProductUnit } from './ProductUnit';
@@ -47,7 +47,7 @@ export namespace BusinessUtils {
      * @returns Units
      */
     export function getUnits(func: ICultureGet): IdLabelDto[] {
-        return Utils.getEnumKeys(ProductUnit).map((key) => ({
+        return DataTypes.getEnumKeys(ProductUnit).map((key) => ({
             id: ProductUnit[key as keyof typeof ProductUnit],
             label: getUnitLabelByKey(func, key)
         }));

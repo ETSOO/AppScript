@@ -1,5 +1,5 @@
 /**
- * Id Dto
+ * Dto with id field
  */
 export type IdDto<T = number> = {
     /**

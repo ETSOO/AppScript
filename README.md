@@ -17,7 +17,32 @@ $ yarn add @etsoo/appscript
 
 ## Structure
 
+### address - Address (region) related
+
+#### AddressContinent.ts ####
+-   AddressContinent - Continent Enum
+
+#### AddressRegion.ts ####
+-   IAddressRegion - Country or region interface
+-   AddressRegion - Address or region
+
+#### AddressUtils.ts ####
+-   getContinents - Get all continents
+-   getRegion - Get region from regions and detected region and language
+
 ### app - Application related
+
+#### AppSettings.ts ####
+-   IAppSettings - App settings interface
+
+#### CoreApp.ts ####
+-   IDetectIPCallback - Detect IP callback interface
+-   ICoreApp - Core application interface
+-   CoreApp - Core application
+
+#### ExternalSettings.ts ####
+-   IExternalSettings - External settings items
+-   IExternalSettingsHost - External settings host passed by external script
 
 ### bridges - Works with Electron
 
@@ -28,35 +53,60 @@ $ yarn add @etsoo/appscript
 -   IAppData - App data interface.
 
 #### IBridge.ts ####
--   IBridgeUnsubscribe - Bridge unsubscribe interface.
--   IBridgeListener - Bridge listener interface.
--   IBridge - Bridge interface.
+-   IBridgeUnsubscribe - Bridge unsubscribe interface
+-   IBridgeListener - Bridge listener interface
+-   IBridge - Bridge interface
+
+### business - Business logics
+
+#### BusinessTax.ts ####
+-   IBusinessTax - Business tax interface
+-   BusinessTax - Business tax
+
+#### BusinessUtils.ts ####
+-   addIdLabelBlankItem - Add blank item to id/label data array
+-   getUnitLabel - Get product unit's label
+-   getUnits - Get all product units
+
+#### ProductUnit.ts ####
+-   ProductUnit - Product units enum
+
+### dto - Data transfer object
+
+#### IdDto.ts ####
+-   IdDto - Dto with id field
+
+#### IdLabelDto.ts ####
+-   IdLabelDto - Dto with id and label field
+
+#### UpdateDto.ts ####
+-   UpdateDto - Dto with id and changedFields
 
 ### result - API action result
 
 #### ActionResult.ts ####
--   ActionResult - API call action result extends IActionResult.
+-   ActionResult - API call action result extends IActionResult
 
 #### ActionResultError.ts ####
 -   ActionResultError - Action result to error type.
 
 #### IActionResult.ts ####
--   IResultData - Result data interface.
--   IdResultData - extends IResultData for 'id' included return data.
--   IResultErrors - Result errors interface.
--   IActionResult - Action result interface.
+-   IResultData - Result data interface
+-   IdResultData - extends IResultData for 'id' included return data
+-   IResultErrors - Result errors interface
+-   IActionResult - Action result interface
 -   ActionResultId - Action result with id data
 
 ### state - State management
 
-#### Language.ts ####
--   LanguageLabels - Language labels, indexable, for simple i18n solution.
--   ILanguage - extends IState for language state.
+#### Culture.ts ####
+-   ICulture - Culture resources state, simple i18n solution
+-   ICultureGet - Culture get delegate
 
 #### State.ts ####
 -   IState - state interface.
--   IAction - state action interface.
+-   IAction - state action interface
 
 #### User.ts ####
 -   IUserData - User basic data.
--   IUser - extends IState for user state.
+-   IUser - extends IState for user state

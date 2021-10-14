@@ -1,7 +1,7 @@
 import { IdDto } from './IdDto';
 
 /**
- * Update Dto
+ * Dto with id and changedFields
  */
 export type UpdateDto<T = number> = IdDto<T> & {
     /**

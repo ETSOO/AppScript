@@ -4,7 +4,7 @@ import { AddressRegion } from '../address/AddressRegion';
 import { IExternalSettings } from './ExternalSettings';
 
 /**
- * API settings interface
+ * App settings interface
  */
 export interface IAppSettings extends IExternalSettings {
     /**

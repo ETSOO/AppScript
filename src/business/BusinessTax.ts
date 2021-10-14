@@ -58,7 +58,13 @@ export class BusinessTax implements IBusinessTax {
     /**
      * All countries and regions
      */
-    static all = [BusinessTax.CN, BusinessTax.NZ, BusinessTax.US];
+    static all = [
+        BusinessTax.CN,
+        BusinessTax.NZ,
+        BusinessTax.US,
+        BusinessTax.CA,
+        BusinessTax.HK
+    ];
 
     /**
      * Get country or region by id

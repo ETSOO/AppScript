@@ -46,9 +46,7 @@ export interface ICoreApp<
     /**
      * Label delegate
      */
-    readonly labelDelegate: <T extends DataTypes.SimpleType = string>(
-        key: string
-    ) => T | undefined;
+    readonly labelDelegate: <T = string>(key: string) => T | undefined;
 
     /**
      * Culture, like zh-CN
@@ -159,7 +157,7 @@ export interface ICoreApp<
      * @param key key
      * @returns Resource
      */
-    get<T extends DataTypes.SimpleType = string>(key: string): T | undefined;
+    get<T = string>(key: string): T | undefined;
 
     /**
      * Get multiple culture labels
@@ -560,9 +558,13 @@ export abstract class CoreApp<
      * @param key key
      * @returns Resource
      */
-    get<T extends DataTypes.SimpleType = string>(key: string): T | undefined {
+    get<T = string>(key: string): T | undefined {
         const value = this.settings.currentCulture.resources[key];
         if (value == null) return undefined;
+
+        // No strict type convertion here
+        // Make sure the type is strictly match
+        // Otherwise even request number, may still return the source string type
         return value as T;
     }
 
