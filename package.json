@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.1.8",
+    "version": "1.1.9",
     "description": "Applications shared TypeScript framework",
     "main": "lib/cjs/index.js",
     "module": "lib/mjs/index.js",
@@ -47,9 +47,9 @@
     },
     "homepage": "https://github.com/ETSOO/NotificationBase#readme",
     "dependencies": {
-        "@etsoo/notificationbase": "^1.0.83",
-        "@etsoo/restclient": "^1.0.53",
-        "@etsoo/shared": "^1.0.50"
+        "@etsoo/notificationbase": "^1.0.84",
+        "@etsoo/restclient": "^1.0.54",
+        "@etsoo/shared": "^1.0.51"
     },
     "devDependencies": {
         "@babel/cli": "^7.15.7",
