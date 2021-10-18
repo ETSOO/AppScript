@@ -196,6 +196,23 @@ export interface ICoreApp<
     pageExit(): void;
 
     /**
+     * Refresh countdown
+     * @param seconds Seconds
+     */
+    refreshCountdown(seconds: number): void;
+
+    /**
+     * Fresh countdown UI
+     * @param callback Callback
+     */
+    freshCountdownUI(callback: () => void): void;
+
+    /**
+     * Refresh token
+     */
+    refreshToken(): Promise<boolean>;
+
+    /**
      * Transform URL
      * @param url URL
      * @returns Transformed url
@@ -313,6 +330,9 @@ export abstract class CoreApp<
 
     private _isTryingLogin = false;
 
+    private _lastCalled = false;
+    private _refreshCountdownSeed = 0;
+
     /**
      * Protected constructor
      * @param settings Settings
@@ -332,6 +352,7 @@ export abstract class CoreApp<
             if (data.showLoading == null || data.showLoading) {
                 notifier.hideLoading();
             }
+            this._lastCalled = true;
         };
 
         // Global API error handler
@@ -633,6 +654,49 @@ export abstract class CoreApp<
      * Callback where exit a page
      */
     pageExit() {}
+
+    /**
+     * Refresh countdown
+     * @param seconds Seconds
+     */
+    refreshCountdown(seconds: number) {
+        // Make sure is big than 60 seconds
+        // Take action 60 seconds before expiry
+        seconds -= 60;
+        if (seconds <= 0) return;
+
+        // Clear the current timeout seed
+        if (this._refreshCountdownSeed > 0) {
+            window.clearTimeout(this._refreshCountdownSeed);
+        }
+
+        // Reset last call flag
+        // Any success call will update it to true
+        this._lastCalled = false;
+
+        this._refreshCountdownSeed = window.setTimeout(() => {
+            if (this._lastCalled) {
+                // Call refreshToken to update access token
+                this.refreshToken();
+            } else {
+                // Popup countdown for user action
+                this.freshCountdownUI(() => this.refreshToken());
+            }
+        }, 1000 * seconds);
+    }
+
+    /**
+     * Fresh countdown UI
+     * @param callback Callback
+     */
+    abstract freshCountdownUI(callback: () => void): void;
+
+    /**
+     * Refresh token
+     */
+    async refreshToken(): Promise<boolean> {
+        return true;
+    }
 
     /**
      * Setup callback
