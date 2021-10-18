@@ -668,6 +668,7 @@ export abstract class CoreApp<
 
         // Reset last call flag
         // Any success call will update it to true
+        // So first time after login will be always silent
         this._lastCalled = false;
 
         this._refreshCountdownSeed = window.setTimeout(() => {
