@@ -196,12 +196,6 @@ export interface ICoreApp<
     pageExit(): void;
 
     /**
-     * Refresh countdown
-     * @param seconds Seconds
-     */
-    refreshCountdown(seconds: number): void;
-
-    /**
      * Fresh countdown UI
      * @param callback Callback
      */
@@ -222,7 +216,7 @@ export interface ICoreApp<
     /**
      * Try login, returning false means is loading
      */
-    tryLogin(): boolean;
+    tryLogin(): Promise<boolean>;
 
     /**
      * User login
@@ -416,6 +410,10 @@ export abstract class CoreApp<
 
         // Reset tryLogin state
         this._isTryingLogin = false;
+
+        // Token countdown
+        if (this.authorized) this.refreshCountdown(this.userData!.seconds);
+        else this.refreshCountdownClear();
     }
 
     /**
@@ -659,16 +657,14 @@ export abstract class CoreApp<
      * Refresh countdown
      * @param seconds Seconds
      */
-    refreshCountdown(seconds: number) {
+    private refreshCountdown(seconds: number) {
         // Make sure is big than 60 seconds
         // Take action 60 seconds before expiry
         seconds -= 60;
         if (seconds <= 0) return;
 
         // Clear the current timeout seed
-        if (this._refreshCountdownSeed > 0) {
-            window.clearTimeout(this._refreshCountdownSeed);
-        }
+        this.refreshCountdownClear();
 
         // Reset last call flag
         // Any success call will update it to true
@@ -683,6 +679,14 @@ export abstract class CoreApp<
                 this.freshCountdownUI(() => this.refreshToken());
             }
         }, 1000 * seconds);
+    }
+
+    private refreshCountdownClear() {
+        // Clear the current timeout seed
+        if (this._refreshCountdownSeed > 0) {
+            window.clearTimeout(this._refreshCountdownSeed);
+            this._refreshCountdownSeed = 0;
+        }
     }
 
     /**
@@ -731,7 +735,7 @@ export abstract class CoreApp<
     /**
      * Try login, returning false means is loading
      */
-    tryLogin() {
+    async tryLogin() {
         if (this._isTryingLogin) return false;
         this._isTryingLogin = true;
         return true;
