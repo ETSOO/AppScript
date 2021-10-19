@@ -38,7 +38,12 @@
     },
     "keywords": [
         "notification",
-        "TypeScript"
+        "TypeScript",
+        "ETSOO",
+        "SmartERP",
+        "司友云平台",
+        "青岛亿速思维",
+        "上海亿商"
     ],
     "author": "Garry Xiao",
     "license": "MIT",
@@ -49,7 +54,7 @@
     "dependencies": {
         "@etsoo/notificationbase": "^1.0.88",
         "@etsoo/restclient": "^1.0.56",
-        "@etsoo/shared": "^1.0.54"
+        "@etsoo/shared": "^1.0.55"
     },
     "devDependencies": {
         "@babel/cli": "^7.15.7",

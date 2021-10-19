@@ -46,12 +46,12 @@ export interface IActionResult<D extends IResultData = IResultData> {
     /**
      * Title
      */
-    readonly title?: string;
+    title?: string;
 
     /**
      * Detail
      */
-    readonly detail?: string;
+    detail?: string;
 
     /**
      * Trace id

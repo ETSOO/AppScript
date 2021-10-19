@@ -5,7 +5,8 @@ import {
     DateUtils,
     DomUtils,
     NumberUtils,
-    StorageUtils
+    StorageUtils,
+    Utils
 } from '@etsoo/shared';
 import { AddressRegion } from '../address/AddressRegion';
 import { ActionResultError } from '../result/ActionResultError';
@@ -153,6 +154,19 @@ export interface ICoreApp<
     ): string | undefined;
 
     /**
+     * Format result text
+     * @param result Action result
+     * @param forceToLocal Force to local labels
+     */
+    formatResult(result: IActionResult, forceToLocal?: boolean): void;
+
+    /**
+     * Fresh countdown UI
+     * @param callback Callback
+     */
+    freshCountdownUI(callback: () => void): void;
+
+    /**
      * Get culture resource
      * @param key key
      * @returns Resource
@@ -194,12 +208,6 @@ export interface ICoreApp<
      * Callback where exit a page
      */
     pageExit(): void;
-
-    /**
-     * Fresh countdown UI
-     * @param callback Callback
-     */
-    freshCountdownUI(callback: () => void): void;
 
     /**
      * Refresh token
@@ -382,6 +390,7 @@ export abstract class CoreApp<
      * @param result Action result
      */
     alertResult(result: IActionResult) {
+        this.formatResult(result);
         this.notifier.alert(ActionResultError.format(result));
     }
 
@@ -570,6 +579,18 @@ export abstract class CoreApp<
      */
     formatError(error: ApiDataError) {
         return error.toString();
+    }
+
+    /**
+     * Format result text
+     * @param result Action result
+     * @param forceToLocal Force to local labels
+     */
+    formatResult(result: IActionResult, forceToLocal?: boolean) {
+        if ((result.title == null || forceToLocal) && result.type != null) {
+            const key = Utils.formatLowerLetter(result.type);
+            result.title = this.get(key);
+        }
     }
 
     /**
