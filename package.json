@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.1.15",
+    "version": "1.1.16",
     "description": "Applications shared TypeScript framework",
     "main": "lib/cjs/index.js",
     "module": "lib/mjs/index.js",
@@ -34,7 +34,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ETSOO/NotificationBase.git"
+        "url": "git+https://github.com/ETSOO/AppScript.git"
     },
     "keywords": [
         "notification",
@@ -43,13 +43,13 @@
     "author": "Garry Xiao",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/ETSOO/NotificationBase/issues"
+        "url": "https://github.com/ETSOO/AppScript/issues"
     },
-    "homepage": "https://github.com/ETSOO/NotificationBase#readme",
+    "homepage": "https://github.com/ETSOO/AppScript#readme",
     "dependencies": {
-        "@etsoo/notificationbase": "^1.0.87",
-        "@etsoo/restclient": "^1.0.55",
-        "@etsoo/shared": "^1.0.53"
+        "@etsoo/notificationbase": "^1.0.88",
+        "@etsoo/restclient": "^1.0.56",
+        "@etsoo/shared": "^1.0.54"
     },
     "devDependencies": {
         "@babel/cli": "^7.15.7",
