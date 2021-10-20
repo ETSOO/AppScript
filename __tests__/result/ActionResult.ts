@@ -22,5 +22,5 @@ test('Tests for ActionResultError.format', () => {
 
     // Assert
     expect(error.name).toBe('ActionResultError');
-    expect(error.message).toBe(`${message}(${status}, ApiError)`);
+    expect(error.message).toBe(`${message} (${status}, ApiError)`);
 });

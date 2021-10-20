@@ -15,7 +15,7 @@ export class ActionResultError extends Error {
         if (result.type && result.type != 'about:blank')
             addtions.push(result.type);
 
-        var add = addtions.length > 0 ? `(${addtions.join(', ')})` : '';
+        var add = addtions.length > 0 ? ` (${addtions.join(', ')})` : '';
 
         return `${result.title || 'Error'}${add}`;
     }
