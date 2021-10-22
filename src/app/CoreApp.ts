@@ -236,8 +236,14 @@ export interface ICoreApp<
 
     /**
      * User logout
+     * @param clearToken Clear refresh token or not
      */
-    userLogout(): void;
+    userLogout(clearToken: boolean): void;
+
+    /**
+     * User unauthorized
+     */
+    userUnauthorized(): void;
 }
 
 /**
@@ -400,7 +406,7 @@ export abstract class CoreApp<
      * @param refreshToken Refresh token
      * @param keep Keep in local storage or not
      */
-    authorize(token?: string, refreshToken?: string, keep: boolean = false) {
+    authorize(token?: string, refreshToken?: string, keep?: boolean) {
         // State, when token is null, means logout
         this.authorized = token != null;
 
@@ -408,14 +414,16 @@ export abstract class CoreApp<
         this.api.authorize(this.settings.authScheme, token);
 
         // Cover the current value
-        StorageUtils.setLocalData(
-            this.headerTokenField,
-            keep ? refreshToken : undefined
-        );
-        StorageUtils.setSessionData(
-            this.headerTokenField,
-            keep ? undefined : refreshToken
-        );
+        if (keep != null) {
+            StorageUtils.setLocalData(
+                this.headerTokenField,
+                keep ? refreshToken : undefined
+            );
+            StorageUtils.setSessionData(
+                this.headerTokenField,
+                keep ? undefined : refreshToken
+            );
+        }
 
         // Reset tryLogin state
         this._isTryingLogin = false;
@@ -769,15 +777,23 @@ export abstract class CoreApp<
      * @param refreshToken Refresh token
      * @param keep Keep in local storage or not
      */
-    userLogin(user: IUserData, refreshToken?: string, keep?: boolean) {
+    userLogin(user: IUserData, refreshToken?: string, keep: boolean = false) {
         this.userData = user;
         this.authorize(user.token, refreshToken, keep);
     }
 
     /**
      * User logout
+     * @param clearToken Clear refresh token or not
      */
-    userLogout() {
-        this.authorize(undefined, undefined);
+    userLogout(clearToken: boolean = true) {
+        this.authorize(undefined, undefined, clearToken ? false : undefined);
+    }
+
+    /**
+     * User unauthorized
+     */
+    userUnauthorized() {
+        this.authorize(undefined, undefined, undefined);
     }
 }
