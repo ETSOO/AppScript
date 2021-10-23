@@ -596,7 +596,7 @@ export abstract class CoreApp<
      */
     formatResult(result: IActionResult, forceToLocal?: boolean) {
         if ((result.title == null || forceToLocal) && result.type != null) {
-            const key = Utils.formatLowerLetter(result.type);
+            const key = result.type.formatInitial(false);
             result.title = this.get(key);
         }
     }
