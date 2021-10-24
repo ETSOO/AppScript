@@ -21,6 +21,7 @@ export * from './business/ProductUnit';
 // dto
 export * from './dto/IdDto';
 export * from './dto/IdLabelDto';
+export * from './dto/IdLabelPrimaryDto';
 export * from './dto/UpdateDto';
 
 // result
