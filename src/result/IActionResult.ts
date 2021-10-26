@@ -64,9 +64,9 @@ export interface IActionResult<D extends IResultData = IResultData> {
     readonly type: string;
 
     /**
-     * Successful or not
+     * Success or not
      */
-    readonly success: boolean;
+    readonly ok: boolean;
 }
 
 /**

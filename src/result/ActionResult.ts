@@ -16,7 +16,7 @@ export class ActionResult {
         // Result
         const result: IActionResult<D> = {
             status,
-            success: false,
+            ok: false,
             type: error.name,
             title: error.message
         };
