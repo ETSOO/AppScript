@@ -20,6 +20,11 @@ export interface IUserData {
     readonly organization?: number;
 
     /**
+     * User role value
+     */
+    readonly role: number;
+
+    /**
      * Refresh seconds
      */
     readonly seconds: number;
