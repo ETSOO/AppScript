@@ -1,6 +1,6 @@
 import { DataTypes } from '@etsoo/shared';
 import { AddressRegion } from '..';
-import { IdLabelDto } from '../dto/IdLabelDto';
+import { IdLabelConditional } from '../dto/IdLabelDto';
 import { ICultureGet } from '../state/Culture';
 import { AddressContinent } from './AddressContinent';
 
@@ -14,14 +14,16 @@ export namespace AddressUtils {
      * @param isNumberKey Is number key or key as id
      * @returns Continents
      */
-    export function getContinents(
+    export function getContinents<T extends boolean>(
         func: ICultureGet,
-        isNumberKey: boolean = false
-    ): IdLabelDto[] {
-        return DataTypes.getEnumKeys(AddressContinent).map((key) => ({
+        isNumberKey = <T>false
+    ): IdLabelConditional<T> {
+        return <IdLabelConditional<T>>DataTypes.getEnumKeys(
+            AddressContinent
+        ).map((key) => ({
             id: isNumberKey
-                ? DataTypes.getEnumByKey(AddressContinent, key)!
-                : key,
+                ? <number>DataTypes.getEnumByKey(AddressContinent, key)!
+                : key.toString(),
             label: func('continent' + key) ?? key
         }));
     }

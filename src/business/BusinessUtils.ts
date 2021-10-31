@@ -14,11 +14,11 @@ export namespace BusinessUtils {
      * @param copy Copy or change the current inpu
      * @returns Items with blank item
      */
-    export function addIdLabelBlankItem(
-        input: IdLabelDto[],
+    export function addIdLabelBlankItem<T extends DataTypes.IdType = number>(
+        input: IdLabelDto<T>[],
         copy: boolean = false
     ) {
-        const blankItem: IdLabelDto = { id: '', label: '---' };
+        const blankItem: IdLabelDto<T> = { id: '' as any, label: '---' };
         if (copy) return [blankItem, ...input];
 
         input.unshift(blankItem);
