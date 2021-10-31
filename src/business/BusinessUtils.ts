@@ -1,6 +1,7 @@
 import { DataTypes } from '@etsoo/shared';
 import { IdLabelDto } from '../dto/IdLabelDto';
 import { ICultureGet } from '../state/Culture';
+import { EntityStatus } from './EntityStatus';
 import { ProductUnit } from './ProductUnit';
 
 /**
@@ -24,9 +25,36 @@ export namespace BusinessUtils {
         return input;
     }
 
-    // Get unit label by key
-    function getUnitLabelByKey(func: ICultureGet, key: string) {
-        return func('unit' + key) ?? key;
+    /**
+     * Get product unit's label
+     * Please define the label in culture with key 'unitPC' for ProductUnit.PC like that
+     * @param unit Unit
+     * @param func Label delegate
+     * @returns Label
+     */
+    export function getEntityStatusLabel(
+        status: EntityStatus,
+        func: ICultureGet
+    ) {
+        const key = EntityStatus[status];
+        return func('status' + key) ?? key;
+    }
+
+    /**
+     * Get product unit's label
+     * Please define the label in culture with key 'unitPC' for ProductUnit.PC like that
+     * @param unit Unit
+     * @param func Label delegate
+     * @returns Label
+     */
+    export function getEntityStatus(func: ICultureGet) {
+        return DataTypes.getEnumKeys(EntityStatus).map((key) => {
+            const id = DataTypes.getEnumByKey(EntityStatus, key)!;
+            return {
+                id,
+                label: getEntityStatusLabel(id, func)
+            };
+        });
     }
 
     /**
@@ -38,7 +66,7 @@ export namespace BusinessUtils {
      */
     export function getUnitLabel(unit: ProductUnit, func: ICultureGet) {
         const key = ProductUnit[unit];
-        return getUnitLabelByKey(func, key);
+        return func('unit' + key) ?? key;
     }
 
     /**
@@ -47,9 +75,12 @@ export namespace BusinessUtils {
      * @returns Units
      */
     export function getUnits(func: ICultureGet): IdLabelDto[] {
-        return DataTypes.getEnumKeys(ProductUnit).map((key) => ({
-            id: ProductUnit[key as keyof typeof ProductUnit],
-            label: getUnitLabelByKey(func, key)
-        }));
+        return DataTypes.getEnumKeys(ProductUnit).map((key) => {
+            const id = DataTypes.getEnumByKey(ProductUnit, key)!;
+            return {
+                id,
+                label: getUnitLabel(id, func)
+            };
+        });
     }
 }

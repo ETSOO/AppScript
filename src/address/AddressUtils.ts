@@ -20,7 +20,7 @@ export namespace AddressUtils {
     ): IdLabelDto[] {
         return DataTypes.getEnumKeys(AddressContinent).map((key) => ({
             id: isNumberKey
-                ? AddressContinent[key as keyof typeof AddressContinent]
+                ? DataTypes.getEnumByKey(AddressContinent, key)!
                 : key,
             label: func('continent' + key) ?? key
         }));
