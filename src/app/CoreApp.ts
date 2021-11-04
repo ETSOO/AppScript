@@ -9,6 +9,7 @@ import {
     Utils
 } from '@etsoo/shared';
 import { AddressRegion } from '../address/AddressRegion';
+import { AddressUtils } from '../address/AddressUtils';
 import { ActionResultError } from '../result/ActionResultError';
 import { IActionResult } from '../result/IActionResult';
 import { IUserData } from '../state/User';
@@ -652,7 +653,7 @@ export abstract class CoreApp<
     getRegions() {
         return this.settings.regions.map((id) => {
             const region = AddressRegion.getById(id)!;
-            const label = this.get<string>('region' + id);
+            const label = AddressUtils.getRegionLabel(id, this.labelDelegate);
             if (label) region.name = label;
             return region;
         });

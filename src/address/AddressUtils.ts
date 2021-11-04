@@ -56,4 +56,14 @@ export namespace AddressUtils {
         // Default
         return AddressRegion.getById(regions[0])!;
     }
+
+    /**
+     * Get region label
+     * @param region Region id
+     * @param func Label delegate
+     * @returns Label
+     */
+    export function getRegionLabel(region: string, func: ICultureGet) {
+        return func('region' + region) ?? region;
+    }
 }
