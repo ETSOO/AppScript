@@ -187,6 +187,13 @@ export interface ICoreApp<
     getCacheToken(): string | null;
 
     /**
+     * Get region by id
+     * @param id Region id
+     * @returns Region
+     */
+    getRegion(id: string): AddressRegion | undefined;
+
+    /**
      * Get all regions
      * @returns Regions
      */
@@ -444,7 +451,7 @@ export abstract class CoreApp<
         let regionItem: AddressRegion | undefined;
         if (typeof region === 'string') {
             regionId = region;
-            regionItem = AddressRegion.getById(region);
+            regionItem = this.getRegion(region);
         } else {
             regionId = region.id;
             regionItem = region;
@@ -647,15 +654,25 @@ export abstract class CoreApp<
     }
 
     /**
+     * Get region by id
+     * @param id Region id
+     * @returns Region
+     */
+    getRegion(id: string) {
+        const region = AddressRegion.getById(id);
+        if (region) {
+            region.name = AddressUtils.getRegionLabel(id, this.labelDelegate);
+        }
+        return region;
+    }
+
+    /**
      * Get all regions
      * @returns Regions
      */
     getRegions() {
         return this.settings.regions.map((id) => {
-            const region = AddressRegion.getById(id)!;
-            const label = AddressUtils.getRegionLabel(id, this.labelDelegate);
-            if (label) region.name = label;
-            return region;
+            return this.getRegion(id)!;
         });
     }
 
