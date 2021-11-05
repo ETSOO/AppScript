@@ -454,6 +454,11 @@ export abstract class CoreApp<
             regionItem = this.getRegion(region);
         } else {
             regionId = region.id;
+            if (regionId === region.name)
+                region.name = AddressUtils.getRegionLabel(
+                    regionId,
+                    this.labelDelegate
+                );
             regionItem = region;
         }
 
