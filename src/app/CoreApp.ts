@@ -187,13 +187,6 @@ export interface ICoreApp<
     getCacheToken(): string | null;
 
     /**
-     * Get region by id
-     * @param id Region id
-     * @returns Region
-     */
-    getRegion(id: string): AddressRegion | undefined;
-
-    /**
      * Get all regions
      * @returns Regions
      */
@@ -391,8 +384,19 @@ export abstract class CoreApp<
         this.api = api;
         this.notifier = notifier;
 
-        const { currentCulture, currentRegion } = settings;
+        const { currentCulture, currentRegion, regions } = settings;
         this.changeCulture(currentCulture);
+
+        // Update all supported regions' name
+        regions.forEach((id) => {
+            const region = AddressRegion.getById(id);
+            if (region)
+                region.name = AddressUtils.getRegionLabel(
+                    id,
+                    this.labelDelegate
+                );
+        });
+
         this.changeRegion(currentRegion);
 
         // Setup callback
@@ -451,14 +455,9 @@ export abstract class CoreApp<
         let regionItem: AddressRegion | undefined;
         if (typeof region === 'string') {
             regionId = region;
-            regionItem = this.getRegion(region);
+            regionItem = AddressRegion.getById(region);
         } else {
             regionId = region.id;
-            if (regionId === region.name)
-                region.name = AddressUtils.getRegionLabel(
-                    regionId,
-                    this.labelDelegate
-                );
             regionItem = region;
         }
 
@@ -659,25 +658,12 @@ export abstract class CoreApp<
     }
 
     /**
-     * Get region by id
-     * @param id Region id
-     * @returns Region
-     */
-    getRegion(id: string) {
-        const region = AddressRegion.getById(id);
-        if (region) {
-            region.name = AddressUtils.getRegionLabel(id, this.labelDelegate);
-        }
-        return region;
-    }
-
-    /**
      * Get all regions
      * @returns Regions
      */
     getRegions() {
         return this.settings.regions.map((id) => {
-            return this.getRegion(id)!;
+            return AddressRegion.getById(id)!;
         });
     }
 
