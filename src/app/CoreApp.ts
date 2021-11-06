@@ -384,18 +384,8 @@ export abstract class CoreApp<
         this.api = api;
         this.notifier = notifier;
 
-        const { currentCulture, currentRegion, regions } = settings;
+        const { currentCulture, currentRegion } = settings;
         this.changeCulture(currentCulture);
-
-        // Update all supported regions' name
-        regions.forEach((id) => {
-            const region = AddressRegion.getById(id);
-            if (region)
-                region.name = AddressUtils.getRegionLabel(
-                    id,
-                    this.labelDelegate
-                );
-        });
 
         this.changeRegion(currentRegion);
 
@@ -502,6 +492,16 @@ export abstract class CoreApp<
 
         // Hold the current resources
         this.settings.currentCulture = culture;
+
+        // Update all supported regions' name
+        this.settings.regions.forEach((id) => {
+            const region = AddressRegion.getById(id);
+            if (region)
+                region.name = AddressUtils.getRegionLabel(
+                    id,
+                    this.labelDelegate
+                );
+        });
     }
 
     /**
