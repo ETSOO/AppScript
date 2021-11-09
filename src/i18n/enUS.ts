@@ -2,11 +2,13 @@ import { DataTypes } from '@etsoo/shared';
 import enUSResources from './en-US.json';
 
 /**
- * en-US cultrue
+ * Get en-US cultrue
+ * @param localResources Local resources
+ * @returns Full culture
  */
-export const enUS: DataTypes.CultureDefinition = {
+export const enUS = (localResources: {}): DataTypes.CultureDefinition => ({
     name: 'en-US',
     label: 'English',
-    resources: enUSResources,
+    resources: { ...enUSResources, ...localResources },
     compatibleName: ['en-CA', 'en-AU', 'en-NZ', 'en-GB', 'en-IE']
-};
+});

@@ -2,11 +2,13 @@ import { DataTypes } from '@etsoo/shared';
 import zhHKResources from './zh-HK.json';
 
 /**
- * zh-HK cultrue
+ * Get zh-HK cultrue
+ * @param localResources Local resources
+ * @returns Full culture
  */
-export const zhHK: DataTypes.CultureDefinition = {
+export const zhHK = (localResources: {}): DataTypes.CultureDefinition => ({
     name: 'zh-HK',
     label: '繁體中文',
-    resources: zhHKResources,
+    resources: { ...zhHKResources, ...localResources },
     compatibleName: ['zh-TW', 'zh-MO']
-};
+});
