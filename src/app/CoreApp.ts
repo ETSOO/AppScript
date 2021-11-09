@@ -1,4 +1,11 @@
-import { INotifier, NotificationCallProps } from '@etsoo/notificationbase';
+import {
+    INotification,
+    INotifier,
+    NotificationAlign,
+    NotificationCallProps,
+    NotificationContent,
+    NotificationMessageType
+} from '@etsoo/notificationbase';
 import { ApiDataError, IApi, IPData } from '@etsoo/restclient';
 import {
     DataTypes,
@@ -169,7 +176,7 @@ export interface ICoreApp<
      * Fresh countdown UI
      * @param callback Callback
      */
-    freshCountdownUI(callback: () => void): void;
+    freshCountdownUI(callback?: () => PromiseLike<unknown>): void;
 
     /**
      * Get culture resource
@@ -249,6 +256,13 @@ export interface ICoreApp<
      * User unauthorized
      */
     userUnauthorized(): void;
+
+    /**
+     * Show warning message
+     * @param message Message
+     * @param align Align, default as TopRight
+     */
+    warning(message: NotificationContent<N>, align?: NotificationAlign): void;
 }
 
 /**
@@ -705,7 +719,9 @@ export abstract class CoreApp<
     /**
      * Callback where exit a page
      */
-    pageExit() {}
+    pageExit() {
+        this.lastWarning?.dismiss();
+    }
 
     /**
      * Refresh countdown
@@ -731,7 +747,7 @@ export abstract class CoreApp<
                 this.refreshToken();
             } else {
                 // Popup countdown for user action
-                this.freshCountdownUI(() => this.refreshToken());
+                this.freshCountdownUI(this.refreshToken);
             }
         }, 1000 * seconds);
     }
@@ -748,7 +764,7 @@ export abstract class CoreApp<
      * Fresh countdown UI
      * @param callback Callback
      */
-    abstract freshCountdownUI(callback: () => void): void;
+    abstract freshCountdownUI(callback?: () => PromiseLike<unknown>): void;
 
     /**
      * Refresh token
@@ -820,5 +836,27 @@ export abstract class CoreApp<
      */
     userUnauthorized() {
         this.authorize(undefined, undefined, undefined);
+    }
+
+    private lastWarning?: INotification<N, C>;
+
+    /**
+     * Show warning message
+     * @param message Message
+     * @param align Align, default as TopRight
+     */
+    warning(message: NotificationContent<N>, align?: NotificationAlign) {
+        // Same message is open
+        if (this.lastWarning?.open && this.lastWarning?.content === message)
+            return;
+
+        this.lastWarning = this.notifier.message(
+            NotificationMessageType.Warning,
+            message,
+            undefined,
+            {
+                align: align ?? NotificationAlign.TopRight
+            }
+        );
     }
 }
