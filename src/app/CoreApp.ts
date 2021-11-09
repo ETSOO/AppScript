@@ -362,8 +362,15 @@ export abstract class CoreApp<
 
     private _isTryingLogin = false;
 
-    private _lastCalled = false;
-    private _refreshCountdownSeed = 0;
+    /**
+     * Last called with token refresh
+     */
+    protected lastCalled = false;
+
+    /**
+     * Token refresh count down seed
+     */
+    protected refreshCountdownSeed = 0;
 
     /**
      * Protected constructor
@@ -390,7 +397,7 @@ export abstract class CoreApp<
             if (data.showLoading == null || data.showLoading) {
                 notifier.hideLoading();
             }
-            this._lastCalled = true;
+            this.lastCalled = true;
         };
 
         // Global API error handler
@@ -727,7 +734,7 @@ export abstract class CoreApp<
      * Refresh countdown
      * @param seconds Seconds
      */
-    private refreshCountdown(seconds: number) {
+    protected refreshCountdown(seconds: number) {
         // Make sure is big than 60 seconds
         // Take action 60 seconds before expiry
         seconds -= 60;
@@ -739,24 +746,24 @@ export abstract class CoreApp<
         // Reset last call flag
         // Any success call will update it to true
         // So first time after login will be always silent
-        this._lastCalled = false;
+        this.lastCalled = false;
 
-        this._refreshCountdownSeed = window.setTimeout(() => {
-            if (this._lastCalled) {
+        this.refreshCountdownSeed = window.setTimeout(() => {
+            if (this.lastCalled) {
                 // Call refreshToken to update access token
                 this.refreshToken();
             } else {
                 // Popup countdown for user action
-                this.freshCountdownUI(this.refreshToken);
+                this.freshCountdownUI();
             }
         }, 1000 * seconds);
     }
 
-    private refreshCountdownClear() {
+    protected refreshCountdownClear() {
         // Clear the current timeout seed
-        if (this._refreshCountdownSeed > 0) {
-            window.clearTimeout(this._refreshCountdownSeed);
-            this._refreshCountdownSeed = 0;
+        if (this.refreshCountdownSeed > 0) {
+            window.clearTimeout(this.refreshCountdownSeed);
+            this.refreshCountdownSeed = 0;
         }
     }
 
