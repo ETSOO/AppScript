@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.1.38",
+    "version": "1.1.39",
     "description": "Applications shared TypeScript framework",
     "main": "lib/cjs/index.js",
     "module": "lib/mjs/index.js",
@@ -53,8 +53,8 @@
     "homepage": "https://github.com/ETSOO/AppScript#readme",
     "dependencies": {
         "@etsoo/notificationbase": "^1.0.93",
-        "@etsoo/restclient": "^1.0.59",
-        "@etsoo/shared": "^1.0.72"
+        "@etsoo/restclient": "^1.0.62",
+        "@etsoo/shared": "^1.0.73"
     },
     "devDependencies": {
         "@babel/cli": "^7.16.0",
@@ -63,9 +63,9 @@
         "@babel/preset-env": "^7.16.0",
         "@babel/runtime-corejs3": "^7.16.0",
         "@types/jest": "^27.0.2",
-        "@typescript-eslint/eslint-plugin": "^5.3.0",
-        "@typescript-eslint/parser": "^5.3.0",
-        "eslint": "^8.1.0",
+        "@typescript-eslint/eslint-plugin": "^5.3.1",
+        "@typescript-eslint/parser": "^5.3.1",
+        "eslint": "^8.2.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-plugin-import": "^2.25.2",
         "jest": "^27.3.1",

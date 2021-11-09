@@ -82,6 +82,8 @@ $ yarn add @etsoo/appscript
 #### UpdateDto.ts ####
 -   UpdateDto - Dto with id and changedFields
 
+### i18n - Multiple cultures
+
 ### result - API action result
 
 #### ActionResult.ts ####

@@ -28,6 +28,11 @@ export * from './dto/IdLabelDto';
 export * from './dto/IdLabelPrimaryDto';
 export * from './dto/UpdateDto';
 
+// i18n
+export * from './i18n/enUS';
+export * from './i18n/zhCN';
+export * from './i18n/zhHK';
+
 // result
 export * from './result/ActionResult';
 export * from './result/ActionResultError';

@@ -5,8 +5,7 @@ import {
     DateUtils,
     DomUtils,
     NumberUtils,
-    StorageUtils,
-    Utils
+    StorageUtils
 } from '@etsoo/shared';
 import { AddressRegion } from '../address/AddressRegion';
 import { AddressUtils } from '../address/AddressUtils';
@@ -69,6 +68,11 @@ export interface ICoreApp<
      * Is current authorized
      */
     readonly authorized: boolean;
+
+    /**
+     * Application name
+     */
+    readonly name: string;
 
     /**
      * IP data
@@ -267,6 +271,11 @@ export abstract class CoreApp<
     readonly api: IApi;
 
     /**
+     * Application name
+     */
+    readonly name: string;
+
+    /**
      * Notifier
      */
     readonly notifier: INotifier<N, C>;
@@ -347,8 +356,14 @@ export abstract class CoreApp<
      * @param settings Settings
      * @param api API
      * @param notifier Notifier
+     * @param name Application name
      */
-    protected constructor(settings: S, api: IApi, notifier: INotifier<N, C>) {
+    protected constructor(
+        settings: S,
+        api: IApi,
+        notifier: INotifier<N, C>,
+        name: string
+    ) {
         // onRequest, show loading or not, rewrite the property to override default action
         api.onRequest = (data) => {
             if (data.showLoading == null || data.showLoading) {
@@ -383,6 +398,7 @@ export abstract class CoreApp<
         this.settings = settings;
         this.api = api;
         this.notifier = notifier;
+        this.name = name;
 
         const { currentCulture, currentRegion } = settings;
         this.changeCulture(currentCulture);
