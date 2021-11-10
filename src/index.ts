@@ -33,6 +33,10 @@ export * from './i18n/enUS';
 export * from './i18n/zhCN';
 export * from './i18n/zhHK';
 
+// @etsoo/restclient
+export { ApiAuthorizationScheme, createClient } from '@etsoo/restclient';
+export type { IApiPayload } from '@etsoo/restclient';
+
 // result
 export * from './result/ActionResult';
 export * from './result/ActionResultError';
