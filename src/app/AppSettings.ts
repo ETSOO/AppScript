@@ -28,6 +28,11 @@ export interface IAppSettings extends IExternalSettings {
     readonly detectedCulture: string;
 
     /**
+     * Service id
+     */
+    readonly serviceId?: string;
+
+    /**
      * Time zone
      */
     timeZone?: string;

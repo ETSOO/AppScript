@@ -16,6 +16,16 @@ export interface IExternalSettings {
      * Cloud web url
      */
     readonly webUrl: string;
+
+    /**
+     * Core system Url
+     */
+    readonly coreUrl?: string;
+
+    /**
+     * Core system API
+     */
+    readonly coreApi?: string;
 }
 
 /**
