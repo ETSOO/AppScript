@@ -385,17 +385,34 @@ export abstract class CoreApp<
         notifier: INotifier<N, C>,
         name: string
     ) {
+        this.settings = settings;
+        this.api = api;
+        this.notifier = notifier;
+        this.name = name;
+
+        this.setApi(api);
+
+        const { currentCulture, currentRegion } = settings;
+        this.changeCulture(currentCulture);
+
+        this.changeRegion(currentRegion);
+
+        // Setup callback
+        this.setup();
+    }
+
+    protected setApi(api: IApi) {
         // onRequest, show loading or not, rewrite the property to override default action
         api.onRequest = (data) => {
             if (data.showLoading == null || data.showLoading) {
-                notifier.showLoading();
+                this.notifier.showLoading();
             }
         };
 
         // onComplete, hide loading, rewrite the property to override default action
         api.onComplete = (data) => {
             if (data.showLoading == null || data.showLoading) {
-                notifier.hideLoading();
+                this.notifier.hideLoading();
             }
             this.lastCalled = true;
         };
@@ -412,22 +429,9 @@ export abstract class CoreApp<
                 this.tryLogin();
             } else {
                 // Report the error
-                notifier.alert(this.formatError(error));
+                this.notifier.alert(this.formatError(error));
             }
         };
-
-        this.settings = settings;
-        this.api = api;
-        this.notifier = notifier;
-        this.name = name;
-
-        const { currentCulture, currentRegion } = settings;
-        this.changeCulture(currentCulture);
-
-        this.changeRegion(currentRegion);
-
-        // Setup callback
-        this.setup();
     }
 
     /**
