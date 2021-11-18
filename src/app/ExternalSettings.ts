@@ -29,12 +29,33 @@ export interface IExternalSettings {
 }
 
 /**
- * External settings host
- * Usually passed by window global settings property
+ * External settings namespace
  */
-export interface IExternalSettingsHost {
+export namespace ExternalSettings {
     /**
-     * Configurable API settings
+     * Create instance
      */
-    readonly settings: IExternalSettings;
+    export function Create(): IExternalSettings | undefined {
+        if ('settings' in globalThis) {
+            const settings = Reflect.get(globalThis, 'settings');
+            if (typeof settings === 'object') {
+                if (typeof window !== 'undefined') {
+                    const hostname = window.location.hostname;
+                    // replace {hostname}
+                    for (const key in settings) {
+                        const value = settings[key];
+                        if (typeof value === 'string') {
+                            settings[key] = value.replace(
+                                '{hostname}',
+                                hostname
+                            );
+                        }
+                    }
+                }
+
+                return settings as IExternalSettings;
+            }
+        }
+        return undefined;
+    }
 }
