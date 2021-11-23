@@ -244,7 +244,7 @@ export interface ICoreApp<
      * @param refreshToken Refresh token
      * @param keep Keep in local storage or not
      */
-    userLogin(user: IUserData, refreshToken?: string, keep?: boolean): void;
+    userLogin(user: IUserData, refreshToken: string, keep?: boolean): void;
 
     /**
      * User logout
@@ -829,7 +829,7 @@ export abstract class CoreApp<
      * @param refreshToken Refresh token
      * @param keep Keep in local storage or not
      */
-    userLogin(user: IUserData, refreshToken?: string, keep: boolean = false) {
+    userLogin(user: IUserData, refreshToken: string, keep: boolean = false) {
         this.userData = user;
         this.authorize(user.token, refreshToken, keep);
     }
