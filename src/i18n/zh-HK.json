@@ -31,6 +31,7 @@
     "name": "姓名",
     "no": "否",
     "noChanges": "還沒有任何修改",
+    "noData": "沒有有效數據",
     "noOptions": "沒有選項",
     "ok": "確定",
     "open": "打開",
