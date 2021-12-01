@@ -20,6 +20,7 @@ import { ActionResultError } from '../result/ActionResultError';
 import { IActionResult } from '../result/IActionResult';
 import { IUserData } from '../state/User';
 import { IAppSettings } from './AppSettings';
+import { UserRole } from './UserRole';
 
 /**
  * Detect IP callback interface
@@ -215,6 +216,13 @@ export interface ICoreApp<
      * @returns Time zone
      */
     getTimeZone(): string | undefined;
+
+    /**
+     * Check use has the specific role permission or not
+     * @param roles Roles to check
+     * @returns Result
+     */
+    hasPermission(roles: number | UserRole | number[] | UserRole[]): boolean;
 
     /**
      * Callback where exit a page
@@ -725,6 +733,25 @@ export abstract class CoreApp<
     getTimeZone(): string | undefined {
         // settings.timeZone = Utils.getTimeZone()
         return this.settings.timeZone ?? this.ipData?.timezone;
+    }
+
+    /**
+     * Check use has the specific role permission or not
+     * @param roles Roles to check
+     * @returns Result
+     */
+    hasPermission(roles: number | UserRole | number[] | UserRole[]): boolean {
+        const userRole = this.userData?.role;
+        if (userRole == null) return false;
+
+        if (Array.isArray(roles)) {
+            return roles.some((role) => (userRole & role) === role);
+        }
+
+        // One role check
+        if ((userRole & roles) === roles) return true;
+
+        return false;
     }
 
     /**

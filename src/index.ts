@@ -7,6 +7,7 @@ export * from './address/AddressUtils';
 export * from './app/AppSettings';
 export * from './app/CoreApp';
 export * from './app/ExternalSettings';
+export * from './app/UserRole';
 
 // bridges
 export * from './bridges/ElectronBridge';
