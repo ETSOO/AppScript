@@ -235,6 +235,17 @@ export interface ICoreApp<
     refreshToken(): Promise<boolean>;
 
     /**
+     * Signout
+     * @param apiUrl Signout API URL
+     */
+    signout(apiUrl?: string): Promise<void>;
+
+    /**
+     * Go to the login page
+     */
+    toLoginPage(): void;
+
+    /**
      * Transform URL
      * @param url URL
      * @returns Transformed url
@@ -815,6 +826,33 @@ export abstract class CoreApp<
      * Setup callback
      */
     setup() {}
+
+    /**
+     * Signout
+     * @param apiUrl Signout API URL
+     */
+    async signout(apiUrl?: string) {
+        await this.api.put<boolean>(apiUrl ?? 'User/Signout', undefined, {
+            onError: (error) => {
+                console.log(error);
+                // Prevent further processing
+                return false;
+            }
+        });
+
+        // Clear
+        this.userLogout();
+
+        // Go to login page
+        this.toLoginPage();
+    }
+
+    /**
+     * Go to the login page
+     */
+    toLoginPage() {
+        window.location.replace(this.transformUrl('/'));
+    }
 
     /**
      * Transform URL
