@@ -241,6 +241,12 @@ export interface ICoreApp<
     signout(apiUrl?: string): Promise<void>;
 
     /**
+     * Switch organization
+     * @param apiOrOrg API URL or organization id
+     */
+    switchOrg(apiOrOrg: string | number): Promise<boolean | undefined>;
+
+    /**
      * Go to the login page
      */
     toLoginPage(): void;
@@ -845,6 +851,20 @@ export abstract class CoreApp<
 
         // Go to login page
         this.toLoginPage();
+    }
+
+    /**
+     * Switch organization
+     * @param apiOrOrg API URL or organization id
+     */
+    async switchOrg(apiOrOrg: string | number) {
+        const api =
+            typeof apiOrOrg === 'number'
+                ? `Organization/Switch/${apiOrOrg}`
+                : apiOrOrg;
+        const result = await this.api.put<boolean>(api);
+        if (result) return await this.refreshToken();
+        return result;
     }
 
     /**
