@@ -55,6 +55,11 @@ export interface RefreshTokenProps<D extends {}> {
     data?: D;
 
     /**
+     * Support relogin or not
+     */
+    relogin?: boolean;
+
+    /**
      * Show loading bar or not
      */
     showLoading?: boolean;
