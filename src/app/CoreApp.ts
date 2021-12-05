@@ -30,6 +30,24 @@ export interface IDetectIPCallback {
 }
 
 /**
+ * Refresh token result type
+ * true means success, false means failed but no any message
+ * other cases means failed with differnet message
+ */
+export type RefreshTokenResult =
+    | boolean
+    | string
+    | ApiDataError
+    | IActionResult;
+
+/**
+ * Refresh token callback
+ */
+export interface RefreshTokenCallback {
+    (result: RefreshTokenResult): void;
+}
+
+/**
  * Core application interface
  */
 export interface ICoreApp<
@@ -231,8 +249,9 @@ export interface ICoreApp<
 
     /**
      * Refresh token
+     * @param callback Callback
      */
-    refreshToken(): Promise<boolean>;
+    refreshToken(callback?: RefreshTokenCallback): Promise<boolean>;
 
     /**
      * Signout
@@ -823,8 +842,10 @@ export abstract class CoreApp<
 
     /**
      * Refresh token
+     * @param callback Callback
      */
-    async refreshToken(): Promise<boolean> {
+    async refreshToken(callback?: RefreshTokenCallback) {
+        if (callback) callback(true);
         return true;
     }
 
@@ -901,6 +922,7 @@ export abstract class CoreApp<
 
     /**
      * Try login, returning false means is loading
+     * UI get involved while refreshToken not intended
      */
     async tryLogin() {
         if (this._isTryingLogin) return false;
