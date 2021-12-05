@@ -45,14 +45,19 @@ export type RefreshTokenResult =
  */
 export interface RefreshTokenProps<D extends {}> {
     /**
+     * Callback
+     */
+    callback?: (result: RefreshTokenResult) => void;
+
+    /**
      * Data to pass
      */
     data?: D;
 
     /**
-     * Callback
+     * Show loading bar or not
      */
-    callback?: (result: RefreshTokenResult) => void;
+    showLoading?: boolean;
 }
 
 /**
