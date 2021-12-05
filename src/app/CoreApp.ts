@@ -294,8 +294,10 @@ export interface ICoreApp<
 
     /**
      * Try login, returning false means is loading
+     * UI get involved while refreshToken not intended
+     * @param data Additional request data
      */
-    tryLogin(): Promise<boolean>;
+    tryLogin<D extends {} = {}>(data?: D): Promise<boolean>;
 
     /**
      * User login
@@ -857,7 +859,7 @@ export abstract class CoreApp<
 
     /**
      * Refresh token
-     * @param callback Callback
+     * @param props Props
      */
     async refreshToken<D extends {} = {}>(props?: RefreshTokenProps<D>) {
         if (props && props.callback) props.callback(true);
@@ -938,8 +940,9 @@ export abstract class CoreApp<
     /**
      * Try login, returning false means is loading
      * UI get involved while refreshToken not intended
+     * @param data Additional request data
      */
-    async tryLogin() {
+    async tryLogin<D extends {} = {}>(_data?: D) {
         if (this._isTryingLogin) return false;
         this._isTryingLogin = true;
         return true;
