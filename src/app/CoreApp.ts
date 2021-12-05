@@ -41,10 +41,18 @@ export type RefreshTokenResult =
     | IActionResult;
 
 /**
- * Refresh token callback
+ * Refresh token props
  */
-export interface RefreshTokenCallback {
-    (result: RefreshTokenResult): void;
+export interface RefreshTokenProps<D extends {}> {
+    /**
+     * Data to pass
+     */
+    data?: D;
+
+    /**
+     * Callback
+     */
+    callback?: (result: RefreshTokenResult) => void;
 }
 
 /**
@@ -249,9 +257,11 @@ export interface ICoreApp<
 
     /**
      * Refresh token
-     * @param callback Callback
+     * @param props Props
      */
-    refreshToken(callback?: RefreshTokenCallback): Promise<boolean>;
+    refreshToken<D extends {} = {}>(
+        props?: RefreshTokenProps<D>
+    ): Promise<boolean>;
 
     /**
      * Signout
@@ -844,8 +854,8 @@ export abstract class CoreApp<
      * Refresh token
      * @param callback Callback
      */
-    async refreshToken(callback?: RefreshTokenCallback) {
-        if (callback) callback(true);
+    async refreshToken<D extends {} = {}>(props?: RefreshTokenProps<D>) {
+        if (props && props.callback) props.callback(true);
         return true;
     }
 
