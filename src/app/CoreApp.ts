@@ -160,10 +160,26 @@ export interface ICoreApp<
     changeCulture(culture: DataTypes.CultureDefinition): void;
 
     /**
+     * Decrypt message
+     * @param messageEncrypted Encrypted message
+     * @param passphrase Secret passphrase
+     * @returns Pure text
+     */
+    decrypt(messageEncrypted: string, passphrase: string): string;
+
+    /**
      * Detect IP data, call only one time
      * @param callback Callback will be called when the IP is ready
      */
     detectIP(callback?: IDetectIPCallback): void;
+
+    /**
+     * Encrypt message
+     * @param message Message
+     * @param passphrase Secret passphrase
+     * @returns Result
+     */
+    encrypt(message: string, passphrase: string): string;
 
     /**
      * Format date to string
@@ -626,6 +642,19 @@ export abstract class CoreApp<
     }
 
     /**
+     * Decrypt message
+     * @param messageEncrypted Encrypted message
+     * @param passphrase Secret passphrase
+     * @returns Pure text
+     */
+    decrypt(messageEncrypted: string, passphrase: string) {
+        return CryptoJS.AES.decrypt(
+            messageEncrypted,
+            this.encryptionEnhance(passphrase)
+        ).toString();
+    }
+
+    /**
      * Detect IP data, call only one time
      * @param callback Callback will be called when the IP is ready
      */
@@ -663,6 +692,28 @@ export abstract class CoreApp<
     // Detect IP callbacks
     private detectIPCallbacks() {
         this.ipDetectCallbacks?.forEach((f) => f());
+    }
+
+    /**
+     * Encrypt message
+     * @param message Message
+     * @param passphrase Secret passphrase
+     * @returns Result
+     */
+    encrypt(message: string, passphrase: string) {
+        return CryptoJS.AES.encrypt(
+            message,
+            this.encryptionEnhance(passphrase)
+        ).toString();
+    }
+
+    /**
+     * Enchance secret passphrase
+     * @param passphrase Secret passphrase
+     * @returns Enhanced passphrase
+     */
+    protected encryptionEnhance(passphrase: string) {
+        return passphrase;
     }
 
     /**
