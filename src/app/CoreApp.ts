@@ -713,6 +713,9 @@ export abstract class CoreApp<
      * @returns Enhanced passphrase
      */
     protected encryptionEnhance(passphrase: string) {
+        passphrase += passphrase.length;
+        if (this.authorized)
+            return passphrase + (this.userData?.passphrase ?? '');
         return passphrase;
     }
 
