@@ -14,6 +14,7 @@ import {
     NumberUtils,
     StorageUtils
 } from '@etsoo/shared';
+import { AES } from 'crypto-js';
 import { AddressRegion } from '../address/AddressRegion';
 import { AddressUtils } from '../address/AddressUtils';
 import { ActionResultError } from '../result/ActionResultError';
@@ -648,7 +649,7 @@ export abstract class CoreApp<
      * @returns Pure text
      */
     decrypt(messageEncrypted: string, passphrase: string) {
-        return CryptoJS.AES.decrypt(
+        return AES.decrypt(
             messageEncrypted,
             this.encryptionEnhance(passphrase)
         ).toString();
@@ -701,7 +702,7 @@ export abstract class CoreApp<
      * @returns Result
      */
     encrypt(message: string, passphrase: string) {
-        return CryptoJS.AES.encrypt(
+        return AES.encrypt(
             message,
             this.encryptionEnhance(passphrase)
         ).toString();
