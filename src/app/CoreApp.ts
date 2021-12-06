@@ -12,7 +12,8 @@ import {
     DateUtils,
     DomUtils,
     NumberUtils,
-    StorageUtils
+    StorageUtils,
+    Utils
 } from '@etsoo/shared';
 import { AES } from 'crypto-js';
 import { AddressRegion } from '../address/AddressRegion';
@@ -659,8 +660,8 @@ export abstract class CoreApp<
      * @returns Pure text
      */
     decrypt(messageEncrypted: string, passphrase: string) {
-        const pos = messageEncrypted.indexOf('M');
-        const miliseconds = parseInt(messageEncrypted.substring(0, pos));
+        const pos = messageEncrypted.indexOf('+');
+        const miliseconds = messageEncrypted.substring(0, pos);
         const message = messageEncrypted.substring(pos + 1);
         return AES.decrypt(
             message,
@@ -715,10 +716,10 @@ export abstract class CoreApp<
      * @returns Result
      */
     encrypt(message: string, passphrase: string) {
-        const miliseconds = new Date().getUTCMilliseconds();
+        const miliseconds = Utils.numberToChars(new Date().getTime());
         return (
             miliseconds +
-            'M' +
+            '+' +
             AES.encrypt(
                 message,
                 this.encryptionEnhance(passphrase, miliseconds)
@@ -732,8 +733,8 @@ export abstract class CoreApp<
      * @param miliseconds Miliseconds
      * @returns Enhanced passphrase
      */
-    protected encryptionEnhance(passphrase: string, miliseconds: number) {
-        passphrase += miliseconds.toString();
+    protected encryptionEnhance(passphrase: string, miliseconds: string) {
+        passphrase += miliseconds;
         passphrase += passphrase.length.toString();
         return passphrase + (this.passphrase ?? '');
     }
