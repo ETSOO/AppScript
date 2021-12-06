@@ -179,6 +179,13 @@ export interface ICoreApp<
     ): string | undefined;
 
     /**
+     * Format error
+     * @param error Error
+     * @returns Error message
+     */
+    formatError(error: ApiDataError): string;
+
+    /**
      * Format money number
      * @param input Input money number
      * @param isInteger Is integer
@@ -201,6 +208,13 @@ export interface ICoreApp<
         input?: number | bigint,
         options?: Intl.NumberFormatOptions
     ): string | undefined;
+
+    /**
+     * Format refresh token result
+     * @param result Refresh token result
+     * @returns Message
+     */
+    formatRefreshTokenResult(result: RefreshTokenResult): string | undefined;
 
     /**
      * Format result text
@@ -706,6 +720,22 @@ export abstract class CoreApp<
      */
     formatError(error: ApiDataError) {
         return error.toString();
+    }
+
+    /**
+     * Format refresh token result
+     * @param result Refresh token result
+     * @returns Message
+     */
+    formatRefreshTokenResult(result: RefreshTokenResult) {
+        // Undefined for boolean
+        if (typeof result === 'boolean') return undefined;
+
+        return result instanceof ApiDataError
+            ? this.formatError(result)
+            : typeof result !== 'string'
+            ? ActionResultError.format(result)
+            : result;
     }
 
     /**
