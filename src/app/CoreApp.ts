@@ -130,6 +130,11 @@ export interface ICoreApp<
     userData?: IUserData;
 
     /**
+     * Passphrase for encryption
+     */
+    passphrase?: string;
+
+    /**
      * Search input element
      */
     searchInput?: HTMLInputElement;
@@ -433,6 +438,11 @@ export abstract class CoreApp<
     userData?: IUserData;
 
     /**
+     * Passphrase for encryption
+     */
+    passphrase?: string;
+
+    /**
      * Response token header field name
      */
     headerTokenField = 'SmartERPRefreshToken';
@@ -649,9 +659,12 @@ export abstract class CoreApp<
      * @returns Pure text
      */
     decrypt(messageEncrypted: string, passphrase: string) {
+        const pos = messageEncrypted.indexOf('M');
+        const miliseconds = parseInt(messageEncrypted.substring(0, pos));
+        const message = messageEncrypted.substring(pos + 1);
         return AES.decrypt(
-            messageEncrypted,
-            this.encryptionEnhance(passphrase)
+            message,
+            this.encryptionEnhance(passphrase, miliseconds)
         ).toString();
     }
 
@@ -702,22 +715,27 @@ export abstract class CoreApp<
      * @returns Result
      */
     encrypt(message: string, passphrase: string) {
-        return AES.encrypt(
-            message,
-            this.encryptionEnhance(passphrase)
-        ).toString();
+        const miliseconds = new Date().getUTCMilliseconds();
+        return (
+            miliseconds +
+            'M' +
+            AES.encrypt(
+                message,
+                this.encryptionEnhance(passphrase, miliseconds)
+            ).toString()
+        );
     }
 
     /**
      * Enchance secret passphrase
      * @param passphrase Secret passphrase
+     * @param miliseconds Miliseconds
      * @returns Enhanced passphrase
      */
-    protected encryptionEnhance(passphrase: string) {
-        passphrase += passphrase.length;
-        if (this.authorized)
-            return passphrase + (this.userData?.passphrase ?? '');
-        return passphrase;
+    protected encryptionEnhance(passphrase: string, miliseconds: number) {
+        passphrase += miliseconds.toString();
+        passphrase += passphrase.length.toString();
+        return passphrase + (this.passphrase ?? '');
     }
 
     /**
