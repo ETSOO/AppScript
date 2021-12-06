@@ -33,6 +33,11 @@ export interface IUserData {
      * Access token
      */
     readonly token: string;
+
+    /**
+     * Secret passphrase
+     */
+    readonly passphrase: string;
 }
 
 /**

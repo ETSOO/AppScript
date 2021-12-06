@@ -661,11 +661,11 @@ export abstract class CoreApp<
      */
     decrypt(messageEncrypted: string, passphrase: string) {
         const pos = messageEncrypted.indexOf('+');
-        const miliseconds = messageEncrypted.substring(0, pos);
+        const timestamp = messageEncrypted.substring(0, pos);
         const message = messageEncrypted.substring(pos + 1);
         return AES.decrypt(
             message,
-            this.encryptionEnhance(passphrase, miliseconds)
+            this.encryptionEnhance(passphrase, timestamp)
         ).toString();
     }
 
@@ -716,13 +716,13 @@ export abstract class CoreApp<
      * @returns Result
      */
     encrypt(message: string, passphrase: string) {
-        const miliseconds = Utils.numberToChars(new Date().getTime());
+        const timestamp = Utils.numberToChars(new Date().getTime());
         return (
-            miliseconds +
+            timestamp +
             '+' +
             AES.encrypt(
                 message,
-                this.encryptionEnhance(passphrase, miliseconds)
+                this.encryptionEnhance(passphrase, timestamp)
             ).toString()
         );
     }
@@ -730,11 +730,11 @@ export abstract class CoreApp<
     /**
      * Enchance secret passphrase
      * @param passphrase Secret passphrase
-     * @param miliseconds Miliseconds
+     * @param timestamp Timestamp
      * @returns Enhanced passphrase
      */
-    protected encryptionEnhance(passphrase: string, miliseconds: string) {
-        passphrase += miliseconds;
+    protected encryptionEnhance(passphrase: string, timestamp: string) {
+        passphrase += timestamp;
         passphrase += passphrase.length.toString();
         return passphrase + (this.passphrase ?? '');
     }
@@ -1065,6 +1065,7 @@ export abstract class CoreApp<
      */
     userLogin(user: IUserData, refreshToken: string, keep: boolean = false) {
         this.userData = user;
+        this.passphrase = user.passphrase;
         this.authorize(user.token, refreshToken, keep);
     }
 
