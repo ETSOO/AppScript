@@ -42,6 +42,7 @@ export type { IApi, IApiPayload } from '@etsoo/restclient';
 export * from './result/ActionResult';
 export * from './result/ActionResultError';
 export * from './result/IActionResult';
+export * from './result/InitCallResult';
 
 // state
 export * from './state/Culture';

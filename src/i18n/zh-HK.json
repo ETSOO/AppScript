@@ -59,6 +59,7 @@
     "status": "狀態",
     "submit": "提交",
     "success": "成功",
+    "timeDifferenceInvalid": "設備時間和服務器時間差為{0}，超過{1}秒的限制，請調整設備時間，如果異常請告知管理員",
     "tokenExpiry": "您的會話即將過期。點擊 取消 按鈕繼續使用",
     "yes": "是",
     "unknownError": "未知錯誤",

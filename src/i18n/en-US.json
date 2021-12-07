@@ -59,6 +59,7 @@
     "status": "Status",
     "submit": "Submit",
     "success": "Success",
+    "timeDifferenceInvalid": "The time difference between the device and the server is {0}, which exceeds the limit of {1} seconds. Please adjust the device time. If it is abnormal, please inform the administrator",
     "tokenExpiry": "Your session is about to expire. Click the Cancel button to continue",
     "yes": "Yes",
     "unknownError": "Unknown Error",
