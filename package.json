@@ -23,7 +23,7 @@
         "testMatch": [
             "<rootDir>/__tests__/**/*.ts"
         ],
-        "testEnvironment": "node",
+        "testEnvironment": "jsdom",
         "transform": {
             ".+\\.jsx?$": "babel-jest",
             ".+\\.tsx?$": "ts-jest"
@@ -65,9 +65,9 @@
         "@babel/preset-env": "^7.16.4",
         "@babel/runtime-corejs3": "^7.16.3",
         "@types/jest": "^27.0.3",
-        "@typescript-eslint/eslint-plugin": "^5.5.0",
-        "@typescript-eslint/parser": "^5.5.0",
-        "eslint": "^8.4.0",
+        "@typescript-eslint/eslint-plugin": "^5.6.0",
+        "@typescript-eslint/parser": "^5.6.0",
+        "eslint": "^8.4.1",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-plugin-import": "^2.25.3",
         "jest": "^27.4.3",

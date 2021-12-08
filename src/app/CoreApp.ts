@@ -15,7 +15,17 @@ import {
     StorageUtils,
     Utils
 } from '@etsoo/shared';
-import { AES } from 'crypto-js';
+import {
+    AES,
+    algo,
+    enc,
+    HmacSHA512,
+    lib,
+    mode,
+    pad,
+    PBKDF2,
+    SHA3
+} from 'crypto-js';
 import { AddressRegion } from '../address/AddressRegion';
 import { AddressUtils } from '../address/AddressUtils';
 import { ActionResultError } from '../result/ActionResultError';
@@ -184,9 +194,10 @@ export interface ICoreApp<
      * Encrypt message
      * @param message Message
      * @param passphrase Secret passphrase
+     * @param iterations Iterations, 1000 times, 1 - 99
      * @returns Result
      */
-    encrypt(message: string, passphrase: string): string;
+    encrypt(message: string, passphrase: string, iterations?: number): string;
 
     /**
      * Format date to string
@@ -289,6 +300,14 @@ export interface ICoreApp<
      * @returns Time zone
      */
     getTimeZone(): string | undefined;
+
+    /**
+     * Hash message, SHA3 or HmacSHA512, 512 as Base64
+     * https://cryptojs.gitbook.io/docs/
+     * @param message Message
+     * @param passphrase Secret passphrase
+     */
+    hash(message: string, passphrase?: string): string;
 
     /**
      * Check use has the specific role permission or not
@@ -660,13 +679,33 @@ export abstract class CoreApp<
      * @returns Pure text
      */
     decrypt(messageEncrypted: string, passphrase: string) {
+        // Timestamp splitter
         const pos = messageEncrypted.indexOf('+');
         const timestamp = messageEncrypted.substring(0, pos);
         const message = messageEncrypted.substring(pos + 1);
-        return AES.decrypt(
-            message,
-            this.encryptionEnhance(passphrase, timestamp)
-        ).toString();
+
+        // Iterations
+        const iterations = parseInt(message.substring(0, 2), 10);
+
+        const salt = enc.Hex.parse(message.substring(2, 34));
+        const iv = enc.Hex.parse(message.substring(34, 66));
+        const encrypted = message.substring(66);
+
+        const key = PBKDF2(
+            this.encryptionEnhance(passphrase, timestamp),
+            salt,
+            {
+                keySize: 8, // 256 / 32
+                hasher: algo.SHA256,
+                iterations: 1000 * iterations
+            }
+        );
+
+        return AES.decrypt(encrypted, key, {
+            iv,
+            padding: pad.Pkcs7,
+            mode: mode.CBC
+        }).toString(enc.Utf8);
     }
 
     /**
@@ -713,17 +752,40 @@ export abstract class CoreApp<
      * Encrypt message
      * @param message Message
      * @param passphrase Secret passphrase
+     * @param iterations Iterations, 1000 times, 1 - 99
      * @returns Result
      */
-    encrypt(message: string, passphrase: string) {
+    encrypt(message: string, passphrase: string, iterations?: number) {
+        // Default 1 * 1000
+        iterations ??= 1;
+
+        // Timestamp
         const timestamp = Utils.numberToChars(new Date().getTime());
+
+        const bits = 16; // 128 / 8
+        const salt = lib.WordArray.random(bits);
+        const key = PBKDF2(
+            this.encryptionEnhance(passphrase, timestamp),
+            salt,
+            {
+                keySize: 8, // 256 / 32
+                hasher: algo.SHA256,
+                iterations: 1000 * iterations
+            }
+        );
+        const iv = lib.WordArray.random(bits);
+
         return (
             timestamp +
             '+' +
-            AES.encrypt(
-                message,
-                this.encryptionEnhance(passphrase, timestamp)
-            ).toString()
+            iterations.toString().padStart(2, '0') +
+            salt.toString(enc.Hex) +
+            iv.toString(enc.Hex) +
+            AES.encrypt(message, key, {
+                iv,
+                padding: pad.Pkcs7,
+                mode: mode.CBC
+            }).toString() // enc.Base64
         );
     }
 
@@ -895,6 +957,18 @@ export abstract class CoreApp<
     getTimeZone(): string | undefined {
         // settings.timeZone = Utils.getTimeZone()
         return this.settings.timeZone ?? this.ipData?.timezone;
+    }
+
+    /**
+     * Hash message, SHA3 or HmacSHA512, 512 as Base64
+     * https://cryptojs.gitbook.io/docs/
+     * @param message Message
+     * @param passphrase Secret passphrase
+     */
+    hash(message: string, passphrase?: string) {
+        if (passphrase == null)
+            return SHA3(message, { outputLength: 512 }).toString(enc.Base64);
+        else return HmacSHA512(message, passphrase).toString(enc.Base64);
     }
 
     /**
