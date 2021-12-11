@@ -327,6 +327,13 @@ export interface ICoreApp<
     hasPermission(roles: number | UserRole | number[] | UserRole[]): boolean;
 
     /**
+     * Init call
+     * @param callback Callback
+     * @returns Result
+     */
+    initCall(callback?: (result: boolean) => void): Promise<void>;
+
+    /**
      * Callback where exit a page
      */
     pageExit(): void;
@@ -588,9 +595,10 @@ export abstract class CoreApp<
 
     /**
      * Init call
+     * @param callback Callback
      * @returns Result
      */
-    protected async initCall() {
+    async initCall(callback?: (result: boolean) => void) {
         const data: InitCallDto = {
             timestamp: new Date().getTime(),
             deviceId: this.deviceId === '' ? undefined : this.deviceId
@@ -599,10 +607,14 @@ export abstract class CoreApp<
             'Auth/WebInitCall',
             data
         );
-        if (result == null) return;
+        if (result == null) {
+            if (callback) callback(false);
+            return;
+        }
 
         if (result.data == null) {
             this.notifier.alert(this.get<string>('noData')!);
+            if (callback) callback(false);
             return;
         }
 
@@ -623,10 +635,14 @@ export abstract class CoreApp<
                 this.alertResult(result);
             }
 
+            if (callback) callback(false);
+
             return;
         }
 
         this.initCallUpdate(result.data, data.timestamp);
+
+        if (callback) callback(true);
     }
 
     /**
