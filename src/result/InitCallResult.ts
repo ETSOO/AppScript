@@ -1,23 +1,33 @@
 import { IActionResult, IResultData } from './IActionResult';
 
 /**
- * Result data with id, follow this style to extend for specific model
+ * Init call result data
  */
 export interface InitCallResultData extends IResultData {
     /**
+     * Device id
+     */
+    deviceId?: string;
+
+    /**
      * Secret passphrase
      */
-    passphrase: string;
+    passphrase?: string;
+
+    /**
+     * Previous secret passphrase
+     */
+    previousPassphrase?: string;
 
     /**
      * Actual seconds gap
      */
-    seconds: number;
+    seconds?: number;
 
     /**
      * Valid seconds gap
      */
-    validSeconds: number;
+    validSeconds?: number;
 }
 
 /**

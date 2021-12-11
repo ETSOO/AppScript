@@ -28,8 +28,10 @@ import {
 } from 'crypto-js';
 import { AddressRegion } from '../address/AddressRegion';
 import { AddressUtils } from '../address/AddressUtils';
+import { InitCallDto } from '../dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
 import { IActionResult } from '../result/IActionResult';
+import { InitCallResult, InitCallResultData } from '../result/InitCallResult';
 import { IUserData } from '../state/User';
 import { IAppSettings } from './AppSettings';
 import { UserRole } from './UserRole';
@@ -141,11 +143,6 @@ export interface ICoreApp<
     userData?: IUserData;
 
     /**
-     * Passphrase for encryption
-     */
-    passphrase?: string;
-
-    /**
      * Search input element
      */
     searchInput?: HTMLInputElement;
@@ -180,9 +177,14 @@ export interface ICoreApp<
      * Decrypt message
      * @param messageEncrypted Encrypted message
      * @param passphrase Secret passphrase
+     * @param durationSeconds Duration seconds, <= 12 will be considered as month
      * @returns Pure text
      */
-    decrypt(messageEncrypted: string, passphrase: string): string;
+    decrypt(
+        messageEncrypted: string,
+        passphrase?: string,
+        durationSeconds?: number
+    ): string | undefined;
 
     /**
      * Detect IP data, call only one time
@@ -197,7 +199,7 @@ export interface ICoreApp<
      * @param iterations Iterations, 1000 times, 1 - 99
      * @returns Result
      */
-    encrypt(message: string, passphrase: string, iterations?: number): string;
+    encrypt(message: string, passphrase?: string, iterations?: number): string;
 
     /**
      * Format date to string
@@ -308,6 +310,14 @@ export interface ICoreApp<
      * @param passphrase Secret passphrase
      */
     hash(message: string, passphrase?: string): string;
+
+    /**
+     * Hash message Hex, SHA3 or HmacSHA512, 512 as Base64
+     * https://cryptojs.gitbook.io/docs/
+     * @param message Message
+     * @param passphrase Secret passphrase
+     */
+    hashHex(message: string, passphrase?: string): string;
 
     /**
      * Check use has the specific role permission or not
@@ -458,11 +468,6 @@ export abstract class CoreApp<
     userData?: IUserData;
 
     /**
-     * Passphrase for encryption
-     */
-    passphrase?: string;
-
-    /**
      * Response token header field name
      */
     headerTokenField = 'SmartERPRefreshToken';
@@ -500,6 +505,21 @@ export abstract class CoreApp<
     protected refreshCountdownSeed = 0;
 
     /**
+     * Device id field name
+     */
+    protected deviceIdField: string = 'SmartERPDeviceId';
+
+    /**
+     * Device id
+     */
+    protected deviceId: string;
+
+    /**
+     * Passphrase for encryption
+     */
+    protected passphrase: string = '***';
+
+    /**
      * Protected constructor
      * @param settings Settings
      * @param api API
@@ -516,6 +536,11 @@ export abstract class CoreApp<
         this.api = api;
         this.notifier = notifier;
         this.name = name;
+
+        this.deviceId = StorageUtils.getLocalData<string>(
+            this.deviceIdField,
+            ''
+        );
 
         this.setApi(api);
 
@@ -559,6 +584,108 @@ export abstract class CoreApp<
                 this.notifier.alert(this.formatError(error));
             }
         };
+    }
+
+    /**
+     * Init call
+     * @returns Result
+     */
+    protected async initCall() {
+        const data: InitCallDto = {
+            timestamp: new Date().getTime(),
+            deviceId: this.deviceId === '' ? undefined : this.deviceId
+        };
+        const result = await this.api.put<InitCallResult>(
+            'Auth/WebInitCall',
+            data
+        );
+        if (result == null) return;
+
+        if (result.data == null) {
+            this.notifier.alert(this.get<string>('noData')!);
+            return;
+        }
+
+        if (!result.ok) {
+            const seconds = result.data.seconds;
+            const validSeconds = result.data.validSeconds;
+            if (
+                result.title === 'timeDifferenceInvalid' &&
+                seconds != null &&
+                validSeconds != null
+            ) {
+                const title = this.get('timeDifferenceInvalid')?.format(
+                    seconds.toString(),
+                    validSeconds.toString()
+                );
+                this.notifier.alert(title!);
+            } else {
+                this.alertResult(result);
+            }
+
+            return;
+        }
+
+        this.initCallUpdate(result.data, data.timestamp);
+    }
+
+    /**
+     * Init call update
+     * @param data Result data
+     * @param timestamp Timestamp
+     */
+    protected initCallUpdate(data: InitCallResultData, timestamp: number) {
+        if (data.deviceId == null || data.passphrase == null) return;
+
+        // Decrypt
+        // Should be done within 120 seconds after returning from the backend
+        const passphrase = this.decrypt(
+            data.passphrase,
+            timestamp.toString(),
+            120
+        );
+        if (passphrase == null) return;
+
+        // Update device id and cache it
+        this.deviceId = data.deviceId;
+        StorageUtils.setLocalData(this.deviceIdField, this.deviceId);
+
+        // Current passphrase
+        this.passphrase = passphrase;
+
+        // Previous passphrase
+        if (data.previousPassphrase) {
+            const prev = this.decrypt(
+                data.previousPassphrase,
+                timestamp.toString(),
+                120
+            );
+
+            // Update
+            const fields = this.initCallUpdateFields();
+            for (const field of fields) {
+                const currentValue = StorageUtils.getLocalData<string>(
+                    field,
+                    ''
+                );
+                if (currentValue === '' || currentValue.indexOf('+') === -1)
+                    continue;
+
+                const newValueSource = this.decrypt(currentValue, prev, 12);
+                if (newValueSource == null) continue;
+
+                const newValue = this.encrypt(newValueSource);
+                StorageUtils.setLocalData(field, newValue);
+            }
+        }
+    }
+
+    /**
+     * Init call update fields in local storage
+     * @returns Fields
+     */
+    protected initCallUpdateFields(): string[] {
+        return [];
     }
 
     /**
@@ -676,23 +803,44 @@ export abstract class CoreApp<
      * Decrypt message
      * @param messageEncrypted Encrypted message
      * @param passphrase Secret passphrase
+     * @param durationSeconds Duration seconds, <= 12 will be considered as month
      * @returns Pure text
      */
-    decrypt(messageEncrypted: string, passphrase: string) {
+    decrypt(
+        messageEncrypted: string,
+        passphrase?: string,
+        durationSeconds?: number
+    ) {
         // Timestamp splitter
         const pos = messageEncrypted.indexOf('+');
+        if (pos === -1 || messageEncrypted.length <= 66) return undefined;
+
         const timestamp = messageEncrypted.substring(0, pos);
         const message = messageEncrypted.substring(pos + 1);
 
+        if (durationSeconds != null && durationSeconds > 0) {
+            const milseconds = Utils.charsToNumber(timestamp);
+            if (isNaN(milseconds) || milseconds < 1) return undefined;
+            const timespan = new Date().substract(new Date(milseconds));
+            if (
+                (durationSeconds <= 12 &&
+                    timespan.totalMonths > durationSeconds) ||
+                (durationSeconds > 12 &&
+                    timespan.totalSeconds > durationSeconds)
+            )
+                return undefined;
+        }
+
         // Iterations
         const iterations = parseInt(message.substring(0, 2), 10);
+        if (isNaN(iterations)) return undefined;
 
         const salt = enc.Hex.parse(message.substring(2, 34));
         const iv = enc.Hex.parse(message.substring(34, 66));
         const encrypted = message.substring(66);
 
         const key = PBKDF2(
-            this.encryptionEnhance(passphrase, timestamp),
+            this.encryptionEnhance(passphrase ?? this.passphrase, timestamp),
             salt,
             {
                 keySize: 8, // 256 / 32
@@ -755,7 +903,7 @@ export abstract class CoreApp<
      * @param iterations Iterations, 1000 times, 1 - 99
      * @returns Result
      */
-    encrypt(message: string, passphrase: string, iterations?: number) {
+    encrypt(message: string, passphrase?: string, iterations?: number) {
         // Default 1 * 1000
         iterations ??= 1;
 
@@ -765,7 +913,7 @@ export abstract class CoreApp<
         const bits = 16; // 128 / 8
         const salt = lib.WordArray.random(bits);
         const key = PBKDF2(
-            this.encryptionEnhance(passphrase, timestamp),
+            this.encryptionEnhance(passphrase ?? this.passphrase, timestamp),
             salt,
             {
                 keySize: 8, // 256 / 32
@@ -798,7 +946,7 @@ export abstract class CoreApp<
     protected encryptionEnhance(passphrase: string, timestamp: string) {
         passphrase += timestamp;
         passphrase += passphrase.length.toString();
-        return passphrase + (this.passphrase ?? '');
+        return passphrase;
     }
 
     /**
@@ -880,7 +1028,18 @@ export abstract class CoreApp<
      * @param forceToLocal Force to local labels
      */
     formatResult(result: IActionResult, forceToLocal?: boolean) {
-        if ((result.title == null || forceToLocal) && result.type != null) {
+        const title = result.title;
+        if (title && /^\w+$/.test(title)) {
+            const key = title.formatInitial(false);
+            const localTitle = this.get(key);
+            if (localTitle) {
+                result.title = localTitle;
+
+                // Hold the original title in type when type is null
+                if (result.type == null) result.type = title;
+            }
+        } else if ((title == null || forceToLocal) && result.type != null) {
+            // Get label from type
             const key = result.type.formatInitial(false);
             result.title = this.get(key);
         }
@@ -918,7 +1077,10 @@ export abstract class CoreApp<
      * @returns Cached token
      */
     getCacheToken(): string | null {
-        let refreshToken = StorageUtils.getLocalData(this.headerTokenField, '');
+        let refreshToken = StorageUtils.getLocalData<string>(
+            this.headerTokenField,
+            ''
+        );
         if (refreshToken === '')
             refreshToken = StorageUtils.getSessionData(
                 this.headerTokenField,
@@ -969,6 +1131,18 @@ export abstract class CoreApp<
         if (passphrase == null)
             return SHA3(message, { outputLength: 512 }).toString(enc.Base64);
         else return HmacSHA512(message, passphrase).toString(enc.Base64);
+    }
+
+    /**
+     * Hash message Hex, SHA3 or HmacSHA512, 512 as Base64
+     * https://cryptojs.gitbook.io/docs/
+     * @param message Message
+     * @param passphrase Secret passphrase
+     */
+    hashHex(message: string, passphrase?: string) {
+        if (passphrase == null)
+            return SHA3(message, { outputLength: 512 }).toString(enc.Hex);
+        else return HmacSHA512(message, passphrase).toString(enc.Hex);
     }
 
     /**
@@ -1139,7 +1313,6 @@ export abstract class CoreApp<
      */
     userLogin(user: IUserData, refreshToken: string, keep: boolean = false) {
         this.userData = user;
-        this.passphrase = user.passphrase;
         this.authorize(user.token, refreshToken, keep);
     }
 

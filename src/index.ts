@@ -27,6 +27,7 @@ export * from './def/ListItem';
 export * from './dto/IdDto';
 export * from './dto/IdLabelDto';
 export * from './dto/IdLabelPrimaryDto';
+export * from './dto/InitCallDto';
 export * from './dto/UpdateDto';
 
 // i18n

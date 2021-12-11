@@ -56,12 +56,12 @@ export interface IActionResult<D extends IResultData = IResultData> {
     /**
      * Trace id
      */
-    readonly traceId?: string;
+    traceId?: string;
 
     /**
      * Type
      */
-    readonly type: string;
+    type: string;
 
     /**
      * Success or not
