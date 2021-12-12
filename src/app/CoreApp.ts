@@ -658,6 +658,9 @@ export abstract class CoreApp<
 
             if (callback) callback(false);
 
+            // Clear device id
+            StorageUtils.setLocalData(this.deviceIdField, null);
+
             return;
         }
 
