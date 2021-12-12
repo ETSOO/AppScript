@@ -118,6 +118,11 @@ export interface ICoreApp<
     readonly currency: string;
 
     /**
+     * Device id
+     */
+    readonly deviceId: string;
+
+    /**
      * Country or region, like CN
      */
     readonly region: string;
@@ -478,6 +483,17 @@ export abstract class CoreApp<
         return this._region;
     }
 
+    private _deviceId: string = '***';
+    /**
+     * Country or region, like CN
+     */
+    get deviceId() {
+        return this._deviceId;
+    }
+    protected set deviceId(value: string) {
+        this._deviceId = value;
+    }
+
     /**
      * Label delegate
      */
@@ -536,11 +552,6 @@ export abstract class CoreApp<
      * Device id field name
      */
     protected deviceIdField: string = 'SmartERPDeviceId';
-
-    /**
-     * Device id
-     */
-    protected deviceId: string;
 
     /**
      * Passphrase for encryption
