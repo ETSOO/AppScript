@@ -177,10 +177,18 @@ export interface ICoreApp<
      * Decrypt message
      * @param messageEncrypted Encrypted message
      * @param passphrase Secret passphrase
+     * @returns Pure text
+     */
+    decrypt(messageEncrypted: string, passphrase?: string): string | undefined;
+
+    /**
+     * Enhanced decrypt message
+     * @param messageEncrypted Encrypted message
+     * @param passphrase Secret passphrase
      * @param durationSeconds Duration seconds, <= 12 will be considered as month
      * @returns Pure text
      */
-    decrypt(
+    decryptEnhanced(
         messageEncrypted: string,
         passphrase?: string,
         durationSeconds?: number
@@ -200,6 +208,19 @@ export interface ICoreApp<
      * @returns Result
      */
     encrypt(message: string, passphrase?: string, iterations?: number): string;
+
+    /**
+     * Enhanced encrypt message
+     * @param message Message
+     * @param passphrase Secret passphrase
+     * @param iterations Iterations, 1000 times, 1 - 99
+     * @returns Result
+     */
+    encryptEnhanced(
+        message: string,
+        passphrase?: string,
+        iterations?: number
+    ): string;
 
     /**
      * Format date to string
@@ -655,11 +676,7 @@ export abstract class CoreApp<
 
         // Decrypt
         // Should be done within 120 seconds after returning from the backend
-        const passphrase = this.decrypt(
-            data.passphrase,
-            timestamp.toString(),
-            120
-        );
+        const passphrase = this.decrypt(data.passphrase, timestamp.toString());
         if (passphrase == null) return;
 
         // Update device id and cache it
@@ -673,8 +690,7 @@ export abstract class CoreApp<
         if (data.previousPassphrase) {
             const prev = this.decrypt(
                 data.previousPassphrase,
-                timestamp.toString(),
-                120
+                timestamp.toString()
             );
 
             // Update
@@ -687,10 +703,14 @@ export abstract class CoreApp<
                 if (currentValue === '' || currentValue.indexOf('+') === -1)
                     continue;
 
-                const newValueSource = this.decrypt(currentValue, prev, 12);
+                const newValueSource = this.decryptEnhanced(
+                    currentValue,
+                    prev,
+                    12
+                );
                 if (newValueSource == null) continue;
 
-                const newValue = this.encrypt(newValueSource);
+                const newValue = this.encryptEnhanced(newValueSource);
                 StorageUtils.setLocalData(field, newValue);
             }
         }
@@ -819,10 +839,38 @@ export abstract class CoreApp<
      * Decrypt message
      * @param messageEncrypted Encrypted message
      * @param passphrase Secret passphrase
+     * @returns Pure text
+     */
+    decrypt(messageEncrypted: string, passphrase?: string) {
+        // Iterations
+        const iterations = parseInt(messageEncrypted.substring(0, 2), 10);
+        if (isNaN(iterations)) return undefined;
+
+        const salt = enc.Hex.parse(messageEncrypted.substring(2, 34));
+        const iv = enc.Hex.parse(messageEncrypted.substring(34, 66));
+        const encrypted = messageEncrypted.substring(66);
+
+        const key = PBKDF2(passphrase ?? this.passphrase, salt, {
+            keySize: 8, // 256 / 32
+            hasher: algo.SHA256,
+            iterations: 1000 * iterations
+        });
+
+        return AES.decrypt(encrypted, key, {
+            iv,
+            padding: pad.Pkcs7,
+            mode: mode.CBC
+        }).toString(enc.Utf8);
+    }
+
+    /**
+     * Enhanced decrypt message
+     * @param messageEncrypted Encrypted message
+     * @param passphrase Secret passphrase
      * @param durationSeconds Duration seconds, <= 12 will be considered as month
      * @returns Pure text
      */
-    decrypt(
+    decryptEnhanced(
         messageEncrypted: string,
         passphrase?: string,
         durationSeconds?: number
@@ -832,7 +880,6 @@ export abstract class CoreApp<
         if (pos === -1 || messageEncrypted.length <= 66) return undefined;
 
         const timestamp = messageEncrypted.substring(0, pos);
-        const message = messageEncrypted.substring(pos + 1);
 
         if (durationSeconds != null && durationSeconds > 0) {
             const milseconds = Utils.charsToNumber(timestamp);
@@ -847,29 +894,13 @@ export abstract class CoreApp<
                 return undefined;
         }
 
-        // Iterations
-        const iterations = parseInt(message.substring(0, 2), 10);
-        if (isNaN(iterations)) return undefined;
-
-        const salt = enc.Hex.parse(message.substring(2, 34));
-        const iv = enc.Hex.parse(message.substring(34, 66));
-        const encrypted = message.substring(66);
-
-        const key = PBKDF2(
-            this.encryptionEnhance(passphrase ?? this.passphrase, timestamp),
-            salt,
-            {
-                keySize: 8, // 256 / 32
-                hasher: algo.SHA256,
-                iterations: 1000 * iterations
-            }
+        const message = messageEncrypted.substring(pos + 1);
+        passphrase = this.encryptionEnhance(
+            passphrase ?? this.passphrase,
+            timestamp
         );
 
-        return AES.decrypt(encrypted, key, {
-            iv,
-            padding: pad.Pkcs7,
-            mode: mode.CBC
-        }).toString(enc.Utf8);
+        return this.decrypt(message, passphrase);
     }
 
     /**
@@ -923,25 +954,16 @@ export abstract class CoreApp<
         // Default 1 * 1000
         iterations ??= 1;
 
-        // Timestamp
-        const timestamp = Utils.numberToChars(new Date().getTime());
-
         const bits = 16; // 128 / 8
         const salt = lib.WordArray.random(bits);
-        const key = PBKDF2(
-            this.encryptionEnhance(passphrase ?? this.passphrase, timestamp),
-            salt,
-            {
-                keySize: 8, // 256 / 32
-                hasher: algo.SHA256,
-                iterations: 1000 * iterations
-            }
-        );
+        const key = PBKDF2(passphrase ?? this.passphrase, salt, {
+            keySize: 8, // 256 / 32
+            hasher: algo.SHA256,
+            iterations: 1000 * iterations
+        });
         const iv = lib.WordArray.random(bits);
 
         return (
-            timestamp +
-            '+' +
             iterations.toString().padStart(2, '0') +
             salt.toString(enc.Hex) +
             iv.toString(enc.Hex) +
@@ -951,6 +973,25 @@ export abstract class CoreApp<
                 mode: mode.CBC
             }).toString() // enc.Base64
         );
+    }
+
+    /**
+     * Enhanced encrypt message
+     * @param message Message
+     * @param passphrase Secret passphrase
+     * @param iterations Iterations, 1000 times, 1 - 99
+     * @returns Result
+     */
+    encryptEnhanced(message: string, passphrase?: string, iterations?: number) {
+        // Timestamp
+        const timestamp = Utils.numberToChars(new Date().getTime());
+
+        passphrase = this.encryptionEnhance(
+            passphrase ?? this.passphrase,
+            timestamp
+        );
+
+        return timestamp + '+' + this.encrypt(message, passphrase, iterations);
     }
 
     /**
