@@ -876,8 +876,10 @@ export abstract class CoreApp<
         durationSeconds?: number
     ) {
         // Timestamp splitter
-        const pos = messageEncrypted.indexOf('+');
-        if (pos === -1 || messageEncrypted.length <= 66) return undefined;
+        const pos = messageEncrypted.indexOf('!');
+
+        // Miliseconds chars are longer than 8
+        if (pos < 8 || messageEncrypted.length <= 66) return undefined;
 
         const timestamp = messageEncrypted.substring(0, pos);
 
@@ -991,7 +993,7 @@ export abstract class CoreApp<
             timestamp
         );
 
-        return timestamp + '+' + this.encrypt(message, passphrase, iterations);
+        return timestamp + '!' + this.encrypt(message, passphrase, iterations);
     }
 
     /**
