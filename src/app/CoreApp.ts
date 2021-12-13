@@ -162,9 +162,8 @@ export interface ICoreApp<
      * Authorize
      * @param token New token
      * @param refreshToken Refresh token
-     * @param keep Keep in local storage or not
      */
-    authorize(token?: string, refreshToken?: string, keep?: boolean): void;
+    authorize(token?: string, refreshToken?: string): void;
 
     /**
      * Change country or region
@@ -177,6 +176,11 @@ export interface ICoreApp<
      * @param culture New culture definition
      */
     changeCulture(culture: DataTypes.CultureDefinition): void;
+
+    /**
+     * Clear cached token
+     */
+    clearCacheToken(): void;
 
     /**
      * Decrypt message
@@ -407,9 +411,8 @@ export interface ICoreApp<
      * User login
      * @param user User data
      * @param refreshToken Refresh token
-     * @param keep Keep in local storage or not
      */
-    userLogin(user: IUserData, refreshToken: string, keep?: boolean): void;
+    userLogin(user: IUserData, refreshToken: string): void;
 
     /**
      * User logout
@@ -714,17 +717,27 @@ export abstract class CoreApp<
                     field,
                     ''
                 );
-                if (currentValue === '' || currentValue.indexOf('+') === -1)
-                    continue;
+                if (currentValue === '') continue;
 
-                const newValueSource = this.decryptEnhanced(
-                    currentValue,
-                    prev,
-                    12
-                );
-                if (newValueSource == null) continue;
+                const enhanced = currentValue.indexOf('!') >= 8;
+                let newValueSource = null;
 
-                const newValue = this.encryptEnhanced(newValueSource);
+                if (enhanced) {
+                    newValueSource = this.decryptEnhanced(
+                        currentValue,
+                        prev,
+                        12
+                    );
+                } else {
+                    newValueSource = this.decrypt(currentValue, prev);
+                }
+
+                if (newValueSource == null || newValueSource === '') continue;
+
+                const newValue = enhanced
+                    ? this.encryptEnhanced(newValueSource)
+                    : this.encrypt(newValueSource);
+
                 StorageUtils.setLocalData(field, newValue);
             }
         }
@@ -735,7 +748,7 @@ export abstract class CoreApp<
      * @returns Fields
      */
     protected initCallUpdateFields(): string[] {
-        return [];
+        return [this.headerTokenField];
     }
 
     /**
@@ -751,9 +764,8 @@ export abstract class CoreApp<
      * Authorize
      * @param token New token
      * @param refreshToken Refresh token
-     * @param keep Keep in local storage or not
      */
-    authorize(token?: string, refreshToken?: string, keep?: boolean) {
+    authorize(token?: string, refreshToken?: string) {
         // State, when token is null, means logout
         this.authorized = token != null;
 
@@ -761,17 +773,10 @@ export abstract class CoreApp<
         this.api.authorize(this.settings.authScheme, token);
 
         // Cover the current value
-        if (keep != null) {
-            StorageUtils.setLocalData(
-                this.headerTokenField,
-                keep ? refreshToken : undefined
-            );
-            StorageUtils.setSessionData(
-                this.headerTokenField,
-                keep ? undefined : refreshToken
-            );
+        if (refreshToken !== '') {
+            if (refreshToken != null) refreshToken = this.encrypt(refreshToken);
+            StorageUtils.setLocalData(this.headerTokenField, refreshToken);
         }
-
         // Reset tryLogin state
         this._isTryingLogin = false;
 
@@ -850,6 +855,13 @@ export abstract class CoreApp<
     }
 
     /**
+     * Clear cached token
+     */
+    clearCacheToken() {
+        StorageUtils.setLocalData(this.headerTokenField, null);
+    }
+
+    /**
      * Decrypt message
      * @param messageEncrypted Encrypted message
      * @param passphrase Secret passphrase
@@ -870,14 +882,11 @@ export abstract class CoreApp<
             iterations: 1000 * iterations
         });
 
-        const bytes = AES.decrypt(encrypted, key, {
+        return AES.decrypt(encrypted, key, {
             iv,
             padding: pad.Pkcs7,
             mode: mode.CBC
-        });
-        if (bytes.words.length == 0) return undefined;
-
-        return bytes.toString(enc.Utf8);
+        }).toString(enc.Utf8);
     }
 
     /**
@@ -1153,19 +1162,16 @@ export abstract class CoreApp<
      * @returns Cached token
      */
     getCacheToken(): string | null {
-        let refreshToken = StorageUtils.getLocalData<string>(
+        const refreshToken = StorageUtils.getLocalData<string>(
             this.headerTokenField,
             ''
         );
-        if (refreshToken === '')
-            refreshToken = StorageUtils.getSessionData(
-                this.headerTokenField,
-                ''
-            );
 
         if (refreshToken === '') return null;
 
-        return refreshToken;
+        const result = this.decrypt(refreshToken);
+        if (result == undefined) return null;
+        return result;
     }
 
     /**
@@ -1385,11 +1391,10 @@ export abstract class CoreApp<
      * User login
      * @param user User data
      * @param refreshToken Refresh token
-     * @param keep Keep in local storage or not
      */
-    userLogin(user: IUserData, refreshToken: string, keep: boolean = false) {
+    userLogin(user: IUserData, refreshToken: string) {
         this.userData = user;
-        this.authorize(user.token, refreshToken, keep);
+        this.authorize(user.token, refreshToken);
     }
 
     /**
@@ -1397,14 +1402,14 @@ export abstract class CoreApp<
      * @param clearToken Clear refresh token or not
      */
     userLogout(clearToken: boolean = true) {
-        this.authorize(undefined, undefined, clearToken ? false : undefined);
+        this.authorize(undefined, clearToken ? undefined : '');
     }
 
     /**
      * User unauthorized
      */
     userUnauthorized() {
-        this.authorize(undefined, undefined, undefined);
+        this.authorize(undefined, undefined);
     }
 
     private lastWarning?: INotification<N, C>;
