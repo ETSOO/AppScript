@@ -411,8 +411,9 @@ export interface ICoreApp<
      * User login
      * @param user User data
      * @param refreshToken Refresh token
+     * @param keep Keep login or not
      */
-    userLogin(user: IUserData, refreshToken: string): void;
+    userLogin(user: IUserData, refreshToken: string, keep?: boolean): void;
 
     /**
      * User logout
@@ -560,6 +561,8 @@ export abstract class CoreApp<
      * Passphrase for encryption
      */
     protected passphrase: string = '***';
+
+    private cachedRefreshToken?: string;
 
     /**
      * Protected constructor
@@ -777,12 +780,16 @@ export abstract class CoreApp<
             if (refreshToken != null) refreshToken = this.encrypt(refreshToken);
             StorageUtils.setLocalData(this.headerTokenField, refreshToken);
         }
+
         // Reset tryLogin state
         this._isTryingLogin = false;
 
         // Token countdown
         if (this.authorized) this.refreshCountdown(this.userData!.seconds);
-        else this.refreshCountdownClear();
+        else {
+            this.cachedRefreshToken = undefined;
+            this.refreshCountdownClear();
+        }
     }
 
     /**
@@ -858,7 +865,8 @@ export abstract class CoreApp<
      * Clear cached token
      */
     clearCacheToken() {
-        StorageUtils.setLocalData(this.headerTokenField, null);
+        this.cachedRefreshToken = undefined;
+        StorageUtils.setLocalData(this.headerTokenField, undefined);
     }
 
     /**
@@ -1162,6 +1170,9 @@ export abstract class CoreApp<
      * @returns Cached token
      */
     getCacheToken(): string | null {
+        // Temp refresh token
+        if (this.cachedRefreshToken) return this.cachedRefreshToken;
+
         const refreshToken = StorageUtils.getLocalData<string>(
             this.headerTokenField,
             ''
@@ -1391,10 +1402,17 @@ export abstract class CoreApp<
      * User login
      * @param user User data
      * @param refreshToken Refresh token
+     * @param keep Keep login or not
      */
-    userLogin(user: IUserData, refreshToken: string) {
+    userLogin(user: IUserData, refreshToken: string, keep?: boolean) {
         this.userData = user;
-        this.authorize(user.token, refreshToken);
+
+        if (keep) {
+            this.authorize(user.token, refreshToken);
+        } else {
+            this.cachedRefreshToken = refreshToken;
+            this.authorize(user.token, undefined);
+        }
     }
 
     /**
