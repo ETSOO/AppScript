@@ -870,11 +870,14 @@ export abstract class CoreApp<
             iterations: 1000 * iterations
         });
 
-        return AES.decrypt(encrypted, key, {
+        const bytes = AES.decrypt(encrypted, key, {
             iv,
             padding: pad.Pkcs7,
             mode: mode.CBC
-        }).toString(enc.Utf8);
+        });
+        if (bytes.words.length == 0) return undefined;
+
+        return bytes.toString(enc.Utf8);
     }
 
     /**
