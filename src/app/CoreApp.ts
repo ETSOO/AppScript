@@ -1375,7 +1375,7 @@ export abstract class CoreApp<
         if (home === '') return url;
 
         // From relative root, like home:/react/, url: /about => /react/about
-        if (url.startsWith('/')) return home + url.substr(1);
+        if (url.startsWith('/')) return home + url.substring(1);
 
         const pathname = window.location.pathname;
 

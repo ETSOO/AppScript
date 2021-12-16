@@ -43,4 +43,9 @@ export interface IUser extends IUserData, IState {
      * Authorized or not
      */
     authorized: boolean;
+
+    /**
+     * Last update changed fields
+     */
+    lastChangedFields?: string[];
 }
