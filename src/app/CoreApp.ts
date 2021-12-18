@@ -1180,9 +1180,7 @@ export abstract class CoreApp<
 
         if (refreshToken === '') return null;
 
-        const result = this.decrypt(refreshToken);
-        if (result == undefined) return null;
-        return result;
+        return refreshToken;
     }
 
     /**
