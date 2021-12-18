@@ -558,6 +558,11 @@ export abstract class CoreApp<
     protected deviceIdField: string = 'SmartERPDeviceId';
 
     /**
+     * Init call Api URL
+     */
+    protected initCallApi: string = 'Auth/WebInitCall';
+
+    /**
      * Passphrase for encryption
      */
     protected passphrase: string = '***';
@@ -632,6 +637,15 @@ export abstract class CoreApp<
     }
 
     /**
+     * Api init call
+     * @param data Data
+     * @returns Result
+     */
+    protected async apiInitCall(data: InitCallDto) {
+        return await this.api.put<InitCallResult>(this.initCallApi, data);
+    }
+
+    /**
      * Init call
      * @param callback Callback
      * @returns Result
@@ -641,10 +655,7 @@ export abstract class CoreApp<
             timestamp: new Date().getTime(),
             deviceId: this.deviceId === '' ? undefined : this.deviceId
         };
-        const result = await this.api.put<InitCallResult>(
-            'Auth/WebInitCall',
-            data
-        );
+        const result = await this.apiInitCall(data);
         if (result == null) {
             if (callback) callback(false);
             return;
