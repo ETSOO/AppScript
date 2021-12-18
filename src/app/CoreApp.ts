@@ -61,7 +61,7 @@ export interface RefreshTokenProps<D extends {}> {
     /**
      * Callback
      */
-    callback?: (result: RefreshTokenResult) => void;
+    callback?: (result: RefreshTokenResult, successData?: string) => void;
 
     /**
      * Data to pass
@@ -1321,7 +1321,7 @@ export abstract class CoreApp<
      * @param props Props
      */
     async refreshToken<D extends {} = {}>(props?: RefreshTokenProps<D>) {
-        if (props && props.callback) props.callback(true);
+        if (props && props.callback) props.callback(true, undefined);
         return true;
     }
 
