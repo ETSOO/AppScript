@@ -36,6 +36,11 @@ export interface IUserData {
 }
 
 /**
+ * User data property keys
+ */
+export type UserKey = keyof IUserData;
+
+/**
  * User interface
  */
 export interface IUser extends IUserData, IState {
@@ -47,5 +52,5 @@ export interface IUser extends IUserData, IState {
     /**
      * Last update changed fields
      */
-    lastChangedFields?: string[];
+    lastChangedFields?: UserKey[];
 }

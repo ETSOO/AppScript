@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.1.79",
+    "version": "1.1.80",
     "description": "Applications shared TypeScript framework",
     "main": "lib/cjs/index.js",
     "module": "lib/mjs/index.js",
@@ -54,7 +54,7 @@
     "dependencies": {
         "@etsoo/notificationbase": "^1.0.94",
         "@etsoo/restclient": "^1.0.62",
-        "@etsoo/shared": "^1.0.76",
+        "@etsoo/shared": "^1.0.78",
         "@types/crypto-js": "^4.0.2",
         "crypto-js": "^4.1.1"
     },
@@ -67,7 +67,7 @@
         "@types/jest": "^27.0.3",
         "@typescript-eslint/eslint-plugin": "^5.7.0",
         "@typescript-eslint/parser": "^5.7.0",
-        "eslint": "^8.4.1",
+        "eslint": "^8.5.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-plugin-import": "^2.25.3",
         "jest": "^27.4.5",
