@@ -3,29 +3,29 @@
  */
 export interface IExternalSettings {
     /**
-     * API endpoint
+     * Core system API endpoint
      */
     readonly endpoint: string;
 
     /**
-     * App root url
+     * Core system app root url
      */
     readonly homepage: string;
 
     /**
-     * Cloud web url
+     * Core system web url
      */
     readonly webUrl: string;
 
     /**
-     * Core system Url
+     * Service API endpoint
      */
-    readonly coreUrl?: string;
+    readonly serviceEndpoint?: string;
 
     /**
-     * Core system API
+     * Service web Url
      */
-    readonly coreApi?: string;
+    readonly serviceUrl?: string;
 }
 
 /**
