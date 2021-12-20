@@ -129,6 +129,18 @@ test('Tests for encrypt / decrypt', () => {
     expect(plain).toEqual(input);
 });
 
+test('Tests for encryptEnhanced / decryptEnhanced', () => {
+    // Arrange
+    const input = 'Hello, world!';
+    const passphrase = 'My password';
+
+    // Act
+    const encrypted = app.encryptEnhanced(input, passphrase);
+    console.log(encrypted);
+    const plain = app.decryptEnhanced(encrypted, passphrase);
+    expect(plain).toEqual(input);
+});
+
 test('Tests for initCallUpdateLocal', () => {
     // Act
     const passphrase = app.initCallUpdateLocal(

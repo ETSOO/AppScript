@@ -28,6 +28,7 @@ import {
 } from 'crypto-js';
 import { AddressRegion } from '../address/AddressRegion';
 import { AddressUtils } from '../address/AddressUtils';
+import { IdLabelDto } from '../dto/IdLabelDto';
 import { InitCallDto } from '../dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
 import { IActionResult } from '../result/IActionResult';
@@ -381,6 +382,17 @@ export interface ICoreApp<
      * @param apiUrl Signout API URL
      */
     signout(apiUrl?: string): Promise<void>;
+
+    /**
+     * Get organization list
+     * @param items Max items
+     * @param serviceId Service id
+     * @returns Result
+     */
+    orgList(
+        items?: number,
+        serviceId?: number
+    ): Promise<IdLabelDto[] | undefined>;
 
     /**
      * Switch organization
@@ -1351,14 +1363,28 @@ export abstract class CoreApp<
     }
 
     /**
-     * Switch organization
-     * @param apiOrOrg API URL or organization id
+     * Get organization list
+     * @param items Max items
+     * @param serviceId Service id
+     * @returns Result
      */
-    async switchOrg(apiOrOrg: string | number) {
-        const api =
-            typeof apiOrOrg === 'number'
-                ? `Organization/Switch/${apiOrOrg}`
-                : apiOrOrg;
+    async orgList(items?: number, serviceId?: number) {
+        return await this.api.post<IdLabelDto[]>(
+            'Organization/List',
+            {
+                items,
+                serviceId
+            },
+            { defaultValue: [], showLoading: false }
+        );
+    }
+
+    /**
+     * Switch organization
+     * @param id Organization id
+     */
+    async switchOrg(id: number) {
+        const api = `Organization/Switch/${id}`;
         const result = await this.api.put<boolean>(api);
         if (result) return await this.refreshToken();
         return result;
