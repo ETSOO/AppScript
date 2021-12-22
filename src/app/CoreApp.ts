@@ -179,6 +179,11 @@ export interface ICoreApp<
     changeCulture(culture: DataTypes.CultureDefinition): void;
 
     /**
+     * Clear cache data
+     */
+    clearCacheData(): void;
+
+    /**
      * Clear cached token
      */
     clearCacheToken(): void;
@@ -791,11 +796,8 @@ export abstract class CoreApp<
             // Update
             const fields = this.initCallUpdateFields();
             for (const field of fields) {
-                const currentValue = StorageUtils.getLocalData<string>(
-                    field,
-                    ''
-                );
-                if (currentValue === '') continue;
+                const currentValue = StorageUtils.getLocalData<string>(field);
+                if (currentValue == null || currentValue === '') continue;
 
                 const enhanced = currentValue.indexOf('!') >= 8;
                 let newValueSource = null;
@@ -934,6 +936,18 @@ export abstract class CoreApp<
                     this.labelDelegate
                 );
         });
+    }
+
+    /**
+     * Clear cache data
+     */
+    clearCacheData() {
+        StorageUtils.setLocalData(this.serversideDeviceIdField, undefined);
+
+        StorageUtils.setLocalData(this.deviceIdField, undefined);
+        StorageUtils.setLocalData(this.deviceIdUpdateTimeField, undefined);
+
+        StorageUtils.setLocalData(this.headerTokenField, undefined);
     }
 
     /**
