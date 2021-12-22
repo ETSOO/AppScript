@@ -8,6 +8,11 @@ export type InitCallDto = {
     deviceId?: string;
 
     /**
+     * Serverside identifier
+     */
+    identifier?: string;
+
+    /**
      * Timestamp
      */
     timestamp: number;

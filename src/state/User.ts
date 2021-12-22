@@ -5,6 +5,11 @@ import { IState } from './State';
  */
 export interface IUserData {
     /**
+     * Serverside device id encrypted
+     */
+    readonly deviceId: string;
+
+    /**
      * User name
      */
     readonly name: string;

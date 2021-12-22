@@ -313,7 +313,7 @@ export interface ICoreApp<
      * Get cached token
      * @returns Cached token
      */
-    getCacheToken(): string | null;
+    getCacheToken(): string | undefined;
 
     /**
      * Get all regions
@@ -499,7 +499,7 @@ export abstract class CoreApp<
         return this._region;
     }
 
-    private _deviceId: string = '***';
+    private _deviceId: string = '';
     /**
      * Country or region, like CN
      */
@@ -517,20 +517,37 @@ export abstract class CoreApp<
         return this.get.bind(this);
     }
 
+    private _ipData?: IPData;
     /**
      * IP data
      */
-    ipData?: IPData;
+    get ipData() {
+        return this._ipData;
+    }
+    protected set ipData(value: IPData | undefined) {
+        this._ipData = value;
+    }
 
+    private _userData?: IUserData;
     /**
      * User data
      */
-    userData?: IUserData;
+    get userData() {
+        return this._userData;
+    }
+    protected set userData(value: IUserData | undefined) {
+        this._userData = value;
+    }
 
     /**
      * Response token header field name
      */
-    headerTokenField = 'SmartERPRefreshToken';
+    readonly headerTokenField = 'SmartERPRefreshToken';
+
+    /**
+     * Serverside device id encrypted field name
+     */
+    protected readonly serversideDeviceIdField = 'SmartERPServersideDeviceId';
 
     // IP detect ready callbacks
     private ipDetectCallbacks?: IDetectIPCallback[];
@@ -567,7 +584,13 @@ export abstract class CoreApp<
     /**
      * Device id field name
      */
-    protected deviceIdField: string = 'SmartERPDeviceId';
+    protected readonly deviceIdField: string = 'SmartERPDeviceId';
+
+    /**
+     * Device id update time field name
+     */
+    protected readonly deviceIdUpdateTimeField: string =
+        'SmartERPDeviceIdUpdateTime';
 
     /**
      * Init call Api URL
@@ -658,14 +681,42 @@ export abstract class CoreApp<
     }
 
     /**
+     * Get device last updte miliseconds
+     * @returns Miliseconds
+     */
+    protected getDeviceUpdateTime() {
+        return StorageUtils.getLocalData(this.deviceIdUpdateTimeField, 0);
+    }
+
+    /**
      * Init call
      * @param callback Callback
      * @returns Result
      */
     async initCall(callback?: (result: boolean) => void) {
+        // Device
+        let hasDeviceId = this.deviceId != null && this.deviceId !== '';
+        const timestamp = new Date().getTime();
+        const lastTimestamp = this.getDeviceUpdateTime();
+        if (
+            hasDeviceId &&
+            lastTimestamp > 0 &&
+            timestamp - lastTimestamp <= 1296000000
+        ) {
+            // When deviceId is there and less than 15 days = 1000 * 60 * 60 * 24 * 15
+            if (callback) callback(true);
+            return;
+        }
+
+        // Serverside encrypted device id
+        const identifier = StorageUtils.getLocalData<string>(
+            this.serversideDeviceIdField
+        );
+
         const data: InitCallDto = {
-            timestamp: new Date().getTime(),
-            deviceId: this.deviceId === '' ? undefined : this.deviceId
+            timestamp,
+            identifier,
+            deviceId: hasDeviceId ? this.deviceId : undefined
         };
         const result = await this.apiInitCall(data);
         if (result == null) {
@@ -725,6 +776,7 @@ export abstract class CoreApp<
         // Update device id and cache it
         this.deviceId = data.deviceId;
         StorageUtils.setLocalData(this.deviceIdField, this.deviceId);
+        StorageUtils.setLocalData(this.deviceIdUpdateTimeField, timestamp);
 
         // Current passphrase
         this.passphrase = passphrase;
@@ -1192,18 +1244,10 @@ export abstract class CoreApp<
      * Get cached token
      * @returns Cached token
      */
-    getCacheToken(): string | null {
+    getCacheToken(): string | undefined {
         // Temp refresh token
         if (this.cachedRefreshToken) return this.cachedRefreshToken;
-
-        const refreshToken = StorageUtils.getLocalData<string>(
-            this.headerTokenField,
-            ''
-        );
-
-        if (refreshToken === '') return null;
-
-        return refreshToken;
+        return StorageUtils.getLocalData<string>(this.headerTokenField);
     }
 
     /**
@@ -1441,6 +1485,9 @@ export abstract class CoreApp<
      */
     userLogin(user: IUserData, refreshToken: string, keep?: boolean) {
         this.userData = user;
+
+        // Cache the encrypted serverside device id
+        StorageUtils.setLocalData(this.serversideDeviceIdField, user.deviceId);
 
         if (keep) {
             this.authorize(user.token, refreshToken);

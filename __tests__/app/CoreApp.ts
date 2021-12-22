@@ -136,7 +136,6 @@ test('Tests for encryptEnhanced / decryptEnhanced', () => {
 
     // Act
     const encrypted = app.encryptEnhanced(input, passphrase);
-    console.log(encrypted);
     const plain = app.decryptEnhanced(encrypted, passphrase);
     expect(plain).toEqual(input);
 });
