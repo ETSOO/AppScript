@@ -384,9 +384,8 @@ export interface ICoreApp<
 
     /**
      * Signout
-     * @param apiUrl Signout API URL
      */
-    signout(apiUrl?: string): Promise<void>;
+    signout(): Promise<void>;
 
     /**
      * Get organization list
@@ -1435,14 +1434,18 @@ export abstract class CoreApp<
      * Signout
      * @param apiUrl Signout API URL
      */
-    async signout(apiUrl?: string) {
-        await this.api.put<boolean>(apiUrl ?? 'User/Signout', undefined, {
-            onError: (error) => {
-                console.log(error);
-                // Prevent further processing
-                return false;
+    async signout() {
+        await this.api.put<boolean>(
+            'User/Signout',
+            { deviceId: this.deviceId },
+            {
+                onError: (error) => {
+                    console.log(error);
+                    // Prevent further processing
+                    return false;
+                }
             }
-        });
+        );
 
         // Clear
         this.userLogout();
