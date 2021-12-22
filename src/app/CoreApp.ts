@@ -589,12 +589,17 @@ export abstract class CoreApp<
     /**
      * Device id field name
      */
-    protected readonly deviceIdField: string = 'SmartERPDeviceId';
+    private readonly deviceIdField: string = 'SmartERPDeviceId';
+
+    /**
+     * Device passphrase field name
+     */
+    private readonly devicePassphraseField: string = 'SmartERPDevicePassphrase';
 
     /**
      * Device id update time field name
      */
-    protected readonly deviceIdUpdateTimeField: string =
+    private readonly deviceIdUpdateTimeField: string =
         'SmartERPDeviceIdUpdateTime';
 
     /**
@@ -627,10 +632,7 @@ export abstract class CoreApp<
         this.notifier = notifier;
         this.name = name;
 
-        this.deviceId = StorageUtils.getLocalData<string>(
-            this.deviceIdField,
-            ''
-        );
+        this.deviceId = this.setupDevice();
 
         this.setApi(api);
 
@@ -674,6 +676,33 @@ export abstract class CoreApp<
                 this.notifier.alert(this.formatError(error));
             }
         };
+    }
+
+    /**
+     * Setup device
+     * @returns Device id
+     */
+    protected setupDevice() {
+        const deviceId = StorageUtils.getLocalData<string>(this.deviceIdField);
+
+        if (deviceId != null && deviceId !== '') {
+            const passphraseEncrypted = StorageUtils.getLocalData<string>(
+                this.devicePassphraseField
+            );
+            if (passphraseEncrypted != null && passphraseEncrypted !== '') {
+                const timestamp = this.getDeviceUpdateTime();
+                if (timestamp > 0) {
+                    const passphraseDecrypted = this.decrypt(
+                        passphraseEncrypted,
+                        timestamp.toString()
+                    );
+                    if (passphraseDecrypted != null)
+                        this.passphrase = passphraseDecrypted;
+                }
+            }
+        }
+
+        return deviceId ?? '';
     }
 
     /**
@@ -781,6 +810,7 @@ export abstract class CoreApp<
         // Update device id and cache it
         this.deviceId = data.deviceId;
         StorageUtils.setLocalData(this.deviceIdField, this.deviceId);
+        StorageUtils.setLocalData(this.devicePassphraseField, data.passphrase);
         StorageUtils.setLocalData(this.deviceIdUpdateTimeField, timestamp);
 
         // Current passphrase
@@ -945,6 +975,7 @@ export abstract class CoreApp<
         StorageUtils.setLocalData(this.serversideDeviceIdField, undefined);
 
         StorageUtils.setLocalData(this.deviceIdField, undefined);
+        StorageUtils.setLocalData(this.devicePassphraseField, undefined);
         StorageUtils.setLocalData(this.deviceIdUpdateTimeField, undefined);
 
         StorageUtils.setLocalData(this.headerTokenField, undefined);
@@ -1506,7 +1537,7 @@ export abstract class CoreApp<
         if (keep) {
             this.authorize(user.token, refreshToken);
         } else {
-            this.cachedRefreshToken = refreshToken;
+            this.cachedRefreshToken = this.encrypt(refreshToken);
             this.authorize(user.token, undefined);
         }
     }
