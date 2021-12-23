@@ -400,9 +400,10 @@ export interface ICoreApp<
 
     /**
      * Switch organization
-     * @param apiOrOrg API URL or organization id
+     * @param id Organization id
+     * @param serviceId Service id
      */
-    switchOrg(apiOrOrg: string | number): Promise<boolean | undefined>;
+    switchOrg(id: number, serviceId?: number): Promise<boolean | undefined>;
 
     /**
      * Go to the login page
@@ -1474,10 +1475,11 @@ export abstract class CoreApp<
     /**
      * Switch organization
      * @param id Organization id
+     * @param serviceId Service id
      */
-    async switchOrg(id: number) {
-        const api = `Organization/Switch/${id}`;
-        const result = await this.api.put<boolean>(api);
+    async switchOrg(id: number, serviceId?: number) {
+        const api = `Organization/Switch`;
+        const result = await this.api.put<boolean>(api, { id, serviceId });
         if (result) return await this.refreshToken();
         return result;
     }
