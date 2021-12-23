@@ -1479,7 +1479,11 @@ export abstract class CoreApp<
      */
     async switchOrg(id: number, serviceId?: number) {
         const api = `Organization/Switch`;
-        const result = await this.api.put<boolean>(api, { id, serviceId });
+        const result = await this.api.put<boolean>(api, {
+            id,
+            serviceId,
+            deviceId: this.deviceId
+        });
         if (result) return await this.refreshToken();
         return result;
     }
