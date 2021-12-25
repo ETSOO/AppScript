@@ -551,16 +551,6 @@ export abstract class CoreApp<
         this._userData = value;
     }
 
-    /**
-     * Response token header field name
-     */
-    readonly headerTokenField = 'SmartERPRefreshToken';
-
-    /**
-     * Serverside device id encrypted field name
-     */
-    protected readonly serversideDeviceIdField = 'SmartERPServersideDeviceId';
-
     // IP detect ready callbacks
     private ipDetectCallbacks?: IDetectIPCallback[];
 
@@ -592,16 +582,6 @@ export abstract class CoreApp<
      * Token refresh count down seed
      */
     protected refreshCountdownSeed = 0;
-
-    /**
-     * Device id field name
-     */
-    protected readonly deviceIdField: string = 'SmartERPDeviceId';
-
-    /**
-     * Device passphrase field name
-     */
-    private readonly devicePassphraseField: string = 'SmartERPDevicePassphrase';
 
     /**
      * Init call Api URL
@@ -637,7 +617,7 @@ export abstract class CoreApp<
         this.name = name;
 
         // Device id
-        this._deviceId = storage.getData<string>(this.deviceIdField) ?? '';
+        this._deviceId = storage.getData<string>(CoreApp.deviceIdField) ?? '';
 
         this.setApi(api);
 
@@ -701,7 +681,7 @@ export abstract class CoreApp<
         // Passphrase exists?
         // Same session should avoid multiple init calls
         const passphraseEncrypted = this.storage.getData<string>(
-            this.devicePassphraseField
+            CoreApp.devicePassphraseField
         );
         if (passphraseEncrypted) {
             const passphraseDecrypted = this.decrypt(
@@ -717,7 +697,7 @@ export abstract class CoreApp<
 
         // Serverside encrypted device id
         const identifier = this.storage.getData<string>(
-            this.serversideDeviceIdField
+            CoreApp.serversideDeviceIdField
         );
 
         // Timestamp
@@ -762,7 +742,7 @@ export abstract class CoreApp<
             if (callback) callback(false);
 
             // Clear device id
-            this.storage.setData(this.deviceIdField, undefined);
+            this.storage.setData(CoreApp.deviceIdField, undefined);
 
             return;
         }
@@ -788,12 +768,12 @@ export abstract class CoreApp<
 
         // Update device id and cache it
         this._deviceId = data.deviceId;
-        this.storage.setData(this.deviceIdField, this.deviceId);
+        this.storage.setData(CoreApp.deviceIdField, this.deviceId);
 
         // Current passphrase
         this.passphrase = passphrase;
         this.storage.setData(
-            this.devicePassphraseField,
+            CoreApp.devicePassphraseField,
             this.encrypt(passphrase, this.name)
         );
 
@@ -839,7 +819,7 @@ export abstract class CoreApp<
      * @returns Fields
      */
     protected initCallEncryptedUpdateFields(): string[] {
-        return [this.headerTokenField];
+        return [CoreApp.headerTokenField];
     }
 
     /**
@@ -866,7 +846,7 @@ export abstract class CoreApp<
         // Cover the current value
         if (refreshToken !== '') {
             if (refreshToken != null) refreshToken = this.encrypt(refreshToken);
-            this.storage.setData(this.headerTokenField, refreshToken);
+            this.storage.setData(CoreApp.headerTokenField, refreshToken);
         }
 
         // Reset tryLogin state
@@ -953,12 +933,12 @@ export abstract class CoreApp<
      * Clear cache data
      */
     clearCacheData() {
-        this.storage.setData(this.serversideDeviceIdField, undefined);
+        this.storage.setData(CoreApp.serversideDeviceIdField, undefined);
 
-        this.storage.setData(this.deviceIdField, undefined);
-        this.storage.setData(this.devicePassphraseField, undefined);
+        this.storage.setData(CoreApp.deviceIdField, undefined);
+        this.storage.setData(CoreApp.devicePassphraseField, undefined);
 
-        this.storage.setData(this.headerTokenField, undefined);
+        this.storage.setData(CoreApp.headerTokenField, undefined);
     }
 
     /**
@@ -966,7 +946,7 @@ export abstract class CoreApp<
      */
     clearCacheToken() {
         this.cachedRefreshToken = undefined;
-        this.storage.setData(this.headerTokenField, undefined);
+        this.storage.setData(CoreApp.headerTokenField, undefined);
     }
 
     /**
@@ -1272,7 +1252,7 @@ export abstract class CoreApp<
     getCacheToken(): string | undefined {
         // Temp refresh token
         if (this.cachedRefreshToken) return this.cachedRefreshToken;
-        return this.storage.getData<string>(this.headerTokenField);
+        return this.storage.getData<string>(CoreApp.headerTokenField);
     }
 
     /**
@@ -1292,7 +1272,10 @@ export abstract class CoreApp<
      */
     getResponseToken(rawResponse: any): string | null {
         const response = this.api.transformResponse(rawResponse);
-        return this.api.getHeaderValue(response.headers, this.headerTokenField);
+        return this.api.getHeaderValue(
+            response.headers,
+            CoreApp.headerTokenField
+        );
     }
 
     /**
@@ -1521,7 +1504,7 @@ export abstract class CoreApp<
         this.userData = user;
 
         // Cache the encrypted serverside device id
-        this.storage.setData(this.serversideDeviceIdField, user.deviceId);
+        this.storage.setData(CoreApp.serversideDeviceIdField, user.deviceId);
 
         if (keep) {
             this.authorize(user.token, refreshToken);
@@ -1567,4 +1550,26 @@ export abstract class CoreApp<
             }
         );
     }
+}
+
+export namespace CoreApp {
+    /**
+     * Response token header field name
+     */
+    export const headerTokenField = 'SmartERPRefreshToken';
+
+    /**
+     * Serverside device id encrypted field name
+     */
+    export const serversideDeviceIdField = 'SmartERPServersideDeviceId';
+
+    /**
+     * Device id field name
+     */
+    export const deviceIdField = 'SmartERPDeviceId';
+
+    /**
+     * Device passphrase field name
+     */
+    export const devicePassphraseField = 'SmartERPDevicePassphrase';
 }
