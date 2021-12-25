@@ -768,7 +768,7 @@ export abstract class CoreApp<
 
         // Update device id and cache it
         this._deviceId = data.deviceId;
-        this.storage.setData(CoreApp.deviceIdField, this.deviceId);
+        this.storage.setData(CoreApp.deviceIdField, this._deviceId);
 
         // Current passphrase
         this.passphrase = passphrase;
