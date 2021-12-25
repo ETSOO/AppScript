@@ -102,7 +102,7 @@ class CoreAppTest extends CoreApp<IAppSettings, {}, NotificationCallProps> {
             },
             createClient(),
             container,
-            new WindowStorage([]),
+            new WindowStorage([], (_field, data, _index) => data),
             'SmartERP'
         );
     }
