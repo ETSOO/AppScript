@@ -11,8 +11,8 @@ import {
     DataTypes,
     DateUtils,
     DomUtils,
+    IStorage,
     NumberUtils,
-    StorageUtils,
     Utils
 } from '@etsoo/shared';
 import {
@@ -127,6 +127,11 @@ export interface ICoreApp<
      * Country or region, like CN
      */
     readonly region: string;
+
+    /**
+     * Storage
+     */
+    readonly storage: IStorage;
 
     /**
      * Is current authorized
@@ -480,6 +485,11 @@ export abstract class CoreApp<
      */
     readonly notifier: INotifier<N, C>;
 
+    /**
+     * Storage
+     */
+    readonly storage: IStorage;
+
     private _culture!: string;
     /**
      * Culture, like zh-CN
@@ -504,15 +514,12 @@ export abstract class CoreApp<
         return this._region;
     }
 
-    private _deviceId: string = '';
+    private _deviceId: string;
     /**
      * Country or region, like CN
      */
     get deviceId() {
         return this._deviceId;
-    }
-    protected set deviceId(value: string) {
-        this._deviceId = value;
     }
 
     /**
@@ -589,18 +596,12 @@ export abstract class CoreApp<
     /**
      * Device id field name
      */
-    private readonly deviceIdField: string = 'SmartERPDeviceId';
+    protected readonly deviceIdField: string = 'SmartERPDeviceId';
 
     /**
      * Device passphrase field name
      */
     private readonly devicePassphraseField: string = 'SmartERPDevicePassphrase';
-
-    /**
-     * Device id update time field name
-     */
-    private readonly deviceIdUpdateTimeField: string =
-        'SmartERPDeviceIdUpdateTime';
 
     /**
      * Init call Api URL
@@ -619,20 +620,24 @@ export abstract class CoreApp<
      * @param settings Settings
      * @param api API
      * @param notifier Notifier
+     * @param storage Storage
      * @param name Application name
      */
     protected constructor(
         settings: S,
         api: IApi,
         notifier: INotifier<N, C>,
+        storage: IStorage,
         name: string
     ) {
         this.settings = settings;
         this.api = api;
         this.notifier = notifier;
+        this.storage = storage;
         this.name = name;
 
-        this.deviceId = this.setupDevice();
+        // Device id
+        this._deviceId = storage.getData<string>(this.deviceIdField) ?? '';
 
         this.setApi(api);
 
@@ -679,33 +684,6 @@ export abstract class CoreApp<
     }
 
     /**
-     * Setup device
-     * @returns Device id
-     */
-    protected setupDevice() {
-        const deviceId = StorageUtils.getLocalData<string>(this.deviceIdField);
-
-        if (deviceId != null && deviceId !== '') {
-            const passphraseEncrypted = StorageUtils.getLocalData<string>(
-                this.devicePassphraseField
-            );
-            if (passphraseEncrypted != null && passphraseEncrypted !== '') {
-                const timestamp = this.getDeviceUpdateTime();
-                if (timestamp > 0) {
-                    const passphraseDecrypted = this.decrypt(
-                        passphraseEncrypted,
-                        timestamp.toString()
-                    );
-                    if (passphraseDecrypted != null)
-                        this.passphrase = passphraseDecrypted;
-                }
-            }
-        }
-
-        return deviceId ?? '';
-    }
-
-    /**
      * Api init call
      * @param data Data
      * @returns Result
@@ -715,43 +693,43 @@ export abstract class CoreApp<
     }
 
     /**
-     * Get device last updte miliseconds
-     * @returns Miliseconds
-     */
-    protected getDeviceUpdateTime() {
-        return StorageUtils.getLocalData(this.deviceIdUpdateTimeField, 0);
-    }
-
-    /**
      * Init call
      * @param callback Callback
      * @returns Result
      */
     async initCall(callback?: (result: boolean) => void) {
-        // Device
-        let hasDeviceId = this.deviceId != null && this.deviceId !== '';
-        const timestamp = new Date().getTime();
-        const lastTimestamp = this.getDeviceUpdateTime();
-        if (
-            hasDeviceId &&
-            lastTimestamp > 0 &&
-            timestamp - lastTimestamp <= 1296000000
-        ) {
-            // When deviceId is there and less than 15 days = 1000 * 60 * 60 * 24 * 15
-            if (callback) callback(true);
-            return;
+        // Passphrase exists?
+        // Same session should avoid multiple init calls
+        const passphraseEncrypted = this.storage.getData<string>(
+            this.devicePassphraseField
+        );
+        if (passphraseEncrypted) {
+            const passphraseDecrypted = this.decrypt(
+                passphraseEncrypted,
+                this.name
+            );
+            if (passphraseDecrypted != null) {
+                this.passphrase = passphraseDecrypted;
+                if (callback) callback(true);
+                return;
+            }
         }
 
         // Serverside encrypted device id
-        const identifier = StorageUtils.getLocalData<string>(
+        const identifier = this.storage.getData<string>(
             this.serversideDeviceIdField
         );
 
+        // Timestamp
+        const timestamp = new Date().getTime();
+
+        // Request data
         const data: InitCallDto = {
             timestamp,
             identifier,
-            deviceId: hasDeviceId ? this.deviceId : undefined
+            deviceId: this.deviceId ? this.deviceId : undefined
         };
+
         const result = await this.apiInitCall(data);
         if (result == null) {
             if (callback) callback(false);
@@ -784,7 +762,7 @@ export abstract class CoreApp<
             if (callback) callback(false);
 
             // Clear device id
-            StorageUtils.setLocalData(this.deviceIdField, null);
+            this.storage.setData(this.deviceIdField, undefined);
 
             return;
         }
@@ -800,6 +778,7 @@ export abstract class CoreApp<
      * @param timestamp Timestamp
      */
     protected initCallUpdate(data: InitCallResultData, timestamp: number) {
+        // Data check
         if (data.deviceId == null || data.passphrase == null) return;
 
         // Decrypt
@@ -808,13 +787,15 @@ export abstract class CoreApp<
         if (passphrase == null) return;
 
         // Update device id and cache it
-        this.deviceId = data.deviceId;
-        StorageUtils.setLocalData(this.deviceIdField, this.deviceId);
-        StorageUtils.setLocalData(this.devicePassphraseField, data.passphrase);
-        StorageUtils.setLocalData(this.deviceIdUpdateTimeField, timestamp);
+        this._deviceId = data.deviceId;
+        this.storage.setData(this.deviceIdField, this.deviceId);
 
         // Current passphrase
         this.passphrase = passphrase;
+        this.storage.setData(
+            this.devicePassphraseField,
+            this.encrypt(passphrase, this.name)
+        );
 
         // Previous passphrase
         if (data.previousPassphrase) {
@@ -824,9 +805,9 @@ export abstract class CoreApp<
             );
 
             // Update
-            const fields = this.initCallUpdateFields();
+            const fields = this.initCallEncryptedUpdateFields();
             for (const field of fields) {
-                const currentValue = StorageUtils.getLocalData<string>(field);
+                const currentValue = this.storage.getData<string>(field);
                 if (currentValue == null || currentValue === '') continue;
 
                 const enhanced = currentValue.indexOf('!') >= 8;
@@ -848,16 +829,16 @@ export abstract class CoreApp<
                     ? this.encryptEnhanced(newValueSource)
                     : this.encrypt(newValueSource);
 
-                StorageUtils.setLocalData(field, newValue);
+                this.storage.setData(field, newValue);
             }
         }
     }
 
     /**
-     * Init call update fields in local storage
+     * Init call encrypted fields update
      * @returns Fields
      */
-    protected initCallUpdateFields(): string[] {
+    protected initCallEncryptedUpdateFields(): string[] {
         return [this.headerTokenField];
     }
 
@@ -885,7 +866,7 @@ export abstract class CoreApp<
         // Cover the current value
         if (refreshToken !== '') {
             if (refreshToken != null) refreshToken = this.encrypt(refreshToken);
-            StorageUtils.setLocalData(this.headerTokenField, refreshToken);
+            this.storage.setData(this.headerTokenField, refreshToken);
         }
 
         // Reset tryLogin state
@@ -972,13 +953,12 @@ export abstract class CoreApp<
      * Clear cache data
      */
     clearCacheData() {
-        StorageUtils.setLocalData(this.serversideDeviceIdField, undefined);
+        this.storage.setData(this.serversideDeviceIdField, undefined);
 
-        StorageUtils.setLocalData(this.deviceIdField, undefined);
-        StorageUtils.setLocalData(this.devicePassphraseField, undefined);
-        StorageUtils.setLocalData(this.deviceIdUpdateTimeField, undefined);
+        this.storage.setData(this.deviceIdField, undefined);
+        this.storage.setData(this.devicePassphraseField, undefined);
 
-        StorageUtils.setLocalData(this.headerTokenField, undefined);
+        this.storage.setData(this.headerTokenField, undefined);
     }
 
     /**
@@ -986,7 +966,7 @@ export abstract class CoreApp<
      */
     clearCacheToken() {
         this.cachedRefreshToken = undefined;
-        StorageUtils.setLocalData(this.headerTokenField, undefined);
+        this.storage.setData(this.headerTokenField, undefined);
     }
 
     /**
@@ -1292,7 +1272,7 @@ export abstract class CoreApp<
     getCacheToken(): string | undefined {
         // Temp refresh token
         if (this.cachedRefreshToken) return this.cachedRefreshToken;
-        return StorageUtils.getLocalData<string>(this.headerTokenField);
+        return this.storage.getData<string>(this.headerTokenField);
     }
 
     /**
@@ -1541,7 +1521,7 @@ export abstract class CoreApp<
         this.userData = user;
 
         // Cache the encrypted serverside device id
-        StorageUtils.setLocalData(this.serversideDeviceIdField, user.deviceId);
+        this.storage.setData(this.serversideDeviceIdField, user.deviceId);
 
         if (keep) {
             this.authorize(user.token, refreshToken);
