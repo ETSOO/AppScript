@@ -884,7 +884,7 @@ export abstract class CoreApp<
             return;
 
         // Save the id to local storage
-        DomUtils.saveCountry(regionId);
+        this.storage.setData(DomUtils.CountryField, regionId);
 
         // Set the currency and culture
         this._currency = regionItem.currency;
@@ -906,7 +906,7 @@ export abstract class CoreApp<
         if (this._culture === name) return;
 
         // Save the cultrue to local storage
-        DomUtils.saveCulture(name);
+        this.storage.setData(DomUtils.CultureField, name);
 
         // Change the API's Content-Language header
         // .net 5 API, UseRequestLocalization, RequestCultureProviders, ContentLanguageHeaderRequestCultureProvider
