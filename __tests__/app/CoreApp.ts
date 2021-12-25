@@ -7,7 +7,7 @@ import {
     NotificationRenderProps
 } from '@etsoo/notificationbase';
 import { ApiAuthorizationScheme, createClient } from '@etsoo/restclient';
-import { DataTypes, DomUtils, Utils } from '@etsoo/shared';
+import { DataTypes, DomUtils, Utils, WindowStorage } from '@etsoo/shared';
 import { AddressUtils } from '../../src/address/AddressUtils';
 import { IAppSettings } from '../../src/app/AppSettings';
 import { CoreApp } from '../../src/app/CoreApp';
@@ -102,6 +102,7 @@ class CoreAppTest extends CoreApp<IAppSettings, {}, NotificationCallProps> {
             },
             createClient(),
             container,
+            new WindowStorage([]),
             'SmartERP'
         );
     }
