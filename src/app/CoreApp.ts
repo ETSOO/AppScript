@@ -404,6 +404,11 @@ export interface ICoreApp<
     ): Promise<IdLabelDto[] | undefined>;
 
     /**
+     * Persist settings to source when application exit
+     */
+    persist(): void;
+
+    /**
      * Switch organization
      * @param id Organization id
      * @param serviceId Service id
@@ -591,7 +596,7 @@ export abstract class CoreApp<
     /**
      * Passphrase for encryption
      */
-    protected passphrase: string = '***';
+    protected passphrase: string = '';
 
     private cachedRefreshToken?: string;
 
@@ -616,6 +621,9 @@ export abstract class CoreApp<
         this.storage = storage;
         this.name = name;
 
+        // Restore
+        this.restore();
+
         // Device id
         this._deviceId = storage.getData(CoreApp.deviceIdField, '');
 
@@ -630,6 +638,58 @@ export abstract class CoreApp<
         this.setup();
     }
 
+    /**
+     * Restore settings from persisted source
+     */
+    protected restore() {
+        const passphraseEncrypted = this.storage.getData<string>(
+            CoreApp.devicePassphraseField
+        );
+        if (passphraseEncrypted) {
+            const passphraseDecrypted = this.decrypt(
+                passphraseEncrypted,
+                this.name
+            );
+            if (passphraseDecrypted != null) {
+                this.passphrase = passphraseDecrypted;
+                return false;
+            }
+        }
+
+        // Restore
+        this.storage.copy(
+            [
+                CoreApp.deviceIdField,
+                CoreApp.serversideDeviceIdField,
+                CoreApp.headerTokenField
+            ],
+            true
+        );
+
+        return true;
+    }
+
+    /**
+     * Persist settings to source when application exit
+     */
+    persist() {
+        this.storage.setPersistedData(CoreApp.deviceIdField, this.deviceId);
+
+        this.storage.setPersistedData(
+            CoreApp.serversideDeviceIdField,
+            this.storage.getData<string>(CoreApp.serversideDeviceIdField)
+        );
+
+        this.storage.setPersistedData(
+            CoreApp.headerTokenField,
+            this.storage.getData<string>(CoreApp.headerTokenField)
+        );
+    }
+
+    /**
+     * Setup Api
+     * @param api Api
+     */
     protected setApi(api: IApi) {
         // onRequest, show loading or not, rewrite the property to override default action
         api.onRequest = (data) => {
@@ -679,20 +739,9 @@ export abstract class CoreApp<
      */
     async initCall(callback?: (result: boolean) => void) {
         // Passphrase exists?
-        // Same session should avoid multiple init calls
-        const passphraseEncrypted = this.storage.getData<string>(
-            CoreApp.devicePassphraseField
-        );
-        if (passphraseEncrypted) {
-            const passphraseDecrypted = this.decrypt(
-                passphraseEncrypted,
-                this.name
-            );
-            if (passphraseDecrypted != null) {
-                this.passphrase = passphraseDecrypted;
-                if (callback) callback(true);
-                return;
-            }
+        if (this.passphrase) {
+            if (callback) callback(true);
+            return;
         }
 
         // Serverside encrypted device id
@@ -707,7 +756,7 @@ export abstract class CoreApp<
         const data: InitCallDto = {
             timestamp,
             identifier,
-            deviceId: this.deviceId.length > 0 ? this.deviceId : undefined
+            deviceId: this.deviceId ? this.deviceId : undefined
         };
 
         const result = await this.apiInitCall(data);
@@ -884,7 +933,7 @@ export abstract class CoreApp<
             return;
 
         // Save the id to local storage
-        this.storage.setData(DomUtils.CountryField, regionId);
+        this.storage.setPersistedData(DomUtils.CountryField, regionId);
 
         // Set the currency and culture
         this._currency = regionItem.currency;
@@ -906,7 +955,7 @@ export abstract class CoreApp<
         if (this._culture === name) return;
 
         // Save the cultrue to local storage
-        this.storage.setData(DomUtils.CultureField, name);
+        this.storage.setPersistedData(DomUtils.CultureField, name);
 
         // Change the API's Content-Language header
         // .net 5 API, UseRequestLocalization, RequestCultureProviders, ContentLanguageHeaderRequestCultureProvider
