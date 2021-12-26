@@ -654,60 +654,74 @@ export abstract class CoreApp<
         return this.deviceId.substring(0, 15);
     }
 
+    private resetKeys() {
+        this.storage.clear(
+            [
+                CoreApp.devicePassphraseField,
+                CoreApp.headerTokenField,
+                CoreApp.serversideDeviceIdField
+            ],
+            false
+        );
+        this.passphrase = '';
+    }
+
     /**
      * Restore settings from persisted source
      */
     protected restore() {
+        // Devices
+        const devices = this.storage.getPersistedData<string[]>(
+            CoreApp.devicesField,
+            []
+        );
+
         // Current device id, '' means new, or reload (not included) or duplicate (included)
-        if (this.deviceId) {
-            // Devices
-            const devices = this.storage.getPersistedData<string[]>(
-                CoreApp.devicesField,
-                []
-            );
+        if (this.deviceId === '') {
+            // First vist, restore
+            this.storage.copyFrom(this.persistedFields, true);
 
-            // Exists in the list?
+            // Reset device id
+            this._deviceId = this.storage.getData(CoreApp.deviceIdField, '');
+        } else {
             const d = this.getDeviceId();
-            if (!devices.includes(d)) {
-                const passphraseEncrypted = this.storage.getData<string>(
-                    CoreApp.devicePassphraseField
-                );
-                if (passphraseEncrypted) {
-                    const passphraseDecrypted = this.decrypt(
-                        passphraseEncrypted,
-                        this.name
-                    );
-                    if (passphraseDecrypted != null) {
-                        this.passphrase = passphraseDecrypted;
 
-                        devices.push(d);
-                        this.storage.setPersistedData(
-                            CoreApp.devicesField,
-                            devices
-                        );
-
-                        return false;
-                    }
-                }
-            } else {
+            if (devices.includes(d)) {
                 // Duplicate tab, session data copied
                 // Remove the token, deviceId, and passphrase
-                this.storage.clear(
-                    [
-                        CoreApp.devicePassphraseField,
-                        CoreApp.headerTokenField,
-                        CoreApp.serversideDeviceIdField
-                    ],
-                    false
-                );
-                this.passphrase = '';
+                this.resetKeys();
+                return false;
             }
         }
 
-        // Restore
-        this.storage.copyFrom(this.persistedFields, true);
+        const passphraseEncrypted = this.storage.getData<string>(
+            CoreApp.devicePassphraseField
+        );
+        if (passphraseEncrypted) {
+            const passphraseDecrypted = this.decrypt(
+                passphraseEncrypted,
+                this.name
+            );
+            if (passphraseDecrypted != null) {
+                this.passphrase = passphraseDecrypted;
 
-        return true;
+                const d = this.getDeviceId();
+                if (!devices.includes(d)) {
+                    devices.push(d);
+                    this.storage.setPersistedData(
+                        CoreApp.devicesField,
+                        devices
+                    );
+                }
+
+                return true;
+            }
+
+            // Failed, reset keys
+            this.resetKeys();
+        }
+
+        return false;
     }
 
     /**
