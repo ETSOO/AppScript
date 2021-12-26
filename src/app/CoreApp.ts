@@ -606,6 +606,7 @@ export abstract class CoreApp<
     protected get persistedFields() {
         return [
             CoreApp.deviceIdField,
+            CoreApp.devicePassphraseField,
             CoreApp.serversideDeviceIdField,
             CoreApp.headerTokenField
         ];
@@ -650,7 +651,7 @@ export abstract class CoreApp<
     }
 
     private getDeviceId() {
-        return this.deviceId.substring(0, 10);
+        return this.deviceId.substring(0, 15);
     }
 
     /**
@@ -661,11 +662,13 @@ export abstract class CoreApp<
         if (this.deviceId) {
             // Devices
             const devices = this.storage.getPersistedData<string[]>(
-                CoreApp.devicesField
+                CoreApp.devicesField,
+                []
             );
 
             // Exists in the list?
-            if (!devices?.includes(this.getDeviceId())) {
+            const d = this.getDeviceId();
+            if (!devices.includes(d)) {
                 const passphraseEncrypted = this.storage.getData<string>(
                     CoreApp.devicePassphraseField
                 );
@@ -676,6 +679,13 @@ export abstract class CoreApp<
                     );
                     if (passphraseDecrypted != null) {
                         this.passphrase = passphraseDecrypted;
+
+                        devices.push(d);
+                        this.storage.setPersistedData(
+                            CoreApp.devicesField,
+                            devices
+                        );
+
                         return false;
                     }
                 }
