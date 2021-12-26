@@ -663,12 +663,21 @@ export abstract class CoreApp<
             );
             if (passphraseDecrypted != null) {
                 this.passphrase = passphraseDecrypted;
+
+                // Same device
+                if (
+                    this.deviceId ===
+                    this.storage.getPersistedData<string>(CoreApp.deviceIdField)
+                ) {
+                    this.storage.clear(this.persistedFields, true);
+                }
+
                 return false;
             }
         }
 
         // Restore
-        this.storage.copy(this.persistedFields, true);
+        this.storage.copyFrom(this.persistedFields, true);
 
         return true;
     }
@@ -677,9 +686,8 @@ export abstract class CoreApp<
      * Persist settings to source when application exit
      */
     persist() {
-        this.persistedFields.forEach((field) => {
-            this.storage.setPersistedData(field, this.storage.getData(field));
-        });
+        if (!this.authorized) return;
+        this.storage.copyTo(this.persistedFields);
     }
 
     /**
