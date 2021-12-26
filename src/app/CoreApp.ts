@@ -632,11 +632,11 @@ export abstract class CoreApp<
         this.storage = storage;
         this.name = name;
 
-        // Restore
-        this.restore();
-
         // Device id
         this._deviceId = storage.getData(CoreApp.deviceIdField, '');
+
+        // Restore
+        this.restore();
 
         this.setApi(api);
 
@@ -649,30 +649,40 @@ export abstract class CoreApp<
         this.setup();
     }
 
+    private getDeviceId() {
+        return this.deviceId.substring(0, 10);
+    }
+
     /**
      * Restore settings from persisted source
      */
     protected restore() {
-        const passphraseEncrypted = this.storage.getData<string>(
-            CoreApp.devicePassphraseField
-        );
-        if (passphraseEncrypted) {
-            const passphraseDecrypted = this.decrypt(
-                passphraseEncrypted,
-                this.name
+        // Current device id, '' means new, or reload (not included) or duplicate (included)
+        if (this.deviceId) {
+            // Devices
+            const devices = this.storage.getPersistedData<string[]>(
+                CoreApp.devicesField
             );
-            if (passphraseDecrypted != null) {
-                this.passphrase = passphraseDecrypted;
 
-                // Same device
-                if (
-                    this.deviceId ===
-                    this.storage.getPersistedData<string>(CoreApp.deviceIdField)
-                ) {
-                    this.storage.clear(this.persistedFields, true);
+            // Exists in the list?
+            if (!devices?.includes(this.getDeviceId())) {
+                const passphraseEncrypted = this.storage.getData<string>(
+                    CoreApp.devicePassphraseField
+                );
+                if (passphraseEncrypted) {
+                    const passphraseDecrypted = this.decrypt(
+                        passphraseEncrypted,
+                        this.name
+                    );
+                    if (passphraseDecrypted != null) {
+                        this.passphrase = passphraseDecrypted;
+                        return false;
+                    }
                 }
-
-                return false;
+            } else {
+                // Remove passphrase
+                this.storage.setData(CoreApp.devicePassphraseField, undefined);
+                this.passphrase = '';
             }
         }
 
@@ -686,6 +696,18 @@ export abstract class CoreApp<
      * Persist settings to source when application exit
      */
     persist() {
+        // Devices
+        const devices = this.storage.getPersistedData<string[]>(
+            CoreApp.devicesField
+        );
+        if (devices != null) {
+            const index = devices.indexOf(this.getDeviceId());
+            if (index !== -1) {
+                devices.splice(index, 1);
+                this.storage.setPersistedData(CoreApp.devicesField, devices);
+            }
+        }
+
         if (!this.authorized) return;
         this.storage.copyTo(this.persistedFields);
     }
@@ -822,6 +844,14 @@ export abstract class CoreApp<
         // Update device id and cache it
         this._deviceId = data.deviceId;
         this.storage.setData(CoreApp.deviceIdField, this._deviceId);
+
+        // Devices
+        const devices = this.storage.getPersistedData<string[]>(
+            CoreApp.devicesField,
+            []
+        );
+        devices.push(this.getDeviceId());
+        this.storage.setPersistedData(CoreApp.devicesField, devices);
 
         // Current passphrase
         this.passphrase = passphrase;
@@ -1616,6 +1646,11 @@ export namespace CoreApp {
      * Device id field name
      */
     export const deviceIdField = 'SmartERPDeviceId';
+
+    /**
+     * Devices field name
+     */
+    export const devicesField = 'SmartERPDevices';
 
     /**
      * Device passphrase field name
