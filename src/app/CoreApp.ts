@@ -690,8 +690,16 @@ export abstract class CoreApp<
                     }
                 }
             } else {
-                // Remove passphrase
-                this.storage.setData(CoreApp.devicePassphraseField, undefined);
+                // Duplicate tab, session data copied
+                // Remove the token, deviceId, and passphrase
+                this.storage.clear(
+                    [
+                        CoreApp.devicePassphraseField,
+                        CoreApp.headerTokenField,
+                        CoreApp.serversideDeviceIdField
+                    ],
+                    false
+                );
                 this.passphrase = '';
             }
         }
