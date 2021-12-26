@@ -617,7 +617,7 @@ export abstract class CoreApp<
         this.name = name;
 
         // Device id
-        this._deviceId = storage.getData<string>(CoreApp.deviceIdField) ?? '';
+        this._deviceId = storage.getData(CoreApp.deviceIdField, '');
 
         this.setApi(api);
 
@@ -707,7 +707,7 @@ export abstract class CoreApp<
         const data: InitCallDto = {
             timestamp,
             identifier,
-            deviceId: this.deviceId ? this.deviceId : undefined
+            deviceId: this.deviceId.length > 0 ? this.deviceId : undefined
         };
 
         const result = await this.apiInitCall(data);
