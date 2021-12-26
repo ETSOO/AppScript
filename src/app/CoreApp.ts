@@ -601,6 +601,17 @@ export abstract class CoreApp<
     private cachedRefreshToken?: string;
 
     /**
+     * Get persisted fields
+     */
+    protected get persistedFields() {
+        return [
+            CoreApp.deviceIdField,
+            CoreApp.serversideDeviceIdField,
+            CoreApp.headerTokenField
+        ];
+    }
+
+    /**
      * Protected constructor
      * @param settings Settings
      * @param api API
@@ -657,14 +668,7 @@ export abstract class CoreApp<
         }
 
         // Restore
-        this.storage.copy(
-            [
-                CoreApp.deviceIdField,
-                CoreApp.serversideDeviceIdField,
-                CoreApp.headerTokenField
-            ],
-            true
-        );
+        this.storage.copy(this.persistedFields, true);
 
         return true;
     }
@@ -673,17 +677,9 @@ export abstract class CoreApp<
      * Persist settings to source when application exit
      */
     persist() {
-        this.storage.setPersistedData(CoreApp.deviceIdField, this.deviceId);
-
-        this.storage.setPersistedData(
-            CoreApp.serversideDeviceIdField,
-            this.storage.getData<string>(CoreApp.serversideDeviceIdField)
-        );
-
-        this.storage.setPersistedData(
-            CoreApp.headerTokenField,
-            this.storage.getData<string>(CoreApp.headerTokenField)
-        );
+        this.persistedFields.forEach((field) => {
+            this.storage.setPersistedData(field, this.storage.getData(field));
+        });
     }
 
     /**
@@ -982,12 +978,8 @@ export abstract class CoreApp<
      * Clear cache data
      */
     clearCacheData() {
-        this.storage.setData(CoreApp.serversideDeviceIdField, undefined);
-
-        this.storage.setData(CoreApp.deviceIdField, undefined);
+        this.clearCacheToken();
         this.storage.setData(CoreApp.devicePassphraseField, undefined);
-
-        this.storage.setData(CoreApp.headerTokenField, undefined);
     }
 
     /**
@@ -995,7 +987,7 @@ export abstract class CoreApp<
      */
     clearCacheToken() {
         this.cachedRefreshToken = undefined;
-        this.storage.setData(CoreApp.headerTokenField, undefined);
+        this.storage.setPersistedData(CoreApp.headerTokenField, undefined);
     }
 
     /**
