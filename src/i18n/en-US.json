@@ -21,6 +21,7 @@
     "expiry": "Expiry",
     "failed": "Operation failed",
     "id": "Number#",
+    "itemExists": "'{0}' already exists",
     "loading": "Loading...",
     "login": "Login",
     "menuHome": "Home",

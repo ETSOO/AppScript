@@ -21,6 +21,7 @@
     "expiry": "到期時間",
     "failed": "操作失敗",
     "id": "編號",
+    "itemExists": "'{0}'已经存在",
     "loading": "正在加載...",
     "login": "登錄",
     "menuHome": "首頁",

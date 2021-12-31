@@ -21,6 +21,7 @@
     "expiry": "到期时间",
     "failed": "操作失败",
     "id": "编号",
+    "itemExists": "'{0}'已经存在",
     "loading": "正在加载...",
     "login": "登录",
     "menuHome": "首页",
