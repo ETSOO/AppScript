@@ -49,6 +49,7 @@
     "remove": "Remove",
     "renew": "Renew",
     "reports": "Reports",
+    "requiredField": "{0} is a required field",
     "resending": "Resending",
     "reset": "Reset",
     "rotateLeft": "Rotate left 90°",
