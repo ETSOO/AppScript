@@ -1335,7 +1335,7 @@ export abstract class CoreApp<
         // When title contains {0}, replace with the field label
         if (result.field && result.title?.includes('{0}')) {
             const fieldLabel = this.get(result.field.formatInitial(false));
-            if (fieldLabel) result.title?.format(fieldLabel);
+            if (fieldLabel) result.title = result.title.format(fieldLabel);
         }
     }
 
