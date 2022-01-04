@@ -61,7 +61,12 @@ export interface IActionResult<D extends IResultData = IResultData> {
     /**
      * Type
      */
-    type: string;
+    type?: string;
+
+    /**
+     * Field name
+     */
+    field?: string;
 
     /**
      * Success or not

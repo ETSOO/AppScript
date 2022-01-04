@@ -12,8 +12,8 @@ export class ActionResultError extends Error {
         // Additional data
         var addtions = [];
         if (result.status != null) addtions.push(result.status);
-        if (result.type && result.type != 'about:blank')
-            addtions.push(result.type);
+        if (result.type) addtions.push(result.type);
+        if (result.field) addtions.push(result.field);
 
         var add = addtions.length > 0 ? ` (${addtions.join(', ')})` : '';
 

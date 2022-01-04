@@ -4,7 +4,8 @@ import {
     NotificationAlign,
     NotificationCallProps,
     NotificationContent,
-    NotificationMessageType
+    NotificationMessageType,
+    NotificationReturn
 } from '@etsoo/notificationbase';
 import { ApiDataError, IApi, IPData } from '@etsoo/restclient';
 import {
@@ -161,8 +162,12 @@ export interface ICoreApp<
     /**
      * Alert action result
      * @param result Action result
+     * @param callback Callback
      */
-    alertResult(result: IActionResult): void;
+    alertResult(
+        result: IActionResult,
+        callback?: NotificationReturn<void>
+    ): void;
 
     /**
      * Authorize
@@ -938,10 +943,11 @@ export abstract class CoreApp<
     /**
      * Alert action result
      * @param result Action result
+     * @param callback Callback
      */
-    alertResult(result: IActionResult) {
+    alertResult(result: IActionResult, callback?: NotificationReturn<void>) {
         this.formatResult(result);
-        this.notifier.alert(ActionResultError.format(result));
+        this.notifier.alert(ActionResultError.format(result), callback);
     }
 
     /**
@@ -1324,6 +1330,12 @@ export abstract class CoreApp<
             // Get label from type
             const key = result.type.formatInitial(false);
             result.title = this.get(key);
+        }
+
+        // When title contains {0}, replace with the field label
+        if (result.field && result.title?.includes('{0}')) {
+            const fieldLabel = this.get(result.field.formatInitial(false));
+            if (fieldLabel) result.title?.format(fieldLabel);
         }
     }
 
