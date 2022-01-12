@@ -29,6 +29,7 @@ import {
 } from 'crypto-js';
 import { AddressRegion } from '../address/AddressRegion';
 import { AddressUtils } from '../address/AddressUtils';
+import { BusinessUtils } from '../business/BusinessUtils';
 import { IdLabelDto } from '../dto/IdLabelDto';
 import { InitCallDto } from '../dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
@@ -329,6 +330,12 @@ export interface ICoreApp<
      * @returns Cached token
      */
     getCacheToken(): string | undefined;
+
+    /**
+     * Get entity status label
+     * @param data Input data
+     */
+    getEntityStatusLabel<D extends { entityStatus?: number }>(data: D): string;
 
     /**
      * Get all regions
@@ -1384,6 +1391,18 @@ export abstract class CoreApp<
         return this.settings.regions.map((id) => {
             return AddressRegion.getById(id)!;
         });
+    }
+
+    /**
+     * Get entity status label
+     * @param data Input data
+     */
+    getEntityStatusLabel<D extends { entityStatus?: number }>(data: D) {
+        if (data == null || data.entityStatus == null) return '';
+        return BusinessUtils.getEntityStatusLabel(
+            data.entityStatus,
+            this.labelDelegate
+        );
     }
 
     /**

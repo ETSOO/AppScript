@@ -1,6 +1,7 @@
 /**
  * Standard entity status enum
  * com.etsoo.SmartERP.Dto.EntityStatus
+ * Labels also included within i18n
  */
 export enum EntityStatus {
     /**
