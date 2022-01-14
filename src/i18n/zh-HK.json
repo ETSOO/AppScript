@@ -12,6 +12,7 @@
     "creation": "登記時間",
     "currency": "幣種",
     "delete": "刪除",
+    "deleteConfirm": "確定要永久刪除此{0}嗎？",
     "description": "描述",
     "done": "完成",
     "edit": "修改",

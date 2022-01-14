@@ -12,6 +12,7 @@
     "creation": "Creation",
     "currency": "Currency",
     "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to permanently delete this {0}?",
     "description": "Description",
     "done": "Done",
     "edit": "Edit",
