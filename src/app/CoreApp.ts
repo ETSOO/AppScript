@@ -30,6 +30,7 @@ import {
 import { AddressRegion } from '../address/AddressRegion';
 import { AddressUtils } from '../address/AddressUtils';
 import { BusinessUtils } from '../business/BusinessUtils';
+import { ProductUnit } from '../business/ProductUnit';
 import { IdLabelDto } from '../dto/IdLabelDto';
 import { InitCallDto } from '../dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
@@ -355,6 +356,13 @@ export interface ICoreApp<
      * @returns Time zone
      */
     getTimeZone(): string | undefined;
+
+    /**
+     * Get product unit and repeat option label
+     * @param unit Product unit or repeat option
+     * @param isJoined Add the join label like 'per Kg' for Kg
+     */
+    getUnitLabel(unit?: ProductUnit, isJoined?: boolean): string;
 
     /**
      * Hash message, SHA3 or HmacSHA512, 512 as Base64
@@ -1425,6 +1433,16 @@ export abstract class CoreApp<
     getTimeZone(): string | undefined {
         // settings.timeZone = Utils.getTimeZone()
         return this.settings.timeZone ?? this.ipData?.timezone;
+    }
+
+    /**
+     * Get product unit and repeat option label
+     * @param unit Product unit or repeat option
+     * @param isJoined Add the join label like 'per Kg' for Kg
+     */
+    getUnitLabel(unit?: ProductUnit, isJoined?: boolean): string {
+        if (unit == null) return '';
+        return BusinessUtils.getUnitLabel(unit, this.labelDelegate, isJoined);
     }
 
     /**

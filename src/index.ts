@@ -19,6 +19,7 @@ export * from './business/BusinessTax';
 export * from './business/BusinessUtils';
 export * from './business/EntityStatus';
 export * from './business/ProductUnit';
+export * from './business/RepeatOption';
 
 // def
 export * from './def/ListItem';

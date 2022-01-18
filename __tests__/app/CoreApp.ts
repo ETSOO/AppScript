@@ -8,6 +8,7 @@ import {
 } from '@etsoo/notificationbase';
 import { ApiAuthorizationScheme, createClient } from '@etsoo/restclient';
 import { DataTypes, DomUtils, Utils, WindowStorage } from '@etsoo/shared';
+import { BusinessUtils } from '../../src';
 import { AddressUtils } from '../../src/address/AddressUtils';
 import { IAppSettings } from '../../src/app/AppSettings';
 import { CoreApp } from '../../src/app/CoreApp';
@@ -153,4 +154,18 @@ test('Tests for initCallUpdateLocal', () => {
         1639282438620
     );
     expect(passphrase).not.toBeNull();
+});
+
+test('Tests for getUnitLabel', () => {
+    expect(app.getUnitLabel(12, true)).toBe('每年');
+});
+
+test('Tests for getRepeatOptions', () => {
+    const options = BusinessUtils.getRepeatOptions(app.labelDelegate, [
+        'MONTH',
+        'QUATER',
+        'YEAR'
+    ]);
+
+    expect(options[2]).toStrictEqual({ id: 12, label: '每年' });
 });

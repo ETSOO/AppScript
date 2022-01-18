@@ -1,77 +1,61 @@
+import { RepeatOption } from './RepeatOption';
+
 /**
- * Product units enum
- * See com.etsoo.CoreFramework.Business.ProductUnit
+ * Product base units
+ * 1 - 9
  */
-export enum ProductUnit {
+export enum ProductBaseUnit {
     /**
      * Picese
      * 件
      */
-    PC = 0,
+    PC = 1,
 
     /**
      * Set
      * 套
      */
-    SET = 1,
+    SET = 2
+}
+
+/**
+ * Product weight units
+ * Range 40 - 49
+ */
+export enum ProductWeightUnit {
+    /**
+     * Gram
+     * 克
+     */
+    GRAM = 40,
 
     /**
-     * Year
-     * 年
+     * Half Kg
+     * 斤
      */
-    YEAR = 10,
-
-    /**
-     * Quater
-     * 季
-     */
-    QUATER = 11,
-
-    /**
-     * Month
-     * 月
-     */
-    MONTH = 12,
-
-    /**
-     * Fortnight
-     * 两周
-     */
-    FORNIGHT = 13,
-
-    /**
-     * Week
-     * 周
-     */
-    WEEK = 14,
-
-    /**
-     * Day
-     * 天
-     */
-    DAY = 15,
-
-    /**
-     * Hour
-     * 小时
-     */
-    HOUR = 16,
-
-    /**
-     * Ton
-     * 吨
-     */
-    TON = 31,
+    JIN = 41,
 
     /**
      * Kilogram
      * 千克
      */
-    KILOGRAM = 32,
+    KILOGRAM = 42,
 
     /**
-     * Gram
-     * 克
+     * Ton
+     * 吨
      */
-    GRAM = 33
+    TON = 49
 }
+
+/**
+ * Product units enum
+ * Repeat options take range 10 - 39
+ * See com.etsoo.CoreFramework.Business.ProductUnit
+ */
+export const ProductUnit = {
+    ...ProductBaseUnit,
+    ...RepeatOption,
+    ...ProductWeightUnit
+};
+export type ProductUnit = ProductBaseUnit | RepeatOption | ProductWeightUnit;

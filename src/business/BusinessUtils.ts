@@ -1,4 +1,5 @@
 import { DataTypes } from '@etsoo/shared';
+import { RepeatOption } from '..';
 import { IdLabelDto } from '../dto/IdLabelDto';
 import { ICultureGet } from '../state/Culture';
 import { EntityStatus } from './EntityStatus';
@@ -27,7 +28,7 @@ export namespace BusinessUtils {
 
     /**
      * Get product unit's label
-     * Please define the label in culture with key 'unitPC' for ProductUnit.PC like that
+     * Please define the label in culture with key 'statusNormal' for Normal status
      * @param unit Unit
      * @param func Label delegate
      * @returns Label
@@ -62,11 +63,21 @@ export namespace BusinessUtils {
      * Please define the label in culture with key 'unitPC' for ProductUnit.PC like that
      * @param unit Unit
      * @param func Label delegate
+     * @param isJoined Add the join label like 'per Kg' for Kg
      * @returns Label
      */
-    export function getUnitLabel(unit: ProductUnit, func: ICultureGet) {
+    export function getUnitLabel(
+        unit: ProductUnit,
+        func: ICultureGet,
+        isJoined?: boolean
+    ) {
         const key = ProductUnit[unit];
-        return func('unit' + key) ?? key;
+        const label = func('unit' + key) ?? key;
+        if (isJoined) {
+            const jLabel = func('unitJoin');
+            if (jLabel) return jLabel.format(label);
+        }
+        return label;
     }
 
     /**
@@ -74,13 +85,61 @@ export namespace BusinessUtils {
      * @param func Label delegate
      * @returns Units
      */
-    export function getUnits(func: ICultureGet): IdLabelDto[] {
-        return DataTypes.getEnumKeys(ProductUnit).map((key) => {
-            const id = DataTypes.getEnumByKey(ProductUnit, key)!;
+    export function getUnits(func: ICultureGet): IdLabelDto[];
+
+    /**
+     *
+     * Get all product units
+     * @param func Label delegate
+     * @param options Define the order and limit the items
+     * @param isJoined Add the join label like 'per Kg' for Kg
+     * @returns Units
+     */
+    export function getUnits(
+        func: ICultureGet,
+        options?: string[],
+        isJoined?: boolean
+    ): IdLabelDto[];
+
+    /**
+     *
+     * Get all product units
+     * @param func Label delegate
+     * @param options Define the order and limit the items
+     * @param isJoined Add the join label like 'per Kg' for Kg
+     * @returns Units
+     */
+    export function getUnits(
+        func: ICultureGet,
+        options?: string[],
+        isJoined?: boolean
+    ): IdLabelDto[] {
+        options ??= DataTypes.getEnumKeys(ProductUnit);
+        return options.map((key) => {
+            const id = DataTypes.getEnumByKey(ProductUnit, key)! as number;
             return {
                 id,
-                label: getUnitLabel(id, func)
+                label: getUnitLabel(id, func, isJoined).formatInitial(true)
             };
         });
+    }
+
+    /**
+     *
+     * Get all repeat options
+     * @param func Label delegate
+     * @param options Define the order and limit the items
+     * @param isJoined Add the join label like 'per Kg' for Kg
+     * @returns Units
+     */
+    export function getRepeatOptions(
+        func: ICultureGet,
+        options?: string[],
+        isJoined: boolean = true
+    ): IdLabelDto[] {
+        options ??= DataTypes.getEnumKeys(RepeatOption);
+        isJoined ??= true;
+
+        return getUnits(func, options, isJoined);
     }
 }
