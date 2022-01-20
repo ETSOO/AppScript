@@ -336,7 +336,7 @@ export interface ICoreApp<
      * Get entity status label
      * @param data Input data
      */
-    getEntityStatusLabel<D extends { entityStatus?: number }>(data: D): string;
+    getEntityStatusLabel<D extends { entityStatus?: number }>(data?: D): string;
 
     /**
      * Get all regions
@@ -1405,7 +1405,7 @@ export abstract class CoreApp<
      * Get entity status label
      * @param data Input data
      */
-    getEntityStatusLabel<D extends { entityStatus?: number }>(data: D) {
+    getEntityStatusLabel<D extends { entityStatus?: number }>(data?: D) {
         if (data == null || data.entityStatus == null) return '';
         return BusinessUtils.getEntityStatusLabel(
             data.entityStatus,

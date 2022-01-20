@@ -15,9 +15,24 @@ export enum EntityStatus {
     Flaged = 9,
 
     /**
+     * Approved
+     */
+    Approved = 100,
+
+    /**
+     * Audited
+     */
+    Audited = 111,
+
+    /**
      * Inactivated
      */
     Inactivated = 200,
+
+    /**
+     * Completed
+     */
+    Completed = 250,
 
     /**
      * Archived
