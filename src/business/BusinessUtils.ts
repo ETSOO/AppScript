@@ -27,6 +27,22 @@ export namespace BusinessUtils {
     }
 
     /**
+     * Get currency collection
+     * @param currencyNames Names like CNY, USD
+     * @param func Label delegate
+     * @returns Collection
+     */
+    export function getCurrencies(
+        currencyNames: string[],
+        func: ICultureGet
+    ): IdLabelDto<string>[] {
+        return currencyNames.map((name) => ({
+            id: name,
+            label: func(`currency${name}`) ?? name
+        }));
+    }
+
+    /**
      * Get product unit's label
      * Please define the label in culture with key 'statusNormal' for Normal status
      * @param unit Unit

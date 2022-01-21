@@ -149,7 +149,7 @@ export class AddressRegion implements IAddressRegion {
         AddressContinent.NA,
         '011',
         '1',
-        'USD',
+        'CAD',
         ['en-CA', 'fr-CA']
     );
 
@@ -209,7 +209,7 @@ export class AddressRegion implements IAddressRegion {
         AddressContinent.EU,
         '00',
         '353',
-        'IEP',
+        'EUR',
         ['en-IE']
     );
 
