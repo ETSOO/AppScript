@@ -1,6 +1,9 @@
 {
+    "accountant": "會計",
     "actions": "操作",
     "add": "添加",
+    "authorizer": "授權人",
+    "applicant": "申請人",
     "approve": "批准",
     "back": "後退",
     "cancel": "取消",
@@ -115,6 +118,7 @@
     "unitGRAM": "克",
     "unitJIN": "斤",
     "unitKILOGRAM": "公斤",
+    "user": "用戶",
     "view": "查看",
     "warning": "警告",
     "welcome": "{0}, 歡迎光臨！"

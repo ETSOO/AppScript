@@ -1,6 +1,9 @@
 {
+    "accountant": "Accountant",
     "actions": "Actions",
     "add": "Add",
+    "authorizer": "Authorizer",
+    "applicant": "Applicant",
     "approve": "Approve it",
     "back": "Back",
     "cancel": "Cancel",
@@ -115,6 +118,7 @@
     "unitGRAM": "g",
     "unitJIN": "½Kg",
     "unitKILOGRAM": "Kg",
+    "user": "User",
     "view": "View",
     "warning": "Warning",
     "welcome": "{0}, welcome!"
