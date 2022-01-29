@@ -64,9 +64,12 @@ $ yarn add @etsoo/appscript
 -   BusinessTax - Business tax
 
 #### BusinessUtils.ts ####
--   addIdLabelBlankItem - Add blank item to id/label data array
+-   getCurrencies - Get currency collection
+-   getEntityStatusLabel - Get entity status's label
+-   getEntityStatus - Get entity status collection
 -   getUnitLabel - Get product unit's label
 -   getUnits - Get all product units
+-   getRepeatOptions -  Get all repeat options
 
 #### ProductUnit.ts ####
 -   ProductUnit - Product units enum

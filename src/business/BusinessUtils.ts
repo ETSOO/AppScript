@@ -10,23 +10,6 @@ import { ProductUnit } from './ProductUnit';
  */
 export namespace BusinessUtils {
     /**
-     * Add blank item to id/label data array
-     * @param input Input array
-     * @param copy Copy or change the current inpu
-     * @returns Items with blank item
-     */
-    export function addIdLabelBlankItem<T extends DataTypes.IdType = number>(
-        input: IdLabelDto<T>[],
-        copy: boolean = false
-    ) {
-        const blankItem: IdLabelDto<T> = { id: '' as any, label: '---' };
-        if (copy) return [blankItem, ...input];
-
-        input.unshift(blankItem);
-        return input;
-    }
-
-    /**
      * Get currency collection
      * @param currencyNames Names like CNY, USD
      * @param func Label delegate
@@ -43,8 +26,8 @@ export namespace BusinessUtils {
     }
 
     /**
-     * Get product unit's label
-     * Please define the label in culture with key 'statusNormal' for Normal status
+     * Get entity status's label
+     * Please define the label with key 'statusNormal' for Normal status
      * @param unit Unit
      * @param func Label delegate
      * @returns Label
@@ -58,8 +41,7 @@ export namespace BusinessUtils {
     }
 
     /**
-     * Get product unit's label
-     * Please define the label in culture with key 'unitPC' for ProductUnit.PC like that
+     * Get entity status collection
      * @param unit Unit
      * @param func Label delegate
      * @returns Label
