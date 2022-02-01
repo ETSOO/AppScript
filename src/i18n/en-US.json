@@ -41,6 +41,7 @@
     "failed": "Operation failed",
     "field": "Field",
     "id": "Number#",
+    "info": "Info",
     "itemExists": "'{0}' already exists",
     "loading": "Loading...",
     "login": "Login",

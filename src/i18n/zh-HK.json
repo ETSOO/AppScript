@@ -41,6 +41,7 @@
     "failed": "操作失敗",
     "field": "字段",
     "id": "編號",
+    "info": "信息",
     "itemExists": "'{0}'已经存在",
     "loading": "正在加載...",
     "login": "登錄",

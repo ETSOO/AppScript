@@ -41,6 +41,7 @@
     "failed": "操作失败",
     "field": "字段",
     "id": "编号",
+    "info": "信息",
     "itemExists": "'{0}'已经存在",
     "loading": "正在加载...",
     "login": "登录",
