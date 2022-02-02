@@ -36,6 +36,7 @@
     "email": "Email",
     "emailAddresses": "Email addresses",
     "enabled": "Enabled",
+    "entityStatus": "Status",
     "etsoo": "ETSOO",
     "expiry": "Expiry",
     "failed": "Operation failed",
