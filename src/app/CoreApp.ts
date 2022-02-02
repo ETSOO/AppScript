@@ -437,8 +437,9 @@ export interface ICoreApp<
 
     /**
      * Go to the login page
+     * @param tryLogin Try to login again
      */
-    toLoginPage(): void;
+    toLoginPage(tryLogin?: boolean): void;
 
     /**
      * Transform URL
@@ -1611,8 +1612,12 @@ export abstract class CoreApp<
 
     /**
      * Go to the login page
+     * @param tryLogin Try to login again
      */
-    toLoginPage() {
+    toLoginPage(tryLogin?: boolean) {
+        const url = this.transformUrl(
+            '/' + (tryLogin ? '' : '?tryLogin=false')
+        );
         window.location.replace(this.transformUrl('/'));
     }
 
