@@ -40,7 +40,12 @@ export namespace ExternalSettings {
             const settings = Reflect.get(globalThis, 'settings');
             if (typeof settings === 'object') {
                 if (typeof window !== 'undefined') {
-                    const hostname = window.location.hostname;
+                    // Host name
+                    let hostname = window.location.hostname;
+
+                    // Empty string returned under Electron
+                    if (hostname === '') hostname = 'localhost';
+
                     // replace {hostname}
                     for (const key in settings) {
                         const value = settings[key];

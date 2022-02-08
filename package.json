@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.2.37",
+    "version": "1.2.38",
     "description": "Applications shared TypeScript framework",
     "main": "lib/cjs/index.js",
     "module": "lib/mjs/index.js",
@@ -65,8 +65,8 @@
         "@babel/preset-env": "^7.16.11",
         "@babel/runtime-corejs3": "^7.17.0",
         "@types/jest": "^27.4.0",
-        "@typescript-eslint/eslint-plugin": "^5.10.2",
-        "@typescript-eslint/parser": "^5.10.2",
+        "@typescript-eslint/eslint-plugin": "^5.11.0",
+        "@typescript-eslint/parser": "^5.11.0",
         "eslint": "^8.8.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-plugin-import": "^2.25.4",
