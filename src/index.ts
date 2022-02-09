@@ -10,9 +10,8 @@ export * from './app/ExternalSettings';
 export * from './app/UserRole';
 
 // bridges
-export * from './bridges/ElectronBridge';
-export * from './bridges/IAppData';
-export * from './bridges/IBridge';
+export * from './bridges/BridgeUtils';
+export * from './bridges/IBridgeHost';
 
 // business
 export * from './business/BusinessTax';
