@@ -1,9 +1,9 @@
-import { IActionResult, IResultData } from './IActionResult';
+import { IActionResult } from './IActionResult';
 
 /**
  * Init call result data
  */
-export interface InitCallResultData extends IResultData {
+export interface InitCallResultData {
     /**
      * Device id
      */
