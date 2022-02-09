@@ -1,14 +1,6 @@
 import { DataTypes } from '@etsoo/shared';
 
 /**
- * Result data
- * Indexable type
- */
-export interface IResultData {
-    readonly [key: string]: unknown;
-}
-
-/**
  * Result errors
  * Indexable type
  */
@@ -19,7 +11,7 @@ export interface IResultErrors {
 /**
  * Operation result interface
  */
-export interface IActionResult<D extends IResultData = IResultData> {
+export interface IActionResult<D extends {} = {}> {
     /**
      * Status code
      */
