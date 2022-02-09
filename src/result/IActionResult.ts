@@ -1,19 +1,11 @@
+import { DataTypes } from '@etsoo/shared';
+
 /**
  * Result data
  * Indexable type
  */
 export interface IResultData {
-    readonly [key: string]: any;
-}
-
-/**
- * Result data with id, follow this style to extend for specific model
- */
-export interface IdResultData extends IResultData {
-    /**
-     * Id
-     */
-    id: number | string;
+    readonly [key: string]: unknown;
 }
 
 /**
@@ -77,4 +69,7 @@ export interface IActionResult<D extends IResultData = IResultData> {
 /**
  * Action result with id data
  */
-export type ActionResultId = IActionResult<IdResultData>;
+export type IdActionResult<T extends DataTypes.IdType = number> =
+    IActionResult<{
+        id: T;
+    }>;
