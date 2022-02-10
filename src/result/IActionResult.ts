@@ -65,3 +65,8 @@ export type IdActionResult<T extends DataTypes.IdType = number> =
     IActionResult<{
         id: T;
     }>;
+
+/**
+ * Action result with dynamic data
+ */
+export type DynamicActionResult = IActionResult<Record<string, any>>;
