@@ -429,6 +429,12 @@ export interface ICoreApp<
     persist(): void;
 
     /**
+     * Redirect to the Url
+     * @param url Url
+     */
+    redirectTo(url: string): void;
+
+    /**
      * Switch organization
      * @param id Organization id
      * @param serviceId Service id
@@ -1497,6 +1503,14 @@ export abstract class CoreApp<
     }
 
     /**
+     * Redirect to the Url
+     * @param url Url
+     */
+    redirectTo(url: string): void {
+        window.location.href = url;
+    }
+
+    /**
      * Refresh countdown
      * @param seconds Seconds
      */
@@ -1618,7 +1632,7 @@ export abstract class CoreApp<
         const url = this.transformUrl(
             '/' + (tryLogin ? '' : '?tryLogin=false')
         );
-        window.location.replace(this.transformUrl('/'));
+        this.redirectTo(url);
     }
 
     /**
