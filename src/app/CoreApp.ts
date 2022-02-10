@@ -633,7 +633,7 @@ export abstract class CoreApp<
     protected get persistedFields() {
         return [
             CoreApp.deviceIdField,
-            CoreApp.devicePassphraseField,
+            this.addIdentifier(CoreApp.devicePassphraseField),
             CoreApp.serversideDeviceIdField,
             CoreApp.headerTokenField
         ];
@@ -684,7 +684,7 @@ export abstract class CoreApp<
     private resetKeys() {
         this.storage.clear(
             [
-                CoreApp.devicePassphraseField,
+                this.addIdentifier(CoreApp.devicePassphraseField),
                 CoreApp.headerTokenField,
                 CoreApp.serversideDeviceIdField
             ],
@@ -723,8 +723,9 @@ export abstract class CoreApp<
             return false;
         }
 
+        // this.name to identifier different app's secret
         const passphraseEncrypted = this.storage.getData<string>(
-            CoreApp.devicePassphraseField
+            this.addIdentifier(CoreApp.devicePassphraseField)
         );
         if (passphraseEncrypted) {
             const passphraseDecrypted = this.decrypt(
@@ -767,6 +768,15 @@ export abstract class CoreApp<
 
         if (!this.authorized) return;
         this.storage.copyTo(this.persistedFields);
+    }
+
+    /**
+     * Add app name as identifier
+     * @param field Field
+     * @returns Result
+     */
+    protected addIdentifier(field: string) {
+        return field + '-' + this.name;
     }
 
     /**
@@ -913,7 +923,7 @@ export abstract class CoreApp<
         // Current passphrase
         this.passphrase = passphrase;
         this.storage.setData(
-            CoreApp.devicePassphraseField,
+            this.addIdentifier(CoreApp.devicePassphraseField),
             this.encrypt(passphrase, this.name)
         );
 
@@ -1075,7 +1085,10 @@ export abstract class CoreApp<
      */
     clearCacheData() {
         this.clearCacheToken();
-        this.storage.setData(CoreApp.devicePassphraseField, undefined);
+        this.storage.setData(
+            this.addIdentifier(CoreApp.devicePassphraseField),
+            undefined
+        );
     }
 
     /**
