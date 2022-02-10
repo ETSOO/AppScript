@@ -16,6 +16,7 @@ export interface IBridgeHost {
     /**
      * Load application
      * @param name App name
+     * @param startUrl Start Url
      */
-    loadApp(name: string): void;
+    loadApp(name: string, startUrl?: string): void;
 }
