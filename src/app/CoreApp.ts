@@ -632,9 +632,9 @@ export abstract class CoreApp<
      */
     protected get persistedFields() {
         return [
-            CoreApp.deviceIdField,
+            this.addIdentifier(CoreApp.deviceIdField),
             this.addIdentifier(CoreApp.devicePassphraseField),
-            CoreApp.serversideDeviceIdField,
+            this.addIdentifier(CoreApp.serversideDeviceIdField),
             this.addIdentifier(CoreApp.headerTokenField)
         ];
     }
@@ -661,7 +661,10 @@ export abstract class CoreApp<
         this.name = name;
 
         // Device id
-        this._deviceId = storage.getData(CoreApp.deviceIdField, '');
+        this._deviceId = storage.getData(
+            this.addIdentifier(CoreApp.deviceIdField),
+            ''
+        );
 
         // Restore
         this.restore();
@@ -686,7 +689,7 @@ export abstract class CoreApp<
             [
                 this.addIdentifier(CoreApp.devicePassphraseField),
                 this.addIdentifier(CoreApp.headerTokenField),
-                CoreApp.serversideDeviceIdField
+                this.addIdentifier(CoreApp.serversideDeviceIdField)
             ],
             false
         );
@@ -708,7 +711,10 @@ export abstract class CoreApp<
             this.storage.copyFrom(this.persistedFields, false);
 
             // Reset device id
-            this._deviceId = this.storage.getData(CoreApp.deviceIdField, '');
+            this._deviceId = this.storage.getData(
+                this.addIdentifier(CoreApp.deviceIdField),
+                ''
+            );
 
             // Totally new, no data restored
             if (this._deviceId === '') return false;
@@ -839,7 +845,7 @@ export abstract class CoreApp<
 
         // Serverside encrypted device id
         const identifier = this.storage.getData<string>(
-            CoreApp.serversideDeviceIdField
+            this.addIdentifier(CoreApp.serversideDeviceIdField)
         );
 
         // Timestamp
@@ -884,7 +890,10 @@ export abstract class CoreApp<
             if (callback) callback(false);
 
             // Clear device id
-            this.storage.setData(CoreApp.deviceIdField, undefined);
+            this.storage.setData(
+                this.addIdentifier(CoreApp.deviceIdField),
+                undefined
+            );
 
             return;
         }
@@ -910,7 +919,10 @@ export abstract class CoreApp<
 
         // Update device id and cache it
         this._deviceId = data.deviceId;
-        this.storage.setData(CoreApp.deviceIdField, this._deviceId);
+        this.storage.setData(
+            this.addIdentifier(CoreApp.deviceIdField),
+            this._deviceId
+        );
 
         // Devices
         const devices = this.storage.getPersistedData<string[]>(
@@ -1702,7 +1714,10 @@ export abstract class CoreApp<
         this.userData = user;
 
         // Cache the encrypted serverside device id
-        this.storage.setData(CoreApp.serversideDeviceIdField, user.deviceId);
+        this.storage.setData(
+            this.addIdentifier(CoreApp.serversideDeviceIdField),
+            user.deviceId
+        );
 
         if (keep) {
             this.authorize(user.token, refreshToken);
