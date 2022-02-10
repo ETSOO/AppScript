@@ -84,6 +84,22 @@ export interface RefreshTokenProps<D extends {}> {
 }
 
 /**
+ * App fields
+ */
+const appFields = [
+    'headerToken',
+    'serversideDeviceId',
+    'deviceId',
+    'devices',
+    'devicePassphrase'
+] as const;
+
+/**
+ * Basic type template
+ */
+export type IAppFields = { [key in typeof appFields[number]]: string };
+
+/**
  * Core application interface
  */
 export interface ICoreApp<
@@ -95,6 +111,11 @@ export interface ICoreApp<
      * Settings
      */
     readonly settings: S;
+
+    /**
+     * Fields
+     */
+    readonly fields: IAppFields;
 
     /**
      * API
@@ -503,6 +524,11 @@ export abstract class CoreApp<
     readonly settings: S;
 
     /**
+     * Fields
+     */
+    readonly fields: IAppFields;
+
+    /**
      * API
      */
     readonly api: IApi;
@@ -632,10 +658,10 @@ export abstract class CoreApp<
      */
     protected get persistedFields() {
         return [
-            this.addIdentifier(CoreApp.deviceIdField),
-            this.addIdentifier(CoreApp.devicePassphraseField),
-            this.addIdentifier(CoreApp.serversideDeviceIdField),
-            this.addIdentifier(CoreApp.headerTokenField)
+            this.fields.deviceId,
+            this.fields.devicePassphrase,
+            this.fields.serversideDeviceId,
+            this.fields.headerToken
         ];
     }
 
@@ -660,11 +686,14 @@ export abstract class CoreApp<
         this.storage = storage;
         this.name = name;
 
-        // Device id
-        this._deviceId = storage.getData(
-            this.addIdentifier(CoreApp.deviceIdField),
-            ''
+        // Fields, attach with the name identifier
+        this.fields = appFields.reduce(
+            (a, v) => ({ ...a, [v]: 'smarterp-' + v + '-' + name }),
+            {} as any
         );
+
+        // Device id
+        this._deviceId = storage.getData(this.fields.deviceId, '');
 
         // Restore
         this.restore();
@@ -687,13 +716,22 @@ export abstract class CoreApp<
     private resetKeys() {
         this.storage.clear(
             [
-                this.addIdentifier(CoreApp.devicePassphraseField),
-                this.addIdentifier(CoreApp.headerTokenField),
-                this.addIdentifier(CoreApp.serversideDeviceIdField)
+                this.fields.devicePassphrase,
+                this.fields.headerToken,
+                this.fields.serversideDeviceId
             ],
             false
         );
         this.passphrase = '';
+    }
+
+    /**
+     * Add app name as identifier
+     * @param field Field
+     * @returns Result
+     */
+    protected addIdentifier(field: string) {
+        return field + '-' + this.name;
     }
 
     /**
@@ -702,7 +740,7 @@ export abstract class CoreApp<
     protected restore() {
         // Devices
         const devices = this.storage.getPersistedData<string[]>(
-            CoreApp.devicesField,
+            this.fields.devices,
             []
         );
 
@@ -711,10 +749,7 @@ export abstract class CoreApp<
             this.storage.copyFrom(this.persistedFields, false);
 
             // Reset device id
-            this._deviceId = this.storage.getData(
-                this.addIdentifier(CoreApp.deviceIdField),
-                ''
-            );
+            this._deviceId = this.storage.getData(this.fields.deviceId, '');
 
             // Totally new, no data restored
             if (this._deviceId === '') return false;
@@ -731,7 +766,7 @@ export abstract class CoreApp<
 
         // this.name to identifier different app's secret
         const passphraseEncrypted = this.storage.getData<string>(
-            this.addIdentifier(CoreApp.devicePassphraseField)
+            this.fields.devicePassphrase
         );
         if (passphraseEncrypted) {
             const passphraseDecrypted = this.decrypt(
@@ -741,7 +776,7 @@ export abstract class CoreApp<
             if (passphraseDecrypted != null) {
                 // Add the device to the list
                 devices.push(d);
-                this.storage.setPersistedData(CoreApp.devicesField, devices);
+                this.storage.setPersistedData(this.fields.devices, devices);
 
                 this.passphrase = passphraseDecrypted;
 
@@ -761,28 +796,19 @@ export abstract class CoreApp<
     persist() {
         // Devices
         const devices = this.storage.getPersistedData<string[]>(
-            CoreApp.devicesField
+            this.fields.devices
         );
         if (devices != null) {
             const index = devices.indexOf(this.getDeviceId());
             if (index !== -1) {
                 // Remove current device from the list
                 devices.splice(index, 1);
-                this.storage.setPersistedData(CoreApp.devicesField, devices);
+                this.storage.setPersistedData(this.fields.devices, devices);
             }
         }
 
         if (!this.authorized) return;
         this.storage.copyTo(this.persistedFields);
-    }
-
-    /**
-     * Add app name as identifier
-     * @param field Field
-     * @returns Result
-     */
-    protected addIdentifier(field: string) {
-        return field + '-' + this.name;
     }
 
     /**
@@ -845,7 +871,7 @@ export abstract class CoreApp<
 
         // Serverside encrypted device id
         const identifier = this.storage.getData<string>(
-            this.addIdentifier(CoreApp.serversideDeviceIdField)
+            this.fields.serversideDeviceId
         );
 
         // Timestamp
@@ -890,10 +916,7 @@ export abstract class CoreApp<
             if (callback) callback(false);
 
             // Clear device id
-            this.storage.setData(
-                this.addIdentifier(CoreApp.deviceIdField),
-                undefined
-            );
+            this.storage.setData(this.fields.deviceId, undefined);
 
             return;
         }
@@ -919,23 +942,20 @@ export abstract class CoreApp<
 
         // Update device id and cache it
         this._deviceId = data.deviceId;
-        this.storage.setData(
-            this.addIdentifier(CoreApp.deviceIdField),
-            this._deviceId
-        );
+        this.storage.setData(this.fields.deviceId, this._deviceId);
 
         // Devices
         const devices = this.storage.getPersistedData<string[]>(
-            CoreApp.devicesField,
+            this.fields.devices,
             []
         );
         devices.push(this.getDeviceId());
-        this.storage.setPersistedData(CoreApp.devicesField, devices);
+        this.storage.setPersistedData(this.fields.devices, devices);
 
         // Current passphrase
         this.passphrase = passphrase;
         this.storage.setData(
-            this.addIdentifier(CoreApp.devicePassphraseField),
+            this.fields.devicePassphrase,
             this.encrypt(passphrase, this.name)
         );
 
@@ -981,7 +1001,7 @@ export abstract class CoreApp<
      * @returns Fields
      */
     protected initCallEncryptedUpdateFields(): string[] {
-        return [this.addIdentifier(CoreApp.headerTokenField)];
+        return [this.fields.headerToken];
     }
 
     /**
@@ -1009,10 +1029,7 @@ export abstract class CoreApp<
         // Cover the current value
         if (refreshToken !== '') {
             if (refreshToken != null) refreshToken = this.encrypt(refreshToken);
-            this.storage.setData(
-                this.addIdentifier(CoreApp.headerTokenField),
-                refreshToken
-            );
+            this.storage.setData(this.fields.headerToken, refreshToken);
         }
 
         // Reset tryLogin state
@@ -1100,10 +1117,7 @@ export abstract class CoreApp<
      */
     clearCacheData() {
         this.clearCacheToken();
-        this.storage.setData(
-            this.addIdentifier(CoreApp.devicePassphraseField),
-            undefined
-        );
+        this.storage.setData(this.fields.devicePassphrase, undefined);
     }
 
     /**
@@ -1111,10 +1125,7 @@ export abstract class CoreApp<
      */
     clearCacheToken() {
         this.cachedRefreshToken = undefined;
-        this.storage.setPersistedData(
-            this.addIdentifier(CoreApp.headerTokenField),
-            undefined
-        );
+        this.storage.setPersistedData(this.fields.headerToken, undefined);
     }
 
     /**
@@ -1426,9 +1437,7 @@ export abstract class CoreApp<
     getCacheToken(): string | undefined {
         // Temp refresh token
         if (this.cachedRefreshToken) return this.cachedRefreshToken;
-        return this.storage.getData<string>(
-            this.addIdentifier(CoreApp.headerTokenField)
-        );
+        return this.storage.getData<string>(this.fields.headerToken);
     }
 
     /**
@@ -1462,7 +1471,7 @@ export abstract class CoreApp<
         const response = this.api.transformResponse(rawResponse);
         return this.api.getHeaderValue(
             response.headers,
-            CoreApp.headerTokenField
+            'SmartERPRefreshToken'
         );
     }
 
@@ -1714,10 +1723,7 @@ export abstract class CoreApp<
         this.userData = user;
 
         // Cache the encrypted serverside device id
-        this.storage.setData(
-            this.addIdentifier(CoreApp.serversideDeviceIdField),
-            user.deviceId
-        );
+        this.storage.setData(this.fields.serversideDeviceId, user.deviceId);
 
         if (keep) {
             this.authorize(user.token, refreshToken);
@@ -1763,31 +1769,4 @@ export abstract class CoreApp<
             }
         );
     }
-}
-
-export namespace CoreApp {
-    /**
-     * Response token header field name
-     */
-    export const headerTokenField = 'SmartERPRefreshToken';
-
-    /**
-     * Serverside device id encrypted field name
-     */
-    export const serversideDeviceIdField = 'SmartERPServersideDeviceId';
-
-    /**
-     * Device id field name
-     */
-    export const deviceIdField = 'SmartERPDeviceId';
-
-    /**
-     * Devices field name
-     */
-    export const devicesField = 'SmartERPDevices';
-
-    /**
-     * Device passphrase field name
-     */
-    export const devicePassphraseField = 'SmartERPDevicePassphrase';
 }
