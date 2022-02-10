@@ -635,7 +635,7 @@ export abstract class CoreApp<
             CoreApp.deviceIdField,
             this.addIdentifier(CoreApp.devicePassphraseField),
             CoreApp.serversideDeviceIdField,
-            CoreApp.headerTokenField
+            this.addIdentifier(CoreApp.headerTokenField)
         ];
     }
 
@@ -685,7 +685,7 @@ export abstract class CoreApp<
         this.storage.clear(
             [
                 this.addIdentifier(CoreApp.devicePassphraseField),
-                CoreApp.headerTokenField,
+                this.addIdentifier(CoreApp.headerTokenField),
                 CoreApp.serversideDeviceIdField
             ],
             false
@@ -969,7 +969,7 @@ export abstract class CoreApp<
      * @returns Fields
      */
     protected initCallEncryptedUpdateFields(): string[] {
-        return [CoreApp.headerTokenField];
+        return [this.addIdentifier(CoreApp.headerTokenField)];
     }
 
     /**
@@ -997,7 +997,10 @@ export abstract class CoreApp<
         // Cover the current value
         if (refreshToken !== '') {
             if (refreshToken != null) refreshToken = this.encrypt(refreshToken);
-            this.storage.setData(CoreApp.headerTokenField, refreshToken);
+            this.storage.setData(
+                this.addIdentifier(CoreApp.headerTokenField),
+                refreshToken
+            );
         }
 
         // Reset tryLogin state
@@ -1096,7 +1099,10 @@ export abstract class CoreApp<
      */
     clearCacheToken() {
         this.cachedRefreshToken = undefined;
-        this.storage.setPersistedData(CoreApp.headerTokenField, undefined);
+        this.storage.setPersistedData(
+            this.addIdentifier(CoreApp.headerTokenField),
+            undefined
+        );
     }
 
     /**
@@ -1408,7 +1414,9 @@ export abstract class CoreApp<
     getCacheToken(): string | undefined {
         // Temp refresh token
         if (this.cachedRefreshToken) return this.cachedRefreshToken;
-        return this.storage.getData<string>(CoreApp.headerTokenField);
+        return this.storage.getData<string>(
+            this.addIdentifier(CoreApp.headerTokenField)
+        );
     }
 
     /**
