@@ -57,6 +57,26 @@ export namespace BusinessUtils {
     }
 
     /**
+     * Get 12-month items
+     * @param monthLabels Month labels
+     * @param startMonth Start month, 0 as Jan.
+     * @returns 12 months
+     */
+    export function getMonths(monthLabels: string[], startMonth: number = 0) {
+        const months: DataTypes.IdLabelItem[] = [];
+
+        for (let i = 0; i < 12; i++) {
+            if (startMonth >= 12) startMonth = 0;
+
+            months.push({ id: startMonth, label: monthLabels[startMonth] });
+
+            startMonth++;
+        }
+
+        return months;
+    }
+
+    /**
      * Get product unit's label
      * Please define the label in culture with key 'unitPC' for ProductUnit.PC like that
      * @param unit Unit

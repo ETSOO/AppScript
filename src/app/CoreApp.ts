@@ -1706,8 +1706,9 @@ export abstract class CoreApp<
      * Try login, returning false means is loading
      * UI get involved while refreshToken not intended
      * @param data Additional request data
+     * @param showLoading Show loading bar or not during call
      */
-    async tryLogin<D extends {} = {}>(_data?: D) {
+    async tryLogin<D extends {} = {}>(_data?: D, _showLoading?: boolean) {
         if (this._isTryingLogin) return false;
         this._isTryingLogin = true;
         return true;
