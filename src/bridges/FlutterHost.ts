@@ -18,7 +18,7 @@ export class FlutterHost implements IBridgeHost {
         public callHandler: (
             name: string,
             ...args: unknown[]
-        ) => PromiseLike<{} | void>
+        ) => PromiseLike<Record<string, unknown> | void>
     ) {}
 
     changeCulture(locale: string): void {
@@ -27,6 +27,18 @@ export class FlutterHost implements IBridgeHost {
 
     exit(): void {
         this.callHandler('exit');
+    }
+
+    async getLabels<T extends string>(...keys: T[]) {
+        const init: any = {};
+        const result = (await this.callHandler('getLabels')) ?? {};
+        return keys.reduce(
+            (a, v) => ({
+                ...a,
+                [v]: result[v] ?? ''
+            }),
+            init
+        );
     }
 
     getStartUrl(): string | null | undefined {

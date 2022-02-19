@@ -14,6 +14,14 @@ export interface IBridgeHost {
     exit(): void;
 
     /**
+     * Get multiple culture labels
+     * @param keys Keys
+     */
+    getLabels<T extends string>(
+        ...keys: T[]
+    ): PromiseLike<{ [K in T]: string }>;
+
+    /**
      * Get app start Url / router Url
      */
     getStartUrl(): string | undefined | null;
