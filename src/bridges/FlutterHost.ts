@@ -1,4 +1,11 @@
+import { ExtendUtils } from '@etsoo/shared';
 import { IBridgeHost } from './IBridgeHost';
+
+// Call handler type
+type CallHandlerType = (
+    name: string,
+    ...args: unknown[]
+) => PromiseLike<Record<string, unknown> | void>;
 
 /**
  * Flutter JavaScript Host
@@ -11,27 +18,65 @@ export class FlutterHost implements IBridgeHost {
     private startUrl: string | null | undefined;
 
     /**
+     * Cached commands
+     */
+    private cachedCommands: Record<string, unknown[]> = {};
+
+    /**
      * Constructor
      * @param callHandler Call handler
      */
-    constructor(
-        public callHandler: (
-            name: string,
-            ...args: unknown[]
-        ) => PromiseLike<Record<string, unknown> | void>
-    ) {}
+    constructor(private host: { callHandler?: CallHandlerType }) {
+        window.addEventListener(
+            'flutterInAppWebViewPlatformReady',
+            (_event) => {
+                if (this.host.callHandler == null) return;
+
+                for (const key in this.cachedCommands) {
+                    // Args
+                    const args = this.cachedCommands[key];
+
+                    // Execute
+                    this.host.callHandler(key, ...args);
+
+                    // Remove the key
+                    delete this.cachedCommands[key];
+                }
+            }
+        );
+    }
+
+    cacheCommand(name: string, ...args: unknown[]): void {
+        this.cachedCommands[name] = args;
+    }
 
     changeCulture(locale: string): void {
-        this.callHandler('changeCulture', locale);
+        if (this.host.callHandler)
+            this.host.callHandler('changeCulture', locale);
+        else this.cacheCommand('changeCulture', locale);
     }
 
     exit(): void {
-        this.callHandler('exit');
+        if (this.host.callHandler) this.host.callHandler('exit');
+        else this.cacheCommand('exit');
     }
 
     async getLabels<T extends string>(...keys: T[]) {
+        // Try 500 miliseconds
+        let count = 5;
+        while (this.host.callHandler == null) {
+            count--;
+            await ExtendUtils.sleep(100);
+
+            if (count === 0) break;
+        }
+
         const init: any = {};
-        const result = (await this.callHandler('getLabels')) ?? {};
+
+        if (this.host.callHandler == null) return init;
+
+        const result = (await this.host.callHandler('getLabels')) ?? {};
+
         return keys.reduce(
             (a, v) => ({
                 ...a,
@@ -47,6 +92,8 @@ export class FlutterHost implements IBridgeHost {
 
     loadApp(name: string, startUrl?: string): void {
         this.startUrl = startUrl;
-        this.callHandler('loadApp', name, startUrl);
+        if (this.host.callHandler)
+            this.host.callHandler('loadApp', name, startUrl);
+        else this.cacheCommand('loadApp', name, startUrl);
     }
 }

@@ -11,8 +11,8 @@ export namespace BridgeUtils {
      * Bridge host
      */
     export const host =
-        typeof g.flutter_inappwebview?.callHandler === 'function'
-            ? new FlutterHost(g.flutter_inappwebview.callHandler)
+        typeof g.flutter_inappwebview === 'object'
+            ? new FlutterHost(g.flutter_inappwebview)
             : typeof g.electron === 'object'
             ? (g.electron as IBridgeHost)
             : undefined;
