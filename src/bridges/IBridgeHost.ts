@@ -9,6 +9,11 @@ export interface IBridgeHost {
     changeCulture(locale: string): void;
 
     /**
+     * Closable from client
+     */
+    closable(): boolean;
+
+    /**
      * Exit the application
      */
     exit(): void;

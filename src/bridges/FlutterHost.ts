@@ -56,6 +56,10 @@ export class FlutterHost implements IBridgeHost {
         else this.cacheCommand('changeCulture', locale);
     }
 
+    closable(): boolean {
+        return false;
+    }
+
     exit(): void {
         if (this.host.callHandler) this.host.callHandler('exit');
         else this.cacheCommand('exit');
