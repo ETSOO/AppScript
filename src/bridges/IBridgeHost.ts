@@ -37,4 +37,10 @@ export interface IBridgeHost {
      * @param startUrl Start Url / router Url
      */
     loadApp(name: string, startUrl?: string): void;
+
+    /**
+     * User authorization notice
+     * @param authorized Authorized or not
+     */
+    userAuthorization(authorized: boolean): void;
 }

@@ -29,6 +29,7 @@ import {
 } from 'crypto-js';
 import { AddressRegion } from '../address/AddressRegion';
 import { AddressUtils } from '../address/AddressUtils';
+import { BridgeUtils } from '../bridges/BridgeUtils';
 import { BusinessUtils } from '../business/BusinessUtils';
 import { ProductUnit } from '../business/ProductUnit';
 import { IdLabelDto } from '../dto/IdLabelDto';
@@ -1041,6 +1042,9 @@ export abstract class CoreApp<
             this.cachedRefreshToken = undefined;
             this.refreshCountdownClear();
         }
+
+        // Host notice
+        BridgeUtils.host?.userAuthorization(this.authorized);
     }
 
     /**
