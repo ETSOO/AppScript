@@ -50,6 +50,7 @@
     "message": "Message",
     "mobile": "Mobile number",
     "mobilePhones": "Mobile numbers",
+    "monthLabel": "{0} month(s)",
     "months": [
         "Jan.",
         "Feb.",
@@ -143,6 +144,8 @@
     "unitJIN": "½Kg",
     "unitKILOGRAM": "Kg",
     "update": "Update",
+    "updateReady": "Update ready",
+    "updateTip": "Restart the application to use the latest features",
     "user": "User",
     "view": "View",
     "warning": "Warning",

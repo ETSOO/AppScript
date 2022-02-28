@@ -43,4 +43,10 @@ export interface IBridgeHost {
      * @param authorized Authorized or not
      */
     userAuthorization(authorized: boolean): void;
+
+    /**
+     * On update callback
+     * @param func Callback function
+     */
+    onUpdate(func: (app: string, version: string) => void): void;
 }

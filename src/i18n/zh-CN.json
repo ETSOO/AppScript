@@ -50,6 +50,7 @@
     "message": "留言",
     "mobile": "手机号码",
     "mobilePhones": "手机号码",
+    "monthLabel": "{0}個月",
     "months": [
         "1月",
         "2月",
@@ -144,6 +145,8 @@
     "unitKILOGRAM": "公斤",
     "unitTON": "吨",
     "update": "更新",
+    "updateReady": "更新就绪",
+    "updateTip": "重新启动应用程序以使用最新功能",
     "user": "用户",
     "view": "查看",
     "warning": "警告",

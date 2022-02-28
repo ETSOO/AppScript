@@ -106,4 +106,6 @@ export class FlutterHost implements IBridgeHost {
             this.host.callHandler('userAuthorization', authorized);
         else this.cacheCommand('userAuthorization', authorized);
     }
+
+    onUpdate(func: (app: string, version: string) => void) {}
 }
