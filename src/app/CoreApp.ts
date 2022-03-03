@@ -1143,21 +1143,26 @@ export abstract class CoreApp<
         const iterations = parseInt(messageEncrypted.substring(0, 2), 10);
         if (isNaN(iterations)) return undefined;
 
-        const salt = enc.Hex.parse(messageEncrypted.substring(2, 34));
-        const iv = enc.Hex.parse(messageEncrypted.substring(34, 66));
-        const encrypted = messageEncrypted.substring(66);
+        try {
+            const salt = enc.Hex.parse(messageEncrypted.substring(2, 34));
+            const iv = enc.Hex.parse(messageEncrypted.substring(34, 66));
+            const encrypted = messageEncrypted.substring(66);
 
-        const key = PBKDF2(passphrase ?? this.passphrase, salt, {
-            keySize: 8, // 256 / 32
-            hasher: algo.SHA256,
-            iterations: 1000 * iterations
-        });
+            const key = PBKDF2(passphrase ?? this.passphrase, salt, {
+                keySize: 8, // 256 / 32
+                hasher: algo.SHA256,
+                iterations: 1000 * iterations
+            });
 
-        return AES.decrypt(encrypted, key, {
-            iv,
-            padding: pad.Pkcs7,
-            mode: mode.CBC
-        }).toString(enc.Utf8);
+            return AES.decrypt(encrypted, key, {
+                iv,
+                padding: pad.Pkcs7,
+                mode: mode.CBC
+            }).toString(enc.Utf8);
+        } catch (e) {
+            console.log('decrypt', e);
+            return undefined;
+        }
     }
 
     /**
@@ -1180,26 +1185,31 @@ export abstract class CoreApp<
 
         const timestamp = messageEncrypted.substring(0, pos);
 
-        if (durationSeconds != null && durationSeconds > 0) {
-            const milseconds = Utils.charsToNumber(timestamp);
-            if (isNaN(milseconds) || milseconds < 1) return undefined;
-            const timespan = new Date().substract(new Date(milseconds));
-            if (
-                (durationSeconds <= 12 &&
-                    timespan.totalMonths > durationSeconds) ||
-                (durationSeconds > 12 &&
-                    timespan.totalSeconds > durationSeconds)
-            )
-                return undefined;
+        try {
+            if (durationSeconds != null && durationSeconds > 0) {
+                const milseconds = Utils.charsToNumber(timestamp);
+                if (isNaN(milseconds) || milseconds < 1) return undefined;
+                const timespan = new Date().substract(new Date(milseconds));
+                if (
+                    (durationSeconds <= 12 &&
+                        timespan.totalMonths > durationSeconds) ||
+                    (durationSeconds > 12 &&
+                        timespan.totalSeconds > durationSeconds)
+                )
+                    return undefined;
+            }
+
+            const message = messageEncrypted.substring(pos + 1);
+            passphrase = this.encryptionEnhance(
+                passphrase ?? this.passphrase,
+                timestamp
+            );
+
+            return this.decrypt(message, passphrase);
+        } catch (e) {
+            console.log('decryptEnhanced', e);
+            return undefined;
         }
-
-        const message = messageEncrypted.substring(pos + 1);
-        passphrase = this.encryptionEnhance(
-            passphrase ?? this.passphrase,
-            timestamp
-        );
-
-        return this.decrypt(message, passphrase);
     }
 
     /**
