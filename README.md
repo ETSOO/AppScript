@@ -15,6 +15,12 @@ Using yarn:
 $ yarn add @etsoo/appscript
 ```
 
+## Client data security framework
+-   CoreApp, constructor, reads deviceId from session storage
+-   restore, when deviceId is empty, try to restore from persisted storage, get the passphrase (encryption / decription) or remove all data keys
+-   initCall (everytime the application running), if passphrase is there, just return, otherwise read from serverside
+-   device updated will cause validataion failure. Please call initCall(undefined, true);
+
 ## Structure
 
 ### address - Address (region) related
@@ -44,18 +50,19 @@ $ yarn add @etsoo/appscript
 -   IExternalSettings - External settings items
 -   IExternalSettingsHost - External settings host passed by external script
 
+#### UserRole.ts ####
+-   Standard user roles
+
 ### bridges - Works with Electron
 
-#### ElectronBridge.ts ####
--   AppRuntime - Action result to error type.
+#### BridgeUtils.ts ####
+-   BridgeUtils - Bridge utils
 
-#### IAppData.ts ####
--   IAppData - App data interface.
+#### FlutterHost.ts ####
+-   FlutterHost - Flutter JavaScript Host
 
-#### IBridge.ts ####
--   IBridgeUnsubscribe - Bridge unsubscribe interface
--   IBridgeListener - Bridge listener interface
--   IBridge - Bridge interface
+#### IBridgeHost.ts ####
+-   IBridgeHost - Bridge host interface
 
 ### business - Business logics
 
@@ -71,8 +78,19 @@ $ yarn add @etsoo/appscript
 -   getUnits - Get all product units
 -   getRepeatOptions -  Get all repeat options
 
+#### EntityStatus.ts ####
+-   EntityStatus - Standard entity status enum
+
 #### ProductUnit.ts ####
 -   ProductUnit - Product units enum
+
+#### RepeatOption.ts ####
+-   RepeatOption - Repeat options
+
+### def - Type definition
+
+#### ListItem.ts ####
+-   ListItem - List item definition
 
 ### dto - Data transfer object
 
@@ -82,8 +100,11 @@ $ yarn add @etsoo/appscript
 #### IdLabelDto.ts ####
 -   IdLabelDto - Dto with id and label field
 
-#### UpdateDto.ts ####
--   UpdateDto - Dto with id and changedFields
+#### IdLabelPrimaryDto.ts ####
+-   IdLabelPrimaryDto - Dto with id, label and primary field
+
+#### IdLabelPrimaryDto.ts ####
+-   InitCallDto - Init call dto
 
 ### i18n - Multiple cultures
 
@@ -93,7 +114,7 @@ $ yarn add @etsoo/appscript
 -   ActionResult - API call action result extends IActionResult
 
 #### ActionResultError.ts ####
--   ActionResultError - Action result to error type.
+-   ActionResultError - Action result to error type
 
 #### IActionResult.ts ####
 -   IResultData - Result data interface
@@ -101,6 +122,10 @@ $ yarn add @etsoo/appscript
 -   IResultErrors - Result errors interface
 -   IActionResult - Action result interface
 -   ActionResultId - Action result with id data
+
+#### InitCallResultData.ts ####
+-   InitCallResultData - Init call result data
+-   InitCallResult - Init call result
 
 ### state - State management
 

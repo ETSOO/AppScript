@@ -412,9 +412,13 @@ export interface ICoreApp<
     /**
      * Init call
      * @param callback Callback
+     * @param resetKeys Reset all keys first
      * @returns Result
      */
-    initCall(callback?: (result: boolean) => void): Promise<void>;
+    initCall(
+        callback?: (result: boolean) => void,
+        resetKeys?: boolean
+    ): Promise<void>;
 
     /**
      * Callback where exit a page
@@ -765,11 +769,11 @@ export abstract class CoreApp<
             return false;
         }
 
-        // this.name to identifier different app's secret
         const passphraseEncrypted = this.storage.getData<string>(
             this.fields.devicePassphrase
         );
         if (passphraseEncrypted) {
+            // this.name to identifier different app's secret
             const passphraseDecrypted = this.decrypt(
                 passphraseEncrypted,
                 this.name
@@ -861,9 +865,13 @@ export abstract class CoreApp<
     /**
      * Init call
      * @param callback Callback
+     * @param resetKeys Reset all keys first
      * @returns Result
      */
-    async initCall(callback?: (result: boolean) => void) {
+    async initCall(callback?: (result: boolean) => void, resetKeys?: boolean) {
+        // Reset keys
+        if (resetKeys) this.resetKeys();
+
         // Passphrase exists?
         if (this.passphrase) {
             if (callback) callback(true);
@@ -887,11 +895,13 @@ export abstract class CoreApp<
 
         const result = await this.apiInitCall(data);
         if (result == null) {
+            // API error will popup
             if (callback) callback(false);
             return;
         }
 
         if (result.data == null) {
+            // Popup no data error
             this.notifier.alert(this.get<string>('noData')!);
             if (callback) callback(false);
             return;
@@ -922,9 +932,12 @@ export abstract class CoreApp<
             return;
         }
 
-        this.initCallUpdate(result.data, data.timestamp);
+        const updateResult = this.initCallUpdate(result.data, data.timestamp);
+        if (!updateResult) {
+            this.notifier.alert(this.get<string>('noData')! + '(Update)');
+        }
 
-        if (callback) callback(true);
+        if (callback) callback(updateResult);
     }
 
     /**
@@ -932,14 +945,17 @@ export abstract class CoreApp<
      * @param data Result data
      * @param timestamp Timestamp
      */
-    protected initCallUpdate(data: InitCallResultData, timestamp: number) {
+    protected initCallUpdate(
+        data: InitCallResultData,
+        timestamp: number
+    ): boolean {
         // Data check
-        if (data.deviceId == null || data.passphrase == null) return;
+        if (data.deviceId == null || data.passphrase == null) return false;
 
         // Decrypt
         // Should be done within 120 seconds after returning from the backend
         const passphrase = this.decrypt(data.passphrase, timestamp.toString());
-        if (passphrase == null) return;
+        if (passphrase == null) return false;
 
         // Update device id and cache it
         this._deviceId = data.deviceId;
@@ -973,8 +989,14 @@ export abstract class CoreApp<
                 const currentValue = this.storage.getData<string>(field);
                 if (currentValue == null || currentValue === '') continue;
 
+                if (prev == null) {
+                    // Reset the field
+                    this.storage.setData(field, undefined);
+                    continue;
+                }
+
                 const enhanced = currentValue.indexOf('!') >= 8;
-                let newValueSource = null;
+                let newValueSource: string | undefined;
 
                 if (enhanced) {
                     newValueSource = this.decryptEnhanced(
@@ -986,7 +1008,11 @@ export abstract class CoreApp<
                     newValueSource = this.decrypt(currentValue, prev);
                 }
 
-                if (newValueSource == null || newValueSource === '') continue;
+                if (newValueSource == null || newValueSource === '') {
+                    // Reset the field
+                    this.storage.setData(field, undefined);
+                    continue;
+                }
 
                 const newValue = enhanced
                     ? this.encryptEnhanced(newValueSource)
@@ -995,6 +1021,8 @@ export abstract class CoreApp<
                 this.storage.setData(field, newValue);
             }
         }
+
+        return true;
     }
 
     /**

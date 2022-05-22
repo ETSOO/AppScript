@@ -1,5 +1,5 @@
 /**
- * Bridge host
+ * Bridge host interface
  */
 export interface IBridgeHost {
     /**
