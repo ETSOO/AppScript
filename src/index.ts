@@ -44,6 +44,10 @@ export * from './result/ActionResultError';
 export * from './result/IActionResult';
 export * from './result/InitCallResult';
 
+// rq
+export * from './rq/LoginIdRQ';
+export * from './rq/LoginRQ';
+
 // state
 export * from './state/Culture';
 export * from './state/State';
