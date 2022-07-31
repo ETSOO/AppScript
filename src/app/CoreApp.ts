@@ -421,6 +421,12 @@ export interface ICoreApp<
     ): Promise<void>;
 
     /**
+     * Is valid password, override to implement custom check
+     * @param password Input password
+     */
+    isValidPassword(password: string): boolean;
+
+    /**
      * Callback where exit a page
      */
     pageExit(): void;
@@ -790,6 +796,22 @@ export abstract class CoreApp<
 
             // Failed, reset keys
             this.resetKeys();
+        }
+
+        return false;
+    }
+
+    /**
+     * Is valid password, override to implement custom check
+     * @param password Input password
+     */
+    isValidPassword(password: string) {
+        // Length check
+        if (password.length < 6) return false;
+
+        // One letter and number required
+        if (/\d+/gi.test(password) && /[a-z]+/gi.test(password)) {
+            return true;
         }
 
         return false;

@@ -160,6 +160,12 @@ test('Tests for getUnitLabel', () => {
     expect(app.getUnitLabel(12, true)).toBe('每年');
 });
 
+test('Tests for isValidPassword', () => {
+    expect(app.isValidPassword('12345678')).toBeFalsy();
+    expect(app.isValidPassword('abcd3')).toBeFalsy();
+    expect(app.isValidPassword('1234abcd')).toBeTruthy();
+});
+
 test('Tests for getRepeatOptions', () => {
     const options = BusinessUtils.getRepeatOptions(app.labelDelegate, [
         'MONTH',
