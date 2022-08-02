@@ -41,6 +41,7 @@
     "emailAddresses": "Email addresses",
     "enabled": "Enabled",
     "entityStatus": "Status",
+    "environmentChanged": "The operating environment has changed, please log in again",
     "etsoo": "ETSOO",
     "expiry": "Expiry",
     "failed": "Operation failed",
