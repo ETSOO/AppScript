@@ -213,6 +213,13 @@ export interface ICoreApp<
     changeCulture(culture: DataTypes.CultureDefinition): void;
 
     /**
+     * Check the action result is about device invalid
+     * @param result Action result
+     * @returns true means device is invalid
+     */
+    checkDeviceResult(result: IActionResult): boolean;
+
+    /**
      * Clear cache data
      */
     clearCacheData(): void;
@@ -901,7 +908,7 @@ export abstract class CoreApp<
      * @param result Action result
      * @returns true means device is invalid
      */
-    protected checkDeviceResult(result: IActionResult): boolean {
+    checkDeviceResult(result: IActionResult): boolean {
         if (result.type === 'NoValidData' && result.field === 'Device')
             return true;
         return false;
