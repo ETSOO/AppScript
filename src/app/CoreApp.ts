@@ -316,6 +316,18 @@ export interface ICoreApp<
     ): string | undefined;
 
     /**
+     * Do refresh token result
+     * @param result Result
+     * @param initCallCallback InitCall callback
+     * @param silent Silent without any popups
+     */
+    doRefreshTokenResult(
+        result: RefreshTokenResult,
+        initCallCallback?: (result: boolean) => void,
+        silent?: boolean
+    ): void;
+
+    /**
      * Format refresh token result
      * @param result Refresh token result
      * @returns Message
@@ -890,7 +902,7 @@ export abstract class CoreApp<
      * @returns true means device is invalid
      */
     protected checkDeviceResult(result: IActionResult): boolean {
-        if (result.type == 'NoValidData' && result.field == 'Device')
+        if (result.type === 'NoValidData' && result.field === 'Device')
             return true;
         return false;
     }
@@ -1434,6 +1446,48 @@ export abstract class CoreApp<
      */
     formatError(error: ApiDataError) {
         return error.toString();
+    }
+
+    /**
+     * Refresh token failed
+     */
+    protected refreshTokenFailed() {
+        this.userUnauthorized();
+        this.toLoginPage();
+    }
+
+    /**
+     * Do refresh token result
+     * @param result Result
+     * @param initCallCallback InitCall callback
+     * @param silent Silent without any popups
+     */
+    doRefreshTokenResult(
+        result: RefreshTokenResult,
+        initCallCallback?: (result: boolean) => void,
+        silent: boolean = false
+    ) {
+        if (result === true) return;
+
+        if (
+            initCallCallback &&
+            typeof result === 'object' &&
+            !(result instanceof ApiDataError) &&
+            this.checkDeviceResult(result)
+        ) {
+            this.initCall(initCallCallback, true);
+            return;
+        }
+
+        const message = this.formatRefreshTokenResult(result);
+        if (message == null || silent) {
+            this.refreshTokenFailed();
+            return;
+        }
+
+        this.notifier.alert(message, () => {
+            this.refreshTokenFailed();
+        });
     }
 
     /**
