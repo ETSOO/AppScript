@@ -1470,11 +1470,22 @@ export abstract class CoreApp<
         if (result === true) return;
 
         if (
-            initCallCallback &&
             typeof result === 'object' &&
             !(result instanceof ApiDataError) &&
             this.checkDeviceResult(result)
         ) {
+            initCallCallback ??= (result) => {
+                if (!result) return;
+                this.notifier.alert(
+                    this.get<string>('environmentChanged') ??
+                        'Environment changed',
+                    () => {
+                        // Reload the page
+                        history.go(0);
+                    }
+                );
+            };
+
             this.initCall(initCallCallback, true);
             return;
         }
