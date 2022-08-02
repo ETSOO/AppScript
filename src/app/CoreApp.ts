@@ -885,6 +885,17 @@ export abstract class CoreApp<
     }
 
     /**
+     * Check the action result is about device invalid
+     * @param result Action result
+     * @returns true means device is invalid
+     */
+    protected checkDeviceResult(result: IActionResult): boolean {
+        if (result.type == 'NoValidData' && result.field == 'Device')
+            return true;
+        return false;
+    }
+
+    /**
      * Init call
      * @param callback Callback
      * @param resetKeys Reset all keys first
@@ -892,7 +903,10 @@ export abstract class CoreApp<
      */
     async initCall(callback?: (result: boolean) => void, resetKeys?: boolean) {
         // Reset keys
-        if (resetKeys) this.resetKeys();
+        if (resetKeys) {
+            this._deviceId = '';
+            this.resetKeys();
+        }
 
         // Passphrase exists?
         if (this.passphrase) {
