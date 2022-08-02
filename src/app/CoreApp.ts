@@ -37,7 +37,7 @@ import { InitCallDto } from '../dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
 import { IActionResult } from '../result/IActionResult';
 import { InitCallResult, InitCallResultData } from '../result/InitCallResult';
-import { IUserData } from '../state/User';
+import { IUser, IUserData } from '../state/User';
 import { IAppSettings } from './AppSettings';
 import { UserRole } from './UserRole';
 
@@ -104,6 +104,7 @@ export type IAppFields = { [key in typeof appFields[number]]: string };
  * Core application interface
  */
 export interface ICoreApp<
+    U extends IUser,
     S extends IAppSettings,
     N,
     C extends NotificationCallProps
@@ -176,7 +177,7 @@ export interface ICoreApp<
     /**
      * User data
      */
-    userData?: IUserData;
+    userData?: U;
 
     /**
      * Search input element
@@ -518,7 +519,7 @@ export interface ICoreApp<
      * @param refreshToken Refresh token
      * @param keep Keep login or not
      */
-    userLogin(user: IUserData, refreshToken: string, keep?: boolean): void;
+    userLogin(user: U, refreshToken: string, keep?: boolean): void;
 
     /**
      * User logout
@@ -543,10 +544,11 @@ export interface ICoreApp<
  * Core application
  */
 export abstract class CoreApp<
+    U extends IUser,
     S extends IAppSettings,
     N,
     C extends NotificationCallProps
-> implements ICoreApp<S, N, C>
+> implements ICoreApp<U, S, N, C>
 {
     /**
      * Settings
@@ -628,14 +630,14 @@ export abstract class CoreApp<
         this._ipData = value;
     }
 
-    private _userData?: IUserData;
+    private _userData?: U;
     /**
      * User data
      */
     get userData() {
         return this._userData;
     }
-    protected set userData(value: IUserData | undefined) {
+    protected set userData(value: U | undefined) {
         this._userData = value;
     }
 
@@ -1870,7 +1872,7 @@ export abstract class CoreApp<
      * @param refreshToken Refresh token
      * @param keep Keep login or not
      */
-    userLogin(user: IUserData, refreshToken: string, keep?: boolean) {
+    userLogin(user: U, refreshToken: string, keep?: boolean) {
         this.userData = user;
 
         // Cache the encrypted serverside device id

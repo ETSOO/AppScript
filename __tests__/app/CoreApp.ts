@@ -8,7 +8,7 @@ import {
 } from '@etsoo/notificationbase';
 import { ApiAuthorizationScheme, createClient } from '@etsoo/restclient';
 import { DataTypes, DomUtils, Utils, WindowStorage } from '@etsoo/shared';
-import { BusinessUtils } from '../../src';
+import { BusinessUtils, IUser } from '../../src';
 import { AddressUtils } from '../../src/address/AddressUtils';
 import { IAppSettings } from '../../src/app/AppSettings';
 import { CoreApp } from '../../src/app/CoreApp';
@@ -49,7 +49,12 @@ class NotificationContainerTest extends NotificationContainer<
 var container = new NotificationContainerTest((update) => {});
 
 // Arrange
-class CoreAppTest extends CoreApp<IAppSettings, {}, NotificationCallProps> {
+class CoreAppTest extends CoreApp<
+    IUser,
+    IAppSettings,
+    {},
+    NotificationCallProps
+> {
     /**
      * Constructor
      * @param settings Settings
