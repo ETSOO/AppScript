@@ -8,7 +8,7 @@ import {
 } from '@etsoo/notificationbase';
 import { ApiAuthorizationScheme, createClient } from '@etsoo/restclient';
 import { DataTypes, DomUtils, Utils, WindowStorage } from '@etsoo/shared';
-import { BusinessUtils, IUser } from '../../src';
+import { BusinessUtils, IUser, UserRole } from '../../src';
 import { AddressUtils } from '../../src/address/AddressUtils';
 import { IAppSettings } from '../../src/app/AppSettings';
 import { CoreApp } from '../../src/app/CoreApp';
@@ -159,6 +159,12 @@ test('Tests for initCallUpdateLocal', () => {
         1639282438620
     );
     expect(passphrase).not.toBeNull();
+});
+
+test('Tests for getRoles', () => {
+    var roles = app.getRoles(UserRole.User | UserRole.Manager | UserRole.Admin);
+    expect(roles.length).toBe(3);
+    expect(roles.map((r) => r.id)).toEqual([8, 128, 8192]);
 });
 
 test('Tests for getUnitLabel', () => {

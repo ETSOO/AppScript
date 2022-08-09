@@ -37,7 +37,7 @@ import { InitCallDto } from '../dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
 import { IActionResult } from '../result/IActionResult';
 import { InitCallResult, InitCallResultData } from '../result/InitCallResult';
-import { IUser, IUserData } from '../state/User';
+import { IUser } from '../state/User';
 import { IAppSettings } from './AppSettings';
 import { UserRole } from './UserRole';
 
@@ -376,15 +376,21 @@ export interface ICoreApp<
 
     /**
      * Get entity status label
-     * @param data Input data
+     * @param status Status value
      */
-    getEntityStatusLabel<D extends { entityStatus?: number }>(data?: D): string;
+    getEntityStatusLabel(status: number | null | undefined): string;
 
     /**
      * Get all regions
      * @returns Regions
      */
     getRegions(): AddressRegion[];
+
+    /**
+     * Get roles
+     * @param role Combination role value
+     */
+    getRoles(role: number): IdLabelDto[];
 
     /**
      * Get refresh token from response headers
@@ -1603,15 +1609,33 @@ export abstract class CoreApp<
     }
 
     /**
-     * Get entity status label
-     * @param data Input data
+     * Get roles
+     * @param role Combination role value
      */
-    getEntityStatusLabel<D extends { entityStatus?: number }>(data?: D) {
-        if (data == null || data.entityStatus == null) return '';
-        return BusinessUtils.getEntityStatusLabel(
-            data.entityStatus,
-            this.labelDelegate
-        );
+    getRoles(role: number) {
+        var roles: IdLabelDto[] = [];
+
+        var keys = DataTypes.getEnumKeys(UserRole);
+        for (var key of keys) {
+            var id = UserRole[key as keyof typeof UserRole];
+            if ((id & role) > 0) {
+                roles.push({
+                    id,
+                    label: this.get<string>(`role${key}`) ?? key
+                });
+            }
+        }
+
+        return roles;
+    }
+
+    /**
+     * Get entity status label
+     * @param status Status value
+     */
+    getEntityStatusLabel(status: number | null | undefined) {
+        if (status == null) return '';
+        return BusinessUtils.getEntityStatusLabel(status, this.labelDelegate);
     }
 
     /**

@@ -24,7 +24,6 @@ export * from './business/RepeatOption';
 export * from './def/ListItem';
 
 // dto
-export * from './dto/IdDto';
 export * from './dto/IdLabelDto';
 export * from './dto/IdLabelPrimaryDto';
 export * from './dto/InitCallDto';
