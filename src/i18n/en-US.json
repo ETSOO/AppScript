@@ -43,6 +43,7 @@
     "enabled": "Enabled",
     "entityStatus": "Status",
     "environmentChanged": "The operating environment has changed, please log in again",
+    "error": "Error",
     "etsoo": "ETSOO",
     "expiry": "Expiry",
     "failed": "Operation failed",

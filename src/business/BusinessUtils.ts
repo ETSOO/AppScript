@@ -2,7 +2,6 @@ import { DataTypes } from '@etsoo/shared';
 import { RepeatOption } from '..';
 import { IdLabelDto } from '../dto/IdLabelDto';
 import { ICultureGet } from '../state/Culture';
-import { EntityStatus } from './EntityStatus';
 import { ProductUnit } from './ProductUnit';
 
 /**
@@ -23,37 +22,6 @@ export namespace BusinessUtils {
             id: name,
             label: func(`currency${name}`) ?? name
         }));
-    }
-
-    /**
-     * Get entity status's label
-     * Please define the label with key 'statusNormal' for Normal status
-     * @param unit Unit
-     * @param func Label delegate
-     * @returns Label
-     */
-    export function getEntityStatusLabel(
-        status: EntityStatus,
-        func: ICultureGet
-    ) {
-        const key = EntityStatus[status];
-        return func('status' + key) ?? key;
-    }
-
-    /**
-     * Get entity status collection
-     * @param unit Unit
-     * @param func Label delegate
-     * @returns Label
-     */
-    export function getEntityStatus(func: ICultureGet) {
-        return DataTypes.getEnumKeys(EntityStatus).map((key) => {
-            const id = DataTypes.getEnumByKey(EntityStatus, key)!;
-            return {
-                id,
-                label: getEntityStatusLabel(id, func)
-            };
-        });
     }
 
     /**

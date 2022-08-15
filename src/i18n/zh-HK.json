@@ -43,6 +43,7 @@
     "enabled": "已啟用",
     "entityStatus": "狀態",
     "environmentChanged": "運行環境已改變，請重新登錄",
+    "error": "錯誤",
     "etsoo": "億速思維",
     "expiry": "到期時間",
     "failed": "操作失敗",

@@ -43,6 +43,7 @@
     "enabled": "已启用",
     "entityStatus": "状态",
     "environmentChanged": "运行环境已改变，请重新登录",
+    "error": "错误",
     "etsoo": "亿速思维",
     "expiry": "到期时间",
     "failed": "操作失败",

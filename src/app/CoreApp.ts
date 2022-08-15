@@ -31,6 +31,7 @@ import { AddressRegion } from '../address/AddressRegion';
 import { AddressUtils } from '../address/AddressUtils';
 import { BridgeUtils } from '../bridges/BridgeUtils';
 import { BusinessUtils } from '../business/BusinessUtils';
+import { EntityStatus } from '../business/EntityStatus';
 import { ProductUnit } from '../business/ProductUnit';
 import { IdLabelDto } from '../dto/IdLabelDto';
 import { InitCallDto } from '../dto/InitCallDto';
@@ -375,12 +376,6 @@ export interface ICoreApp<
     getCacheToken(): string | undefined;
 
     /**
-     * Get entity status label
-     * @param status Status value
-     */
-    getEntityStatusLabel(status: number | null | undefined): string;
-
-    /**
      * Get all regions
      * @returns Regions
      */
@@ -391,6 +386,18 @@ export interface ICoreApp<
      * @param role Combination role value
      */
     getRoles(role: number): IdLabelDto[];
+
+    /**
+     * Get status label
+     * @param status Status value
+     */
+    getStatusLabel(status: number | null | undefined): string;
+
+    /**
+     * Get status list
+     * @returns list
+     */
+    getStatusList(): IdLabelDto[];
 
     /**
      * Get refresh token from response headers
@@ -1599,6 +1606,67 @@ export abstract class CoreApp<
     }
 
     /**
+     * Get enum item number id list
+     * @param em Enum
+     * @param prefix Label prefix
+     * @param filter Filter
+     * @returns List
+     */
+    protected getEnumList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
+        em: E,
+        prefix: string,
+        filter?: (
+            id: E[keyof E],
+            key: keyof E & string
+        ) => E[keyof E] | undefined
+    ): IdLabelDto[] {
+        const list: IdLabelDto<number>[] = [];
+        const keys = DataTypes.getEnumKeys(em);
+        for (const key of keys) {
+            let id = em[key as keyof E];
+            if (filter) {
+                const fid = filter(id, key);
+                if (fid == null) continue;
+                id = fid;
+            }
+            if (typeof id !== 'number') continue;
+            var label = this.get<string>(prefix + key) ?? key;
+            list.push({ id, label });
+        }
+        return list;
+    }
+
+    /**
+     * Get enum item string id list
+     * @param em Enum
+     * @param prefix Label prefix
+     * @param filter Filter
+     * @returns List
+     */
+    protected getEnumStrList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
+        em: E,
+        prefix: string,
+        filter?: (
+            id: E[keyof E],
+            key: keyof E & string
+        ) => E[keyof E] | undefined
+    ): IdLabelDto<string>[] {
+        const list: IdLabelDto<string>[] = [];
+        const keys = DataTypes.getEnumKeys(em);
+        for (const key of keys) {
+            let id = em[key as keyof E];
+            if (filter) {
+                const fid = filter(id, key);
+                if (fid == null) continue;
+                id = fid;
+            }
+            var label = this.get<string>(prefix + key) ?? key;
+            list.push({ id: id.toString(), label });
+        }
+        return list;
+    }
+
+    /**
      * Get all regions
      * @returns Regions
      */
@@ -1613,29 +1681,27 @@ export abstract class CoreApp<
      * @param role Combination role value
      */
     getRoles(role: number) {
-        var roles: IdLabelDto[] = [];
-
-        var keys = DataTypes.getEnumKeys(UserRole);
-        for (var key of keys) {
-            var id = UserRole[key as keyof typeof UserRole];
-            if ((id & role) > 0) {
-                roles.push({
-                    id,
-                    label: this.get<string>(`role${key}`) ?? key
-                });
-            }
-        }
-
-        return roles;
+        return this.getEnumList(UserRole, 'role', (id, _key) => {
+            if ((id & role) > 0) return id;
+        });
     }
 
     /**
-     * Get entity status label
+     * Get status list
+     * @returns list
+     */
+    getStatusList() {
+        return this.getEnumList(EntityStatus, 'status');
+    }
+
+    /**
+     * Get status label
      * @param status Status value
      */
-    getEntityStatusLabel(status: number | null | undefined) {
+    getStatusLabel(status: number | null | undefined) {
         if (status == null) return '';
-        return BusinessUtils.getEntityStatusLabel(status, this.labelDelegate);
+        const key = EntityStatus[status];
+        return this.get<string>('status' + key) ?? key;
     }
 
     /**
