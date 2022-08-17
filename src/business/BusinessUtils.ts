@@ -1,13 +1,52 @@
 import { DataTypes } from '@etsoo/shared';
-import { RepeatOption } from '..';
 import { IdLabelDto } from '../dto/IdLabelDto';
 import { ICultureGet } from '../state/Culture';
 import { ProductUnit } from './ProductUnit';
+import { RepeatOption } from './RepeatOption';
 
 /**
  * Business utils
  */
 export namespace BusinessUtils {
+    /**
+     * Format avatar title
+     * @param title Title
+     * @param maxChars Max characters
+     * @param defaultTitle Default title
+     * @returns Result
+     */
+    export function formatAvatarTitle(
+        title?: string,
+        maxChars: number = 3,
+        defaultTitle: string = 'ME'
+    ): string {
+        // Just return for empty cases
+        if (title == null || title === '') return defaultTitle;
+
+        // split with words
+        const items = title.trim().split(/\s+/g);
+
+        if (items.length === 1) {
+            // 2-3 Chinese names
+            const titleLen = title.length;
+            if (titleLen <= maxChars) return title.toUpperCase();
+
+            // Return default for simplicity
+            return defaultTitle;
+        }
+
+        // First letter of each item
+        var firstLetters = items
+            .map((item) => item[0])
+            .join('')
+            .toUpperCase();
+
+        const flen = firstLetters.length;
+        if (flen <= maxChars) return firstLetters;
+
+        return defaultTitle;
+    }
+
     /**
      * Get currency collection
      * @param currencyNames Names like CNY, USD
