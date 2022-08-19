@@ -347,8 +347,9 @@ export interface ICoreApp<
      * Format result text
      * @param result Action result
      * @param forceToLocal Force to local labels
+     * @returns Message
      */
-    formatResult(result: IActionResult, forceToLocal?: boolean): void;
+    formatResult(result: IActionResult, forceToLocal?: boolean): string;
 
     /**
      * Fresh countdown UI
@@ -1109,8 +1110,7 @@ export abstract class CoreApp<
      * @param callback Callback
      */
     alertResult(result: IActionResult, callback?: NotificationReturn<void>) {
-        this.formatResult(result);
-        this.notifier.alert(ActionResultError.format(result), callback);
+        this.notifier.alert(this.formatResult(result), callback);
     }
 
     /**
@@ -1566,6 +1566,8 @@ export abstract class CoreApp<
             const fieldLabel = this.get(result.field.formatInitial(false));
             if (fieldLabel) result.title = result.title.format(fieldLabel);
         }
+
+        return ActionResultError.format(result);
     }
 
     /**

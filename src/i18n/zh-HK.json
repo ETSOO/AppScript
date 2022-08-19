@@ -48,6 +48,7 @@
     "expiry": "到期時間",
     "failed": "操作失敗",
     "field": "字段",
+    "help": "幫助",
     "id": "編號",
     "info": "信息",
     "itemExists": "'{0}'已经存在",

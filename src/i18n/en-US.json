@@ -48,6 +48,7 @@
     "expiry": "Expiry",
     "failed": "Operation failed",
     "field": "Field",
+    "help": "Help",
     "id": "Number#",
     "info": "Info",
     "itemExists": "'{0}' already exists",
