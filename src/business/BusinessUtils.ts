@@ -167,4 +167,18 @@ export namespace BusinessUtils {
 
         return getUnits(func, options, isJoined);
     }
+
+    /**
+     * Set id value
+     * @param item QueryRQ or TiplistRQ or similiar item
+     * @param id Id value
+     */
+    export function setIdValue<T extends { id?: number; sid?: string }>(
+        item: T,
+        id?: DataTypes.IdType
+    ) {
+        if (id == null) return;
+        if (typeof id === 'number') item.id = id;
+        else item.sid = id;
+    }
 }

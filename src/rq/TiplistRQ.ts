@@ -1,17 +1,24 @@
+import { DataTypes } from '@etsoo/shared';
+
 /**
  * Tiplist request data
  * com.etsoo.CoreFramework.Models.TiplistRQ
  */
-export type TiplistRQ<T = number> = {
+export type TiplistRQ = {
     /**
-     * Current id
+     * number id
      */
-    id: T;
+    id?: number;
+
+    /**
+     * String id
+     */
+    sid?: string;
 
     /**
      * Excluded ids
      */
-    excludedIds?: T[];
+    excludedIds?: DataTypes.IdType[];
 
     /**
      * Filter keyword
