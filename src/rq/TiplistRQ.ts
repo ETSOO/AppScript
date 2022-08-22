@@ -1,0 +1,25 @@
+/**
+ * Tiplist request data
+ * com.etsoo.CoreFramework.Models.TiplistRQ
+ */
+export type TiplistRQ<T = number> = {
+    /**
+     * Current id
+     */
+    id: T;
+
+    /**
+     * Excluded ids
+     */
+    excludedIds?: T[];
+
+    /**
+     * Filter keyword
+     */
+    keyword?: string;
+
+    /**
+     * Max items to return
+     */
+    items?: number;
+};

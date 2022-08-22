@@ -46,6 +46,8 @@ export * from './result/InitCallResult';
 // rq
 export * from './rq/LoginIdRQ';
 export * from './rq/LoginRQ';
+export * from './rq/QueryRQ';
+export * from './rq/TiplistRQ';
 
 // state
 export * from './state/Culture';
