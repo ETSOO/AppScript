@@ -33,7 +33,6 @@ import { BridgeUtils } from '../bridges/BridgeUtils';
 import { BusinessUtils } from '../business/BusinessUtils';
 import { EntityStatus } from '../business/EntityStatus';
 import { ProductUnit } from '../business/ProductUnit';
-import { IdLabelDto } from '../dto/IdLabelDto';
 import { InitCallDto } from '../dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
 import { IActionResult } from '../result/IActionResult';
@@ -386,7 +385,7 @@ export interface ICoreApp<
      * Get roles
      * @param role Combination role value
      */
-    getRoles(role: number): IdLabelDto[];
+    getRoles(role: number): DataTypes.IdLabelItem[];
 
     /**
      * Get status label
@@ -398,7 +397,7 @@ export interface ICoreApp<
      * Get status list
      * @returns list
      */
-    getStatusList(): IdLabelDto[];
+    getStatusList(): DataTypes.IdLabelItem[];
 
     /**
      * Get refresh token from response headers
@@ -487,7 +486,7 @@ export interface ICoreApp<
     orgList(
         items?: number,
         serviceId?: number
-    ): Promise<IdLabelDto[] | undefined>;
+    ): Promise<DataTypes.IdLabelItem[] | undefined>;
 
     /**
      * Persist settings to source when application exit
@@ -1621,8 +1620,8 @@ export abstract class CoreApp<
             id: E[keyof E],
             key: keyof E & string
         ) => E[keyof E] | undefined
-    ): IdLabelDto[] {
-        const list: IdLabelDto<number>[] = [];
+    ): DataTypes.IdLabelItem[] {
+        const list: DataTypes.IdLabelItem<number>[] = [];
         const keys = DataTypes.getEnumKeys(em);
         for (const key of keys) {
             let id = em[key as keyof E];
@@ -1652,8 +1651,8 @@ export abstract class CoreApp<
             id: E[keyof E],
             key: keyof E & string
         ) => E[keyof E] | undefined
-    ): IdLabelDto<string>[] {
-        const list: IdLabelDto<string>[] = [];
+    ): DataTypes.IdLabelItem<string>[] {
+        const list: DataTypes.IdLabelItem<string>[] = [];
         const keys = DataTypes.getEnumKeys(em);
         for (const key of keys) {
             let id = em[key as keyof E];
@@ -1884,7 +1883,7 @@ export abstract class CoreApp<
      * @returns Result
      */
     async orgList(items?: number, serviceId?: number) {
-        return await this.api.post<IdLabelDto[]>(
+        return await this.api.post<DataTypes.IdLabelItem[]>(
             'Organization/List',
             {
                 items,

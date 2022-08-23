@@ -1,5 +1,4 @@
 import { DataTypes } from '@etsoo/shared';
-import { IdLabelDto } from '../dto/IdLabelDto';
 import { ICultureGet } from '../state/Culture';
 import { ProductUnit } from './ProductUnit';
 import { RepeatOption } from './RepeatOption';
@@ -56,7 +55,7 @@ export namespace BusinessUtils {
     export function getCurrencies(
         currencyNames: string[],
         func: ICultureGet
-    ): IdLabelDto<string>[] {
+    ): DataTypes.IdLabelItem<string>[] {
         return currencyNames.map((name) => ({
             id: name,
             label: func(`currency${name}`) ?? name
@@ -110,7 +109,7 @@ export namespace BusinessUtils {
      * @param func Label delegate
      * @returns Units
      */
-    export function getUnits(func: ICultureGet): IdLabelDto[];
+    export function getUnits(func: ICultureGet): DataTypes.IdLabelItem[];
 
     /**
      *
@@ -124,7 +123,7 @@ export namespace BusinessUtils {
         func: ICultureGet,
         options?: string[],
         isJoined?: boolean
-    ): IdLabelDto[];
+    ): DataTypes.IdLabelItem[];
 
     /**
      *
@@ -138,7 +137,7 @@ export namespace BusinessUtils {
         func: ICultureGet,
         options?: string[],
         isJoined?: boolean
-    ): IdLabelDto[] {
+    ): DataTypes.IdLabelItem[] {
         options ??= DataTypes.getEnumKeys(ProductUnit);
         return options.map((key) => {
             const id = DataTypes.getEnumByKey(ProductUnit, key)! as number;
@@ -161,7 +160,7 @@ export namespace BusinessUtils {
         func: ICultureGet,
         options?: string[],
         isJoined: boolean = true
-    ): IdLabelDto[] {
+    ): DataTypes.IdLabelItem[] {
         options ??= DataTypes.getEnumKeys(RepeatOption);
         isJoined ??= true;
 
