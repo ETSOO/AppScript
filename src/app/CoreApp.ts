@@ -62,7 +62,7 @@ export type RefreshTokenResult =
 /**
  * Refresh token props
  */
-export interface RefreshTokenProps<D extends {}> {
+export interface RefreshTokenProps<D extends object> {
     /**
      * Callback
      */
@@ -468,7 +468,7 @@ export interface ICoreApp<
      * Refresh token
      * @param props Props
      */
-    refreshToken<D extends {} = {}>(
+    refreshToken<D extends object = {}>(
         props?: RefreshTokenProps<D>
     ): Promise<boolean>;
 
@@ -524,7 +524,7 @@ export interface ICoreApp<
      * UI get involved while refreshToken not intended
      * @param data Additional request data
      */
-    tryLogin<D extends {} = {}>(data?: D): Promise<boolean>;
+    tryLogin<D extends object = {}>(data?: D): Promise<boolean>;
 
     /**
      * User login
@@ -1842,7 +1842,7 @@ export abstract class CoreApp<
      * Refresh token
      * @param props Props
      */
-    async refreshToken<D extends {} = {}>(props?: RefreshTokenProps<D>) {
+    async refreshToken<D extends object = {}>(props?: RefreshTokenProps<D>) {
         if (props && props.callback) props.callback(true, undefined);
         return true;
     }
@@ -1951,7 +1951,7 @@ export abstract class CoreApp<
      * @param data Additional request data
      * @param showLoading Show loading bar or not during call
      */
-    async tryLogin<D extends {} = {}>(_data?: D, _showLoading?: boolean) {
+    async tryLogin<D extends object = {}>(_data?: D, _showLoading?: boolean) {
         if (this._isTryingLogin) return false;
         this._isTryingLogin = true;
         return true;

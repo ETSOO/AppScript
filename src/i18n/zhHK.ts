@@ -6,7 +6,7 @@ import zhHKResources from './zh-HK.json';
  * @param localResources Local resources
  * @returns Full culture
  */
-export const zhHK = (localResources: {}): DataTypes.CultureDefinition => ({
+export const zhHK = (localResources: object): DataTypes.CultureDefinition => ({
     name: 'zh-HK',
     label: '繁體中文',
     resources: { ...zhHKResources, ...localResources },

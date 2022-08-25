@@ -11,7 +11,7 @@ export interface IResultErrors {
 /**
  * Operation result interface
  */
-export interface IActionResult<D extends {} = {}> {
+export interface IActionResult<D extends object = {}> {
     /**
      * Status code
      */

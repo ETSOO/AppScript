@@ -1,11 +1,11 @@
-import { ExtendUtils } from '@etsoo/shared';
+import { DataTypes, ExtendUtils } from '@etsoo/shared';
 import { IBridgeHost } from './IBridgeHost';
 
 // Call handler type
 type CallHandlerType = (
     name: string,
     ...args: unknown[]
-) => PromiseLike<Record<string, unknown> | void>;
+) => PromiseLike<DataTypes.StringRecord | void>;
 
 /**
  * Flutter JavaScript Host
