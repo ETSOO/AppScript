@@ -13,6 +13,8 @@ import {
     DateUtils,
     DomUtils,
     IStorage,
+    ListType,
+    ListType1,
     NumberUtils,
     Utils
 } from '@etsoo/shared';
@@ -385,7 +387,7 @@ export interface ICoreApp<
      * Get roles
      * @param role Combination role value
      */
-    getRoles(role: number): DataTypes.IdLabelItem[];
+    getRoles(role: number): ListType[];
 
     /**
      * Get status label
@@ -397,7 +399,7 @@ export interface ICoreApp<
      * Get status list
      * @returns list
      */
-    getStatusList(): DataTypes.IdLabelItem[];
+    getStatusList(): ListType[];
 
     /**
      * Get refresh token from response headers
@@ -486,7 +488,7 @@ export interface ICoreApp<
     orgList(
         items?: number,
         serviceId?: number
-    ): Promise<DataTypes.IdLabelItem[] | undefined>;
+    ): Promise<ListType[] | undefined>;
 
     /**
      * Persist settings to source when application exit
@@ -1620,8 +1622,8 @@ export abstract class CoreApp<
             id: E[keyof E],
             key: keyof E & string
         ) => E[keyof E] | undefined
-    ): DataTypes.IdLabelItem[] {
-        const list: DataTypes.IdLabelItem<number>[] = [];
+    ): ListType[] {
+        const list: ListType[] = [];
         const keys = DataTypes.getEnumKeys(em);
         for (const key of keys) {
             let id = em[key as keyof E];
@@ -1651,8 +1653,8 @@ export abstract class CoreApp<
             id: E[keyof E],
             key: keyof E & string
         ) => E[keyof E] | undefined
-    ): DataTypes.IdLabelItem<string>[] {
-        const list: DataTypes.IdLabelItem<string>[] = [];
+    ): ListType1[] {
+        const list: ListType1[] = [];
         const keys = DataTypes.getEnumKeys(em);
         for (const key of keys) {
             let id = em[key as keyof E];
@@ -1883,7 +1885,7 @@ export abstract class CoreApp<
      * @returns Result
      */
     async orgList(items?: number, serviceId?: number) {
-        return await this.api.post<DataTypes.IdLabelItem[]>(
+        return await this.api.post<ListType[]>(
             'Organization/List',
             {
                 items,

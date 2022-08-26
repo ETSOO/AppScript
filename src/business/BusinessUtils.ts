@@ -1,4 +1,4 @@
-import { DataTypes } from '@etsoo/shared';
+import { DataTypes, ListType, ListType1 } from '@etsoo/shared';
 import { ICultureGet } from '../state/Culture';
 import { ProductUnit } from './ProductUnit';
 import { RepeatOption } from './RepeatOption';
@@ -55,7 +55,7 @@ export namespace BusinessUtils {
     export function getCurrencies(
         currencyNames: string[],
         func: ICultureGet
-    ): DataTypes.IdLabelItem<string>[] {
+    ): ListType1[] {
         return currencyNames.map((name) => ({
             id: name,
             label: func(`currency${name}`) ?? name
@@ -69,7 +69,7 @@ export namespace BusinessUtils {
      * @returns 12 months
      */
     export function getMonths(monthLabels: string[], startMonth: number = 0) {
-        const months: DataTypes.IdLabelItem[] = [];
+        const months: ListType[] = [];
 
         for (let i = 0; i < 12; i++) {
             if (startMonth >= 12) startMonth = 0;
@@ -109,7 +109,7 @@ export namespace BusinessUtils {
      * @param func Label delegate
      * @returns Units
      */
-    export function getUnits(func: ICultureGet): DataTypes.IdLabelItem[];
+    export function getUnits(func: ICultureGet): ListType[];
 
     /**
      *
@@ -123,7 +123,7 @@ export namespace BusinessUtils {
         func: ICultureGet,
         options?: string[],
         isJoined?: boolean
-    ): DataTypes.IdLabelItem[];
+    ): ListType[];
 
     /**
      *
@@ -137,7 +137,7 @@ export namespace BusinessUtils {
         func: ICultureGet,
         options?: string[],
         isJoined?: boolean
-    ): DataTypes.IdLabelItem[] {
+    ): ListType[] {
         options ??= DataTypes.getEnumKeys(ProductUnit);
         return options.map((key) => {
             const id = DataTypes.getEnumByKey(ProductUnit, key)! as number;
@@ -160,7 +160,7 @@ export namespace BusinessUtils {
         func: ICultureGet,
         options?: string[],
         isJoined: boolean = true
-    ): DataTypes.IdLabelItem[] {
+    ): ListType[] {
         options ??= DataTypes.getEnumKeys(RepeatOption);
         isJoined ??= true;
 
