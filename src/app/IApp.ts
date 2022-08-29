@@ -153,6 +153,16 @@ export interface IApp {
     searchInput?: HTMLInputElement;
 
     /**
+     * Is screen size down 'sm'
+     */
+    smDown?: boolean;
+
+    /**
+     * Is screen size up 'md'
+     */
+    mdUp?: boolean;
+
+    /**
      * Alert action result
      * @param result Action result
      * @param callback Callback
