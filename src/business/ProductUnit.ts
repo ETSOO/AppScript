@@ -51,7 +51,7 @@ export enum ProductWeightUnit {
 /**
  * Product units enum
  * Repeat options take range 10 - 39
- * See com.etsoo.CoreFramework.Business.ProductUnit
+ * @see com.etsoo.CoreFramework.Business.ProductUnit
  */
 export const ProductUnit = {
     ...ProductBaseUnit,

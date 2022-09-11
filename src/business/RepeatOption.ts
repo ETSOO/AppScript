@@ -1,5 +1,6 @@
 /**
  * Repeat options
+ * @see com.etsoo.CoreFramework.Business.RepeatOption
  * Part of ProductUnit, range 10 - 39
  */
 export enum RepeatOption {
