@@ -491,13 +491,6 @@ export interface IApp {
     toLoginPage(tryLogin?: boolean): void;
 
     /**
-     * Transform URL
-     * @param url URL
-     * @returns Transformed url
-     */
-    transformUrl(url: string): string;
-
-    /**
      * Try login, returning false means is loading
      * UI get involved while refreshToken not intended
      * @param data Additional request data

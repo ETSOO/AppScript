@@ -1437,35 +1437,9 @@ export abstract class CoreApp<
      * @param tryLogin Try to login again
      */
     toLoginPage(tryLogin?: boolean) {
-        const url = this.transformUrl(
-            '/' + (tryLogin ? '' : '?tryLogin=false')
-        );
+        const url =
+            this.settings.homepage + '/' + (tryLogin ? '' : '?tryLogin=false');
         this.redirectTo(url);
-    }
-
-    /**
-     * Transform URL
-     * @param url URL
-     * @returns Transformed url
-     */
-    transformUrl(url: string) {
-        // Home page for the router
-        const home = this.settings.homepage;
-
-        // Default, just leave it
-        if (home === '') return url;
-
-        // From relative root, like home:/react/, url: /about => /react/about
-        if (url.startsWith('/')) return home + url.substring(1);
-
-        const pathname = window.location.pathname;
-
-        // Relative
-        const pos = pathname.indexOf(home);
-        if (pos == -1) return url;
-
-        // To /a/b/../ => /a
-        return pathname.endsWith('/') ? pathname + url : pathname + '/' + url;
     }
 
     /**
