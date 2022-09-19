@@ -71,7 +71,7 @@ class CoreAppTest extends CoreApp<
                 /**
                  * App root url
                  */
-                homepage: '',
+                homepage: '/cms',
 
                 /**
                  * Web url of the cloud
@@ -124,6 +124,12 @@ class CoreAppTest extends CoreApp<
 }
 
 const app = new CoreAppTest();
+
+test('Tests for addRootUrl', () => {
+    expect(app.addRootUrl('/home')).toBe('/cms/home');
+    expect(app.addRootUrl('./home')).toBe('/cms/./home');
+    expect(app.addRootUrl('home')).toBe('/cms/home');
+});
 
 test('Tests for encrypt / decrypt', () => {
     // Arrange

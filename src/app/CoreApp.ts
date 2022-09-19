@@ -304,6 +304,24 @@ export abstract class CoreApp<
     }
 
     /**
+     * Add root (homepage) to the URL
+     * @param url URL to add
+     * @returns Result
+     */
+    addRootUrl(url: string) {
+        const page = this.settings.homepage;
+        const endSlash = page.endsWith('/');
+        return (
+            page +
+            (endSlash
+                ? Utils.trimStart(url, '/')
+                : url.startsWith('/')
+                ? url
+                : '/' + url)
+        );
+    }
+
+    /**
      * Restore settings from persisted source
      */
     protected restore() {

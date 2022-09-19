@@ -171,6 +171,13 @@ export interface IApp {
     mdUp?: boolean;
 
     /**
+     * Add root (homepage) to the URL
+     * @param url URL to add
+     * @returns Result
+     */
+    addRootUrl(url: string): string;
+
+    /**
      * Alert action result
      * @param result Action result
      * @param callback Callback
