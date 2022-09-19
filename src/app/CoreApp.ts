@@ -1315,7 +1315,7 @@ export abstract class CoreApp<
      * @param url Url
      */
     redirectTo(url: string): void {
-        window.location.href = url;
+        globalThis.location.href = url;
     }
 
     /**
