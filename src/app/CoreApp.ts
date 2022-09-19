@@ -1304,18 +1304,18 @@ export abstract class CoreApp<
     }
 
     /**
+     * Navigate the Url
+     * @param url Url
+     */
+    navigate(url: string): void {
+        globalThis.location.href = this.settings.homepage + url;
+    }
+
+    /**
      * Callback where exit a page
      */
     pageExit() {
         this.lastWarning?.dismiss();
-    }
-
-    /**
-     * Redirect to the Url
-     * @param url Url
-     */
-    redirectTo(url: string): void {
-        globalThis.location.href = url;
     }
 
     /**
@@ -1437,9 +1437,8 @@ export abstract class CoreApp<
      * @param tryLogin Try to login again
      */
     toLoginPage(tryLogin?: boolean) {
-        const url =
-            this.settings.homepage + '/' + (tryLogin ? '' : '?tryLogin=false');
-        this.redirectTo(url);
+        const url = '/' + (tryLogin ? '' : '?tryLogin=false');
+        this.navigate(url);
     }
 
     /**

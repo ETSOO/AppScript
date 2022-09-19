@@ -438,6 +438,12 @@ export interface IApp {
     isValidPassword(password: string): boolean;
 
     /**
+     * Navigate the Url
+     * @param url Url
+     */
+    navigate(url: string): void;
+
+    /**
      * Callback where exit a page
      */
     pageExit(): void;
@@ -470,12 +476,6 @@ export interface IApp {
      * Persist settings to source when application exit
      */
     persist(): void;
-
-    /**
-     * Redirect to the Url
-     * @param url Url
-     */
-    redirectTo(url: string): void;
 
     /**
      * Switch organization
