@@ -22,6 +22,14 @@ export interface IDetectIPCallback {
 }
 
 /**
+ * Navigate options
+ */
+export interface NavigateOptions {
+    replace?: boolean;
+    state?: any;
+}
+
+/**
  * Refresh token result type
  * true means success, false means failed but no any message
  * other cases means failed with differnet message
@@ -438,10 +446,14 @@ export interface IApp {
     isValidPassword(password: string): boolean;
 
     /**
-     * Navigate the Url
-     * @param url Url
+     * Navigate to Url or delta
+     * @param url Url or delta
+     * @param options Options
      */
-    navigate(url: string): void;
+    navigate<T extends number | string | URL>(
+        to: T,
+        options?: T extends number ? never : NavigateOptions
+    ): void;
 
     /**
      * Callback where exit a page

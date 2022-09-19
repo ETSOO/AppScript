@@ -46,6 +46,7 @@ import {
     IApp,
     IAppFields,
     IDetectIPCallback,
+    NavigateOptions,
     RefreshTokenProps,
     RefreshTokenResult
 } from './IApp';
@@ -1304,11 +1305,27 @@ export abstract class CoreApp<
     }
 
     /**
-     * Navigate the Url
-     * @param url Url
+     * Navigate to Url or delta
+     * @param url Url or delta
+     * @param options Options
      */
-    navigate(url: string): void {
-        globalThis.location.href = this.settings.homepage + url;
+    navigate<T extends number | string | URL>(
+        to: T,
+        options?: T extends number ? never : NavigateOptions
+    ) {
+        if (typeof to === 'number') {
+            globalThis.history.go(to);
+        } else {
+            const { state, replace = false } = options ?? {};
+
+            if (replace) {
+                if (state) globalThis.history.replaceState(state, '', to);
+                else globalThis.location.replace(to);
+            } else {
+                if (state) globalThis.history.pushState(state, '', to);
+                else globalThis.location.assign(to);
+            }
+        }
     }
 
     /**
