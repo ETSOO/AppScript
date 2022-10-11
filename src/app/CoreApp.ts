@@ -100,7 +100,7 @@ export abstract class CoreApp<
     /**
      * API
      */
-    readonly api: IApi;
+    protected readonly api: IApi;
 
     /**
      * Application name

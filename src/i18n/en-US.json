@@ -52,6 +52,7 @@
     "help": "Help",
     "id": "Number#",
     "info": "Info",
+    "item": "Item",
     "itemExists": "'{0}' already exists",
     "loading": "Loading...",
     "login": "Login",

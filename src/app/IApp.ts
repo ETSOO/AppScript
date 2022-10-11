@@ -96,11 +96,6 @@ export interface IApp {
     readonly fields: IAppFields;
 
     /**
-     * API
-     */
-    readonly api: IApi;
-
-    /**
      * Notifier
      */
     readonly notifier: INotifier<unknown, NotificationCallProps>;
