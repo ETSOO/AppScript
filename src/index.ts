@@ -32,6 +32,11 @@ export * from './dto/IdLabelPrimaryDto';
 export * from './dto/InitCallDto';
 
 // erp
+export * from './erp/dto/CurrencyDto';
+export * from './erp/dto/ExchangeRateDto';
+export * from './erp/dto/ExchangeRateHistoryDto';
+export * from './erp/dto/PublicProductDto';
+
 export * from './erp/AddressApi';
 export * from './erp/BaseApi';
 export * from './erp/OrgApi';

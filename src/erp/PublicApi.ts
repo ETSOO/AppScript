@@ -36,7 +36,7 @@ export class PublicApi extends BaseApi {
      * @param currency Currency
      * @returns Result
      */
-    exchangeRate(currency: Currency) {
+    exchangeRate(currency: Currency | string) {
         return this.app.api.get<ExchangeRateDto>(
             `Public/ExchangeRate/${currency}`
         );
@@ -48,7 +48,7 @@ export class PublicApi extends BaseApi {
      * @param months Max months
      * @returns Result
      */
-    exchangeRateHistory(currencies: Currency[], months?: number) {
+    exchangeRateHistory(currencies: (Currency | string)[], months?: number) {
         return this.app.api.post<ExchangeRateHistoryDto[]>(
             'Public/ExchangeRateHistory',
             { currencies, months },
