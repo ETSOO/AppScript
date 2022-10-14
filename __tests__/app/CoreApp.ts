@@ -201,7 +201,7 @@ test('Tests for addressApi', async () => {
     const continents = await app.addressApi.continents();
     expect(continents.length).toBe(7);
 
-    const labels = await app.addressApi.getLabels('en-NZ');
+    const labels = await AddressUtils.getLabels('en-US');
     expect(labels['regionHK']).toBe('Hong Kong, China');
 
     const regions = await app.addressApi.regions('zh-CN');

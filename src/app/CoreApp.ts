@@ -30,6 +30,7 @@ import {
     SHA3
 } from 'crypto-js';
 import { AddressRegion } from '../address/AddressRegion';
+import { AddressUtils } from '../address/AddressUtils';
 import { BridgeUtils } from '../bridges/BridgeUtils';
 import { EntityStatus } from '../business/EntityStatus';
 import { InitCallDto } from '../dto/InitCallDto';
@@ -717,6 +718,7 @@ export abstract class CoreApp<
         this._region = regionId;
 
         // Hold the current country or region
+        AddressUtils.updateRegionLabel(regionItem, this._culture);
         this.settings.currentRegion = regionItem;
     }
 

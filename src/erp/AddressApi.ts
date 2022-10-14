@@ -2,6 +2,7 @@ import { DataTypes } from '@etsoo/shared';
 import { AddressContinent } from '../address/AddressContinent';
 import { AddressRegion, AddressRegionDb } from '../address/AddressRegion';
 import { AddressState } from '../address/AddressState';
+import { AddressUtils } from '../address/AddressUtils';
 import { IdLabelConditional } from '../dto/IdLabelDto';
 import { BaseApi } from './BaseApi';
 
@@ -9,26 +10,6 @@ import { BaseApi } from './BaseApi';
  * Address Api
  */
 export class AddressApi extends BaseApi {
-    private languageLabels: Record<string, DataTypes.StringRecord | undefined> =
-        {};
-
-    /**
-     * Get address labels
-     * @param language Language
-     * @returns Result
-     */
-    async getLabels(language?: string) {
-        const l = this.app.checkLanguage(language);
-        let labels = this.languageLabels[l];
-        if (labels == null) {
-            labels = await import(`./../i18n/address.${l}.json`);
-
-            // Cache
-            this.languageLabels[l] = labels;
-        }
-        return labels!;
-    }
-
     /**
      * Get all continents
      * @param language Language
@@ -39,7 +20,9 @@ export class AddressApi extends BaseApi {
         language?: string,
         isNumberKey = <T>false
     ): Promise<IdLabelConditional<T>> {
-        const labels = await this.getLabels(language);
+        const labels = await AddressUtils.getLabels(
+            this.app.checkLanguage(language)
+        );
         return <IdLabelConditional<T>>DataTypes.getEnumKeys(
             AddressContinent
         ).map((key) => ({
@@ -66,9 +49,9 @@ export class AddressApi extends BaseApi {
     > {
         language = this.app.checkLanguage(language);
         if (isLocal == null || isLocal) {
-            const labels = await this.getLabels(language);
+            const labels = await AddressUtils.getLabels(language);
             return AddressRegion.all.map((region) => {
-                region.label = labels['region' + region.id] as string;
+                region.label = AddressUtils.getRegionLabel(region.id, labels);
                 return { ...region };
             });
         } else {
