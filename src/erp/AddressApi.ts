@@ -2,7 +2,6 @@ import { DataTypes } from '@etsoo/shared';
 import { AddressContinent } from '../address/AddressContinent';
 import { AddressRegion, AddressRegionDb } from '../address/AddressRegion';
 import { AddressState } from '../address/AddressState';
-import { AddressUtils } from '../address/AddressUtils';
 import { IdLabelConditional } from '../dto/IdLabelDto';
 import { BaseApi } from './BaseApi';
 
@@ -12,51 +11,51 @@ import { BaseApi } from './BaseApi';
 export class AddressApi extends BaseApi {
     /**
      * Get all continents
-     * @param language Language
      * @param isNumberKey Is number key or key as id
      * @returns Continents
      */
     async continents<T extends boolean>(
-        language?: string,
         isNumberKey = <T>false
     ): Promise<IdLabelConditional<T>> {
-        const labels = await AddressUtils.getLabels(
-            this.app.checkLanguage(language)
-        );
         return <IdLabelConditional<T>>DataTypes.getEnumKeys(
             AddressContinent
         ).map((key) => ({
             id: isNumberKey
                 ? <number>DataTypes.getEnumByKey(AddressContinent, key)!
                 : key.toString(),
-            label: labels['continent' + key] ?? key
+            label: this.getContinentLabel(key)
         }));
     }
 
     /**
-     * Get region list from database
-     * @param language Language
+     * Get continent label
+     * @param id Region id
+     * @returns Label
+     */
+    getContinentLabel(id: AddressContinent | string) {
+        return this.app.get('continent' + id) ?? (id as string);
+    }
+
+    /**
+     * Get region list
      * @param isLocal Is local version
      * @returns Result
      */
     async regions<T extends boolean = true>(
-        language?: string,
         isLocal?: T
     ): Promise<
         T extends true | undefined
             ? AddressRegion[]
             : AddressRegionDb[] | undefined
     > {
-        language = this.app.checkLanguage(language);
         if (isLocal == null || isLocal) {
-            const labels = await AddressUtils.getLabels(language);
             return AddressRegion.all.map((region) => {
-                region.label = AddressUtils.getRegionLabel(region.id, labels);
+                region.label = this.app.getRegionLabel(region.id);
                 return { ...region };
             });
         } else {
             return (await this.app.api.get<AddressRegionDb[]>(
-                `Address/RegionList?language=${language}`,
+                `Address/RegionList?language=${this.app.culture}`,
                 undefined,
                 { defaultValue: [] }
             )) as any;
@@ -64,15 +63,13 @@ export class AddressApi extends BaseApi {
     }
 
     /**
-     * Get state list from database
+     * Get state list
      * @param regionId Region id
-     * @param language Language
      * @returns Result
      */
-    states(regionId: string, language?: string) {
-        language = this.app.checkLanguage(language);
+    states(regionId: string) {
         return this.app.api.get<AddressState[]>(
-            `Address/StateList?regionId=${regionId}&language=${language}`,
+            `Address/StateList?regionId=${regionId}&language=${this.app.culture}`,
             undefined,
             { defaultValue: [] }
         );

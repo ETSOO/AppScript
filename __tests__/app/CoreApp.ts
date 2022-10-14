@@ -143,6 +143,10 @@ const appClass = EnhanceApp(CoreAppTest);
 const app = new appClass();
 app.changeCulture(app.settings.cultures[0]);
 
+test('Test for properties', () => {
+    expect(app.settings.currentRegion.label).toBe('中国大陆');
+});
+
 test('Tests for addRootUrl', () => {
     expect(app.addRootUrl('/home')).toBe('/cms/home');
     expect(app.addRootUrl('./home')).toBe('/cms/./home');
@@ -201,10 +205,7 @@ test('Tests for addressApi', async () => {
     const continents = await app.addressApi.continents();
     expect(continents.length).toBe(7);
 
-    const labels = await AddressUtils.getLabels('en-US');
-    expect(labels['regionHK']).toBe('Hong Kong, China');
-
-    const regions = await app.addressApi.regions('zh-CN');
+    const regions = await app.addressApi.regions();
     const cn = regions.find((r) => r.id === 'CN');
     expect(cn?.label).toBe('中国大陆');
 });
@@ -217,16 +218,4 @@ test('Tests for publicApi', async () => {
 
     const currencies = await app.publicApi.currencies(['NZD', 'AUD', 'USD']);
     expect(currencies[1].id).toBe('AUD');
-
-    //const currenciesRemote = await app.publicApi.currencies();
-    //console.log(currenciesRemote);
-
-    //const history = await app.publicApi.exchangeRateHistory(['NZD', 'AUD'], 24);
-    //console.log(history);
-
-    //const qrcode = await app.publicApi.mobileQRCode('xz@etsoo.com');
-    //console.log(qrcode);
-
-    //const exchangeRate = await app.publicApi.exchangeRate('USD');
-    //console.log(exchangeRate);
 });

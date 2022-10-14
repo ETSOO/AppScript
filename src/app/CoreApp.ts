@@ -718,8 +718,8 @@ export abstract class CoreApp<
         this._region = regionId;
 
         // Hold the current country or region
-        AddressUtils.updateRegionLabel(regionItem, this._culture);
         this.settings.currentRegion = regionItem;
+        this.updateRegionLabel();
     }
 
     /**
@@ -745,6 +745,16 @@ export abstract class CoreApp<
 
         // Hold the current resources
         this.settings.currentCulture = culture;
+
+        this.updateRegionLabel();
+    }
+
+    /**
+     * Update current region label
+     */
+    protected updateRegionLabel() {
+        const region = this.settings.currentRegion;
+        region.label = this.getRegionLabel(region.id);
     }
 
     /**
@@ -1217,6 +1227,15 @@ export abstract class CoreApp<
             list.push({ id: id.toString(), label });
         }
         return list;
+    }
+
+    /**
+     * Get region label
+     * @param id Region id
+     * @returns Label
+     */
+    getRegionLabel(id: string) {
+        return this.get('region' + id) ?? id;
     }
 
     /**

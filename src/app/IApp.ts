@@ -376,6 +376,13 @@ export interface IApp {
     getCacheToken(): string | undefined;
 
     /**
+     * Get region label
+     * @param id Region id
+     * @returns Label
+     */
+    getRegionLabel(id: string): string;
+
+    /**
      * Get all regions
      * @returns Regions
      */
