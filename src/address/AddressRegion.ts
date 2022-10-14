@@ -1,9 +1,10 @@
-import { AddressContinent } from './AddressContinent';
+import { Currency } from '../business/Currency';
+import { AddressContinent, AddressContinentId } from './AddressContinent';
 
 /**
- * Country or region interface
+ * Address region in database
  */
-export interface IAddressRegion {
+export interface AddressRegionDb {
     /**
      * Id, like CN for China
      * https://www.iban.com/country-codes
@@ -24,10 +25,10 @@ export interface IAddressRegion {
     readonly nid: string;
 
     /**
-     * Continent
-     * 洲
+     * Continent id
+     * 洲编号
      */
-    readonly continent: AddressContinent;
+    readonly continentId: AddressContinentId;
 
     /**
      * Phone exit code for international dial, like 00 in China
@@ -45,19 +46,30 @@ export interface IAddressRegion {
      * Currency, like CNY for China's currency
      * 币种
      */
-    readonly currency: string;
+    readonly currency: Currency;
+
+    /**
+     * Name
+     * 名称
+     */
+    label: string;
+}
+
+/**
+ * Country or region interface
+ */
+export interface IAddressRegion extends AddressRegionDb {
+    /**
+     * Continent
+     * 洲
+     */
+    readonly continent: AddressContinent;
 
     /**
      * Languages
      * 语言
      */
     readonly languages: string[];
-
-    /**
-     * Name
-     * 名称
-     */
-    name: string;
 }
 
 /**
@@ -269,6 +281,12 @@ export class AddressRegion implements IAddressRegion {
         return AddressRegion.all.find((c) => c.id === id);
     }
 
+    /**
+     * Continent id
+     * 洲编号
+     */
+    readonly continentId: AddressContinentId;
+
     // Typescript constructor shorthand
     constructor(
         public id: string,
@@ -277,8 +295,10 @@ export class AddressRegion implements IAddressRegion {
         public continent: AddressContinent,
         public exitCode: string,
         public idd: string,
-        public currency: string,
+        public currency: Currency,
         public languages: string[],
-        public name: string = id
-    ) {}
+        public label: string = id
+    ) {
+        this.continentId = AddressContinent[continent] as AddressContinentId;
+    }
 }

@@ -1,5 +1,5 @@
 /**
- * Continent
+ * Address continent
  */
 export enum AddressContinent {
     /// <summary>
@@ -44,3 +44,8 @@ export enum AddressContinent {
     /// </summary>
     SA = 7
 }
+
+/**
+ * Address continent ids
+ */
+export type AddressContinentId = keyof typeof AddressContinent;

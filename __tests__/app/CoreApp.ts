@@ -8,7 +8,14 @@ import {
 } from '@etsoo/notificationbase';
 import { ApiAuthorizationScheme, createClient } from '@etsoo/restclient';
 import { DataTypes, DomUtils, Utils, WindowStorage } from '@etsoo/shared';
-import { BusinessUtils, IUser, UserRole } from '../../src';
+import {
+    AddressApi,
+    enUS,
+    ExternalSettings,
+    IUser,
+    PublicApi,
+    UserRole
+} from '../../src';
 import { AddressUtils } from '../../src/address/AddressUtils';
 import { IAppSettings } from '../../src/app/AppSettings';
 import { CoreApp } from '../../src/app/CoreApp';
@@ -22,7 +29,7 @@ const { detectedCountry } = DomUtils;
 const { detectedCulture } = DomUtils;
 
 // Supported cultures
-const supportedCultures: DataTypes.CultureDefinition[] = [zhCN({})];
+const supportedCultures: DataTypes.CultureDefinition[] = [zhCN({}), enUS({})];
 
 // Supported regions
 const supportedRegions = ['CN'];
@@ -41,7 +48,7 @@ class NotificationContainerTest extends NotificationContainer<
     protected addRaw(
         data: INotificaseBase<any, NotificationCallProps>
     ): INotification<any, NotificationCallProps> {
-        throw new Error('Method not implemented.');
+        return new NotificationTest(data.type, data.content);
     }
 }
 
@@ -62,7 +69,7 @@ class CoreAppTest extends CoreApp<
      */
     constructor() {
         super(
-            {
+            ExternalSettings.format({
                 /**
                  * Endpoint of the API service
                  */
@@ -105,7 +112,7 @@ class CoreAppTest extends CoreApp<
                     supportedCultures,
                     detectedCulture
                 )!
-            },
+            }),
             createClient(),
             container,
             new WindowStorage(),
@@ -123,7 +130,18 @@ class CoreAppTest extends CoreApp<
     }
 }
 
-const app = new CoreAppTest();
+function EnhanceApp<TBase extends DataTypes.MConstructor<CoreAppTest>>(
+    Base: TBase
+) {
+    return class extends Base {
+        readonly addressApi = new AddressApi(this);
+        readonly publicApi = new PublicApi(this);
+    };
+}
+
+const appClass = EnhanceApp(CoreAppTest);
+const app = new appClass();
+app.changeCulture(app.settings.cultures[0]);
 
 test('Tests for addRootUrl', () => {
     expect(app.addRootUrl('/home')).toBe('/cms/home');
@@ -173,22 +191,42 @@ test('Tests for getRoles', () => {
     expect(roles.map((r) => r.id)).toEqual([8, 128, 8192]);
 });
 
-test('Tests for getUnitLabel', () => {
-    expect(app.getUnitLabel(12, true)).toBe('每年');
-});
-
 test('Tests for isValidPassword', () => {
     expect(app.isValidPassword('12345678')).toBeFalsy();
     expect(app.isValidPassword('abcd3')).toBeFalsy();
     expect(app.isValidPassword('1234abcd')).toBeTruthy();
 });
 
-test('Tests for getRepeatOptions', () => {
-    const options = BusinessUtils.getRepeatOptions(app.labelDelegate, [
-        'MONTH',
-        'QUATER',
-        'YEAR'
-    ]);
+test('Tests for addressApi', async () => {
+    const continents = await app.addressApi.continents();
+    expect(continents.length).toBe(7);
 
+    const labels = await app.addressApi.getLabels('en-NZ');
+    expect(labels['regionHK']).toBe('Hong Kong, China');
+
+    const regions = await app.addressApi.regions('zh-CN');
+    const cn = regions.find((r) => r.id === 'CN');
+    expect(cn?.label).toBe('中国大陆');
+});
+
+test('Tests for publicApi', async () => {
+    expect(app.publicApi.getUnitLabel(12, true)).toBe('每年');
+
+    const options = app.publicApi.repeatOptions(['MONTH', 'QUATER', 'YEAR']);
     expect(options[2]).toStrictEqual({ id: 12, label: '每年' });
+
+    const currencies = await app.publicApi.currencies(['NZD', 'AUD', 'USD']);
+    expect(currencies[1].id).toBe('AUD');
+
+    //const currenciesRemote = await app.publicApi.currencies();
+    //console.log(currenciesRemote);
+
+    //const history = await app.publicApi.exchangeRateHistory(['NZD', 'AUD'], 24);
+    //console.log(history);
+
+    //const qrcode = await app.publicApi.mobileQRCode('xz@etsoo.com');
+    //console.log(qrcode);
+
+    //const exchangeRate = await app.publicApi.exchangeRate('USD');
+    //console.log(exchangeRate);
 });

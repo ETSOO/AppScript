@@ -1,7 +1,4 @@
-import { DataTypes, ListType, ListType1 } from '@etsoo/shared';
-import { ICultureGet } from '../state/Culture';
-import { ProductUnit } from './ProductUnit';
-import { RepeatOption } from './RepeatOption';
+import { DataTypes, ListType } from '@etsoo/shared';
 
 /**
  * Business utils
@@ -47,22 +44,6 @@ export namespace BusinessUtils {
     }
 
     /**
-     * Get currency collection
-     * @param currencyNames Names like CNY, USD
-     * @param func Label delegate
-     * @returns Collection
-     */
-    export function getCurrencies(
-        currencyNames: string[],
-        func: ICultureGet
-    ): ListType1[] {
-        return currencyNames.map((name) => ({
-            id: name,
-            label: func(`currency${name}`) ?? name
-        }));
-    }
-
-    /**
      * Get 12-month items
      * @param monthLabels Month labels
      * @param startMonth Start month, 0 as Jan.
@@ -80,91 +61,6 @@ export namespace BusinessUtils {
         }
 
         return months;
-    }
-
-    /**
-     * Get product unit's label
-     * Please define the label in culture with key 'unitPC' for ProductUnit.PC like that
-     * @param unit Unit
-     * @param func Label delegate
-     * @param isJoined Add the join label like 'per Kg' for Kg
-     * @returns Label
-     */
-    export function getUnitLabel(
-        unit: ProductUnit,
-        func: ICultureGet,
-        isJoined?: boolean
-    ) {
-        const key = ProductUnit[unit];
-        const label = func('unit' + key) ?? key;
-        if (isJoined) {
-            const jLabel = func('unitJoin');
-            if (jLabel) return jLabel.format(label);
-        }
-        return label;
-    }
-
-    /**
-     * Get all product units
-     * @param func Label delegate
-     * @returns Units
-     */
-    export function getUnits(func: ICultureGet): ListType[];
-
-    /**
-     *
-     * Get all product units
-     * @param func Label delegate
-     * @param options Define the order and limit the items
-     * @param isJoined Add the join label like 'per Kg' for Kg
-     * @returns Units
-     */
-    export function getUnits(
-        func: ICultureGet,
-        options?: string[],
-        isJoined?: boolean
-    ): ListType[];
-
-    /**
-     *
-     * Get all product units
-     * @param func Label delegate
-     * @param options Define the order and limit the items
-     * @param isJoined Add the join label like 'per Kg' for Kg
-     * @returns Units
-     */
-    export function getUnits(
-        func: ICultureGet,
-        options?: string[],
-        isJoined?: boolean
-    ): ListType[] {
-        options ??= DataTypes.getEnumKeys(ProductUnit);
-        return options.map((key) => {
-            const id = DataTypes.getEnumByKey(ProductUnit, key)! as number;
-            return {
-                id,
-                label: getUnitLabel(id, func, isJoined).formatInitial(true)
-            };
-        });
-    }
-
-    /**
-     *
-     * Get all repeat options
-     * @param func Label delegate
-     * @param options Define the order and limit the items
-     * @param isJoined Add the join label like 'per Kg' for Kg
-     * @returns Units
-     */
-    export function getRepeatOptions(
-        func: ICultureGet,
-        options?: string[],
-        isJoined: boolean = true
-    ): ListType[] {
-        options ??= DataTypes.getEnumKeys(RepeatOption);
-        isJoined ??= true;
-
-        return getUnits(func, options, isJoined);
     }
 
     /**

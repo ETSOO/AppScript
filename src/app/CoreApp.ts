@@ -30,11 +30,8 @@ import {
     SHA3
 } from 'crypto-js';
 import { AddressRegion } from '../address/AddressRegion';
-import { AddressUtils } from '../address/AddressUtils';
 import { BridgeUtils } from '../bridges/BridgeUtils';
-import { BusinessUtils } from '../business/BusinessUtils';
 import { EntityStatus } from '../business/EntityStatus';
-import { ProductUnit } from '../business/ProductUnit';
 import { InitCallDto } from '../dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
 import { IActionResult } from '../result/IActionResult';
@@ -98,9 +95,9 @@ export abstract class CoreApp<
     readonly fields: IAppFields;
 
     /**
-     * API
+     * API, not recommend to use it directly in code, wrap to separate methods
      */
-    protected readonly api: IApi;
+    readonly api: IApi;
 
     /**
      * Application name
@@ -419,6 +416,9 @@ export abstract class CoreApp<
      * @param api Api
      */
     protected setApi(api: IApi) {
+        // Base URL of the API
+        api.baseUrl = this.settings.endpoint;
+
         // onRequest, show loading or not, rewrite the property to override default action
         api.onRequest = (data) => {
             if (data.showLoading == null || data.showLoading) {
@@ -743,16 +743,24 @@ export abstract class CoreApp<
 
         // Hold the current resources
         this.settings.currentCulture = culture;
+    }
 
-        // Update all supported regions' name
-        this.settings.regions.forEach((id) => {
-            const region = AddressRegion.getById(id);
-            if (region)
-                region.name = AddressUtils.getRegionLabel(
-                    id,
-                    this.labelDelegate
-                );
-        });
+    /**
+     * Check language is supported or not, return a valid language when supported
+     * @param language Language
+     * @returns Result
+     */
+    checkLanguage(language?: string) {
+        if (language) {
+            const item = this.settings.cultures.find(
+                (c) =>
+                    c.name === language || c.compatibleName?.includes(language)
+            );
+            if (item) return item.name;
+        }
+
+        // Default language
+        return this.culture;
     }
 
     /**
@@ -1270,16 +1278,6 @@ export abstract class CoreApp<
     }
 
     /**
-     * Get product unit and repeat option label
-     * @param unit Product unit or repeat option
-     * @param isJoined Add the join label like 'per Kg' for Kg
-     */
-    getUnitLabel(unit?: ProductUnit, isJoined?: boolean): string {
-        if (unit == null) return '';
-        return BusinessUtils.getUnitLabel(unit, this.labelDelegate, isJoined);
-    }
-
-    /**
      * Hash message, SHA3 or HmacSHA512, 512 as Base64
      * https://cryptojs.gitbook.io/docs/
      * @param message Message
@@ -1432,39 +1430,6 @@ export abstract class CoreApp<
 
         // Go to login page
         this.toLoginPage();
-    }
-
-    /**
-     * Get organization list
-     * @param items Max items
-     * @param serviceId Service id
-     * @returns Result
-     */
-    async orgList(items?: number, serviceId?: number) {
-        return await this.api.post<ListType[]>(
-            'Organization/List',
-            {
-                items,
-                serviceId
-            },
-            { defaultValue: [], showLoading: false }
-        );
-    }
-
-    /**
-     * Switch organization
-     * @param id Organization id
-     * @param serviceId Service id
-     */
-    async switchOrg(id: number, serviceId?: number) {
-        const api = `Organization/Switch`;
-        const result = await this.api.put<boolean>(api, {
-            id,
-            serviceId,
-            deviceId: this.deviceId
-        });
-        if (result) return await this.refreshToken();
-        return result;
     }
 
     /**

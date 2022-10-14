@@ -41,26 +41,30 @@ export namespace ExternalSettings {
             if (typeof settings === 'object') {
                 if (typeof window !== 'undefined') {
                     // Host name
-                    let hostname = window.location.hostname;
-
-                    // Empty string returned under Electron
-                    if (hostname === '') hostname = 'localhost';
+                    const hostname = globalThis.location.hostname;
 
                     // replace {hostname}
-                    for (const key in settings) {
-                        const value = settings[key];
-                        if (typeof value === 'string') {
-                            settings[key] = value.replace(
-                                '{hostname}',
-                                hostname
-                            );
-                        }
-                    }
+                    format(settings, hostname);
                 }
 
                 return settings as IExternalSettings;
             }
         }
         return undefined;
+    }
+
+    export function format(settings: any, hostname?: string) {
+        // Default hostname
+        if (!hostname) hostname = 'localhost';
+
+        // replace {hostname}
+        for (const key in settings) {
+            const value = settings[key];
+            if (typeof value === 'string') {
+                settings[key] = value.replace('{hostname}', hostname);
+            }
+        }
+
+        return settings;
     }
 }

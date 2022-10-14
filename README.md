@@ -33,7 +33,6 @@ $ yarn add @etsoo/appscript
 -   AddressRegion - Address or region
 
 #### AddressUtils.ts ####
--   getContinents - Get all continents
 -   getRegion - Get region from regions and detected region and language
 
 ### app - Application related

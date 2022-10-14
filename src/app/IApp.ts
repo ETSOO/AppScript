@@ -96,6 +96,11 @@ export interface IApp {
     readonly fields: IAppFields;
 
     /**
+     * API, not recommend to use it directly in code, wrap to separate methods
+     */
+    readonly api: IApi;
+
+    /**
      * Notifier
      */
     readonly notifier: INotifier<unknown, NotificationCallProps>;
@@ -207,6 +212,13 @@ export interface IApp {
      * @returns true means device is invalid
      */
     checkDeviceResult(result: IActionResult): boolean;
+
+    /**
+     * Check language is supported or not
+     * @param language Language
+     * @returns Result
+     */
+    checkLanguage(language?: string): string;
 
     /**
      * Clear cache data
@@ -401,13 +413,6 @@ export interface IApp {
     getTimeZone(): string | undefined;
 
     /**
-     * Get product unit and repeat option label
-     * @param unit Product unit or repeat option
-     * @param isJoined Add the join label like 'per Kg' for Kg
-     */
-    getUnitLabel(unit?: ProductUnit, isJoined?: boolean): string;
-
-    /**
      * Hash message, SHA3 or HmacSHA512, 512 as Base64
      * https://cryptojs.gitbook.io/docs/
      * @param message Message
@@ -476,27 +481,9 @@ export interface IApp {
     signout(): Promise<void>;
 
     /**
-     * Get organization list
-     * @param items Max items
-     * @param serviceId Service id
-     * @returns Result
-     */
-    orgList(
-        items?: number,
-        serviceId?: number
-    ): Promise<ListType[] | undefined>;
-
-    /**
      * Persist settings to source when application exit
      */
     persist(): void;
-
-    /**
-     * Switch organization
-     * @param id Organization id
-     * @param serviceId Service id
-     */
-    switchOrg(id: number, serviceId?: number): Promise<boolean | undefined>;
 
     /**
      * Go to the login page
