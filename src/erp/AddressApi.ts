@@ -2,21 +2,15 @@ import { DataTypes } from '@etsoo/shared';
 import { AddressContinent } from '../address/AddressContinent';
 import { AddressRegion, AddressRegionDb } from '../address/AddressRegion';
 import { AddressState } from '../address/AddressState';
-import { IApp } from '../app/IApp';
 import { IdLabelConditional } from '../dto/IdLabelDto';
+import { BaseApi } from './BaseApi';
 
 /**
  * Address Api
  */
-export class AddressApi {
+export class AddressApi extends BaseApi {
     private languageLabels: Record<string, DataTypes.StringRecord | undefined> =
         {};
-
-    /**
-     * Constructor
-     * @param app Application
-     */
-    constructor(private app: IApp) {}
 
     /**
      * Get address labels

@@ -33,6 +33,7 @@ export * from './dto/InitCallDto';
 
 // erp
 export * from './erp/AddressApi';
+export * from './erp/BaseApi';
 export * from './erp/OrgApi';
 export * from './erp/PublicApi';
 

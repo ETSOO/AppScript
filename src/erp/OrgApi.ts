@@ -1,16 +1,10 @@
 import { ListType } from '@etsoo/shared';
-import { IApp } from '../app/IApp';
+import { BaseApi } from './BaseApi';
 
 /**
  * Organization API
  */
-export class OrgApi {
-    /**
-     * Constructor
-     * @param app Application
-     */
-    constructor(private app: IApp) {}
-
+export class OrgApi extends BaseApi {
     /**
      * Get organization list
      * @param items Max items

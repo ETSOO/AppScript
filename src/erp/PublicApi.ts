@@ -1,8 +1,8 @@
 import { DataTypes, ListType, ListType1 } from '@etsoo/shared';
-import { IApp } from '../app/IApp';
 import { Currency } from '../business/Currency';
 import { ProductUnit } from '../business/ProductUnit';
 import { RepeatOption } from '../business/RepeatOption';
+import { BaseApi } from './BaseApi';
 import { CurrencyDto } from './dto/CurrencyDto';
 import { ExchangeRateDto } from './dto/ExchangeRateDto';
 import { ExchangeRateHistoryDto } from './dto/ExchangeRateHistoryDto';
@@ -11,13 +11,7 @@ import { PublicOrgProductDto, PublicProductDto } from './dto/PublicProductDto';
 /**
  * Public API
  */
-export class PublicApi {
-    /**
-     * Constructor
-     * @param app Application
-     */
-    constructor(private app: IApp) {}
-
+export class PublicApi extends BaseApi {
     /**
      * Get currencies
      * @param currencyNames Limited currency names for local data, undefined will try to retrive remoately
