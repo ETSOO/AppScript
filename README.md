@@ -91,20 +91,6 @@ $ yarn add @etsoo/appscript
 #### ListItem.ts ####
 -   ListItem - List item definition
 
-### dto - Data transfer object
-
-#### IdDto.ts ####
--   IdDto - Dto with id field
-
-#### IdLabelDto.ts ####
--   IdLabelDto - Dto with id and label field
-
-#### IdLabelPrimaryDto.ts ####
--   IdLabelPrimaryDto - Dto with id, label and primary field
-
-#### IdLabelPrimaryDto.ts ####
--   InitCallDto - Init call dto
-
 ### i18n - Multiple cultures
 
 ### result - API action result
@@ -125,6 +111,8 @@ $ yarn add @etsoo/appscript
 #### InitCallResultData.ts ####
 -   InitCallResultData - Init call result data
 -   InitCallResult - Init call result
+
+### erp - SmartERP APIs
 
 ### state - State management
 

@@ -21,7 +21,7 @@ export class PublicApi extends BaseApi {
         currencyNames?: T
     ): Promise<T extends undefined ? CurrencyDto[] | undefined : ListType1[]> {
         if (currencyNames == null)
-            return (await this.app.api.get<CurrencyDto[]>(
+            return (await this.api.get<CurrencyDto[]>(
                 'Public/GetCurrencies'
             )) as any;
         else
@@ -37,9 +37,7 @@ export class PublicApi extends BaseApi {
      * @returns Result
      */
     exchangeRate(currency: Currency | string) {
-        return this.app.api.get<ExchangeRateDto>(
-            `Public/ExchangeRate/${currency}`
-        );
+        return this.api.get<ExchangeRateDto>(`Public/ExchangeRate/${currency}`);
     }
 
     /**
@@ -49,7 +47,7 @@ export class PublicApi extends BaseApi {
      * @returns Result
      */
     exchangeRateHistory(currencies: (Currency | string)[], months?: number) {
-        return this.app.api.post<ExchangeRateHistoryDto[]>(
+        return this.api.post<ExchangeRateHistoryDto[]>(
             'Public/ExchangeRateHistory',
             { currencies, months },
             { defaultValue: [] }
@@ -87,7 +85,7 @@ export class PublicApi extends BaseApi {
      * @param host Host URL
      */
     mobileQRCode(id?: string, host?: string) {
-        return this.app.api.post<string>('Public/MobileQRCode', { id, host });
+        return this.api.post<string>('Public/MobileQRCode', { id, host });
     }
 
     /**
@@ -101,7 +99,7 @@ export class PublicApi extends BaseApi {
         culture?: string
     ): T extends number ? PublicProductDto : PublicOrgProductDto {
         culture = this.app.checkLanguage(culture);
-        return this.app.api.post<PublicProductDto>(
+        return this.api.post<PublicProductDto>(
             `Public/Product/${id}/${culture}`
         ) as any;
     }

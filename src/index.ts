@@ -26,19 +26,24 @@ export * from './business/RepeatOption';
 // def
 export * from './def/ListItem';
 
-// dto
-export * from './dto/IdLabelDto';
-export * from './dto/IdLabelPrimaryDto';
-export * from './dto/InitCallDto';
-
-// erp
+// erp dto
 export * from './erp/dto/CurrencyDto';
 export * from './erp/dto/ExchangeRateDto';
 export * from './erp/dto/ExchangeRateHistoryDto';
+export * from './erp/dto/IdLabelDto';
+export * from './erp/dto/IdLabelPrimaryDto';
+export * from './erp/dto/InitCallDto';
 export * from './erp/dto/PublicProductDto';
 
+// erp rq
+export * from './erp/rq/QueryRQ';
+export * from './erp/rq/RefreshTokenRQ';
+export * from './erp/rq/TiplistRQ';
+
+// erp api
 export * from './erp/AddressApi';
 export * from './erp/BaseApi';
+export * from './erp/EntityApi';
 export * from './erp/OrgApi';
 export * from './erp/PublicApi';
 
@@ -56,12 +61,6 @@ export * from './result/ActionResult';
 export * from './result/ActionResultError';
 export * from './result/IActionResult';
 export * from './result/InitCallResult';
-
-// rq
-export * from './rq/LoginIdRQ';
-export * from './rq/LoginRQ';
-export * from './rq/QueryRQ';
-export * from './rq/TiplistRQ';
 
 // state
 export * from './state/Culture';

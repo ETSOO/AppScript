@@ -2,7 +2,7 @@ import { DataTypes } from '@etsoo/shared';
 import { AddressContinent } from '../address/AddressContinent';
 import { AddressRegion, AddressRegionDb } from '../address/AddressRegion';
 import { AddressState } from '../address/AddressState';
-import { IdLabelConditional } from '../dto/IdLabelDto';
+import { IdLabelConditional } from './dto/IdLabelDto';
 import { BaseApi } from './BaseApi';
 
 /**
@@ -54,7 +54,7 @@ export class AddressApi extends BaseApi {
                 return { ...region };
             });
         } else {
-            return (await this.app.api.get<AddressRegionDb[]>(
+            return (await this.api.get<AddressRegionDb[]>(
                 `Address/RegionList?language=${this.app.culture}`,
                 undefined,
                 { defaultValue: [] }
@@ -68,7 +68,7 @@ export class AddressApi extends BaseApi {
      * @returns Result
      */
     states(regionId: string) {
-        return this.app.api.get<AddressState[]>(
+        return this.api.get<AddressState[]>(
             `Address/StateList?regionId=${regionId}&language=${this.app.culture}`,
             undefined,
             { defaultValue: [] }

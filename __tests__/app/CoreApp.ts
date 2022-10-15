@@ -13,6 +13,7 @@ import {
     enUS,
     ExternalSettings,
     IUser,
+    OrgApi,
     PublicApi,
     UserRole
 } from '../../src';
@@ -130,12 +131,14 @@ class CoreAppTest extends CoreApp<
     }
 }
 
+// Mixins example
 function EnhanceApp<TBase extends DataTypes.MConstructor<CoreAppTest>>(
     Base: TBase
 ) {
     return class extends Base {
         readonly addressApi = new AddressApi(this);
         readonly publicApi = new PublicApi(this);
+        readonly orgApi = new OrgApi(this);
     };
 }
 
@@ -218,4 +221,12 @@ test('Tests for publicApi', async () => {
 
     const currencies = await app.publicApi.currencies(['NZD', 'AUD', 'USD']);
     expect(currencies[1].id).toBe('AUD');
+
+    /*
+    const orgs = await app.orgApi.list();
+    console.log(orgs);
+
+    const orgsQuery = await app.orgApi.query({ currentPage: 1, batchSize: 2 });
+    console.log(orgsQuery);
+    */
 });

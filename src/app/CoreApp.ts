@@ -33,7 +33,7 @@ import { AddressRegion } from '../address/AddressRegion';
 import { AddressUtils } from '../address/AddressUtils';
 import { BridgeUtils } from '../bridges/BridgeUtils';
 import { EntityStatus } from '../business/EntityStatus';
-import { InitCallDto } from '../dto/InitCallDto';
+import { InitCallDto } from '../erp/dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
 import { IActionResult } from '../result/IActionResult';
 import { InitCallResult, InitCallResultData } from '../result/InitCallResult';
