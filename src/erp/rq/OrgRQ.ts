@@ -3,6 +3,11 @@
  */
 export type OrgRQ = {
     /**
+     * Id
+     */
+    id: number;
+
+    /**
      * Region id
      */
     regionId: string;
