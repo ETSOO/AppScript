@@ -28,7 +28,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      */
     protected createBase<R extends IActionResult>(
         data: object,
-        payload?: IApiPayload<R, any>
+        payload?: IApiPayload<R>
     ) {
         return this.api.put<R>(`${this.flag}/Create`, data, payload);
     }
@@ -40,15 +40,15 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      */
     protected deleteBase<R extends IActionResult>(
         id: DataTypes.IdType,
-        payload?: IApiPayload<R, any>
+        payload?: IApiPayload<R>
     ): R;
     protected deleteBase<R extends IActionResult>(
         ids: DataTypes.IdType[],
-        payload?: IApiPayload<R, any>
+        payload?: IApiPayload<R>
     ): R;
     protected deleteBase<R extends IActionResult>(
         id: DataTypes.IdType | DataTypes.IdType[],
-        payload?: IApiPayload<R, any>
+        payload?: IApiPayload<R>
     ) {
         const query = Array.isArray(id)
             ? '?' + id.map((item) => `ids=${item}`).join('&')
@@ -68,7 +68,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      */
     protected listBase<RQ extends TiplistRQ, R extends object>(
         rq: RQ,
-        payload?: IApiPayload<R[], any>
+        payload?: IApiPayload<R[]>
     ) {
         return this.api.post<R[]>(`${this.flag}/List`, rq, payload);
     }
@@ -81,7 +81,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      */
     protected queryBase<RQ extends QueryRQ, R extends object>(
         rq: RQ,
-        payload?: IApiPayload<R[], any>
+        payload?: IApiPayload<R[]>
     ) {
         return this.api.post<R[]>(`${this.flag}/Query`, rq, payload);
     }
@@ -94,7 +94,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      */
     protected readBase<R extends object>(
         id: DataTypes.IdType,
-        payload?: IApiPayload<R, any>
+        payload?: IApiPayload<R>
     ) {
         return this.api.get<R>(`${this.flag}/Read/${id}`, payload);
     }
@@ -107,7 +107,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      */
     protected sortBase<RQ extends { id: DataTypes.IdType }>(
         items: RQ[],
-        payload?: IApiPayload<number, any>
+        payload?: IApiPayload<number>
     ) {
         const rq: Record<DataTypes.IdType, number> = {};
         items.forEach((item, index) => (rq[item.id] = index));
@@ -122,7 +122,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      */
     protected updateBase<R extends IActionResult>(
         data: object,
-        payload?: IApiPayload<R, any>
+        payload?: IApiPayload<R>
     ) {
         return this.api.put<R>(`${this.flag}/Update`, data, payload);
     }
@@ -135,7 +135,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      */
     protected updateReadBase<R extends object>(
         id: DataTypes.IdType,
-        payload?: IApiPayload<R, any>
+        payload?: IApiPayload<R>
     ) {
         return this.api.get<R>(`${this.flag}/UpdateRead/${id}`, payload);
     }

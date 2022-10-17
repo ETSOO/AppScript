@@ -31,7 +31,7 @@ export class OrgApi extends EntityApi {
     list(
         items?: number | OrgListRQ,
         serviceId?: number,
-        payload?: IApiPayload<ListType[], any>
+        payload?: IApiPayload<ListType[]>
     ) {
         payload ??= { defaultValue: [], showLoading: false };
         const rq = typeof items === 'object' ? items : { items, serviceId };
@@ -44,7 +44,7 @@ export class OrgApi extends EntityApi {
      * @param payload Payload
      * @returns Result
      */
-    query(rq: OrgQueryRQ, payload?: IApiPayload<OrgQueryDto[], any>) {
+    query(rq: OrgQueryRQ, payload?: IApiPayload<OrgQueryDto[]>) {
         return this.queryBase(rq, payload);
     }
 
@@ -56,7 +56,7 @@ export class OrgApi extends EntityApi {
     async switch(
         id: number,
         serviceId?: number,
-        payload?: IApiPayload<boolean, any>
+        payload?: IApiPayload<boolean>
     ) {
         const result = await this.app.api.put<boolean>(
             'Organization/Switch',
@@ -79,7 +79,7 @@ export class OrgApi extends EntityApi {
      */
     update(
         data: DataTypes.AddOrEditType<OrgRQ, true>,
-        payload?: IApiPayload<IdActionResult, any>
+        payload?: IApiPayload<IdActionResult>
     ) {
         return super.updateBase<IdActionResult>(data, payload);
     }
