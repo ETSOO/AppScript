@@ -1,3 +1,4 @@
+import { DataTypes } from '@etsoo/shared';
 import { EntityStatus } from '../../business/EntityStatus';
 
 /**
@@ -23,6 +24,11 @@ export type PublicProductDto = {
      * Web URL for access
      */
     webUrl: string;
+
+    /**
+     * Query id for service Id / service Uid
+     */
+    queryId?: DataTypes.IdType;
 };
 
 /**
