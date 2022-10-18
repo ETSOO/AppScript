@@ -1,8 +1,8 @@
 import { IApiPayload } from '@etsoo/restclient';
 import { DataTypes, ListType } from '@etsoo/shared';
 import { IApp } from '../app/IApp';
-import { IdActionResult } from '../result/IActionResult';
 import { OrgQueryDto } from './dto/OrgQueryDto';
+import { IdResultPayload } from './dto/ResultPayload';
 import { EntityApi } from './EntityApi';
 import { OrgListRQ } from './rq/OrgListRQ';
 import { OrgQueryRQ } from './rq/OrgQueryRQ';
@@ -81,7 +81,7 @@ export class OrgApi extends EntityApi {
      */
     update(
         data: DataTypes.AddOrEditType<OrgRQ, true>,
-        payload?: IApiPayload<IdActionResult>
+        payload?: IdResultPayload
     ) {
         return super.updateBase(data, payload);
     }
