@@ -34,6 +34,7 @@ export * from './erp/dto/IdLabelDto';
 export * from './erp/dto/IdLabelPrimaryDto';
 export * from './erp/dto/InitCallDto';
 export * from './erp/dto/PublicProductDto';
+export * from './erp/dto/ResultPayload';
 
 // erp rq
 export * from './erp/rq/QueryRQ';
