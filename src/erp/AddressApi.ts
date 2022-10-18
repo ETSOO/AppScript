@@ -4,6 +4,7 @@ import { AddressRegion, AddressRegionDb } from '../address/AddressRegion';
 import { AddressState } from '../address/AddressState';
 import { IdLabelConditional } from './dto/IdLabelDto';
 import { BaseApi } from './BaseApi';
+import { IApiPayload } from '@etsoo/restclient';
 
 /**
  * Address Api
@@ -57,7 +58,7 @@ export class AddressApi extends BaseApi {
             return (await this.api.get<AddressRegionDb[]>(
                 `Address/RegionList?language=${this.app.culture}`,
                 undefined,
-                { defaultValue: [] }
+                { defaultValue: [], showLoading: false }
             )) as any;
         }
     }
@@ -65,13 +66,16 @@ export class AddressApi extends BaseApi {
     /**
      * Get state list
      * @param regionId Region id
+     * @param payload Payload
      * @returns Result
      */
-    states(regionId: string) {
-        return this.api.get<AddressState[]>(
+    states(regionId: string, payload?: IApiPayload<AddressState[]>) {
+        payload ??= { defaultValue: [], showLoading: false };
+
+        return this.api.get(
             `Address/StateList?regionId=${regionId}&language=${this.app.culture}`,
             undefined,
-            { defaultValue: [] }
+            payload
         );
     }
 }

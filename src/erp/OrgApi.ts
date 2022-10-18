@@ -24,6 +24,7 @@ export class OrgApi extends EntityApi {
      * Get organization list
      * @param items Max items or request data
      * @param serviceId Service id
+     * @param payload Payload
      * @returns Result
      */
     list(items?: number, serviceId?: number): Promise<ListType[] | undefined>;
@@ -52,13 +53,14 @@ export class OrgApi extends EntityApi {
      * Switch organization
      * @param id Organization id
      * @param serviceId Service id
+     * @param payload Payload
      */
     async switch(
         id: number,
         serviceId?: number,
         payload?: IApiPayload<boolean>
     ) {
-        const result = await this.app.api.put<boolean>(
+        const result = await this.app.api.put(
             'Organization/Switch',
             {
                 id,
@@ -81,6 +83,6 @@ export class OrgApi extends EntityApi {
         data: DataTypes.AddOrEditType<OrgRQ, true>,
         payload?: IApiPayload<IdActionResult>
     ) {
-        return super.updateBase<IdActionResult>(data, payload);
+        return super.updateBase(data, payload);
     }
 }

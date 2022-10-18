@@ -30,7 +30,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
         data: object,
         payload?: IApiPayload<R>
     ) {
-        return this.api.put<R>(`${this.flag}/Create`, data, payload);
+        return this.api.put(`${this.flag}/Create`, data, payload);
     }
 
     /**
@@ -41,11 +41,11 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
     protected deleteBase<R extends IActionResult>(
         id: DataTypes.IdType,
         payload?: IApiPayload<R>
-    ): R;
+    ): Promise<R | undefined>;
     protected deleteBase<R extends IActionResult>(
         ids: DataTypes.IdType[],
         payload?: IApiPayload<R>
-    ): R;
+    ): Promise<R | undefined>;
     protected deleteBase<R extends IActionResult>(
         id: DataTypes.IdType | DataTypes.IdType[],
         payload?: IApiPayload<R>
@@ -53,7 +53,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
         const query = Array.isArray(id)
             ? '?' + id.map((item) => `ids=${item}`).join('&')
             : id;
-        return this.api.delete<R>(
+        return this.api.delete(
             `${this.flag}/Delete/${query}`,
             undefined,
             payload
@@ -70,7 +70,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
         rq: RQ,
         payload?: IApiPayload<R[]>
     ) {
-        return this.api.post<R[]>(`${this.flag}/List`, rq, payload);
+        return this.api.post(`${this.flag}/List`, rq, payload);
     }
 
     /**
@@ -83,7 +83,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
         rq: RQ,
         payload?: IApiPayload<R[]>
     ) {
-        return this.api.post<R[]>(`${this.flag}/Query`, rq, payload);
+        return this.api.post(`${this.flag}/Query`, rq, payload);
     }
 
     /**
@@ -96,7 +96,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
         id: DataTypes.IdType,
         payload?: IApiPayload<R>
     ) {
-        return this.api.get<R>(`${this.flag}/Read/${id}`, payload);
+        return this.api.get(`${this.flag}/Read/${id}`, undefined, payload);
     }
 
     /**
@@ -111,7 +111,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
     ) {
         const rq: Record<DataTypes.IdType, number> = {};
         items.forEach((item, index) => (rq[item.id] = index));
-        return this.api.put<number>(`${this.flag}/Sort`, rq, payload);
+        return this.api.put(`${this.flag}/Sort`, rq, payload);
     }
 
     /**
@@ -124,7 +124,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
         data: object,
         payload?: IApiPayload<R>
     ) {
-        return this.api.put<R>(`${this.flag}/Update`, data, payload);
+        return this.api.put(`${this.flag}/Update`, data, payload);
     }
 
     /**
@@ -137,6 +137,10 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
         id: DataTypes.IdType,
         payload?: IApiPayload<R>
     ) {
-        return this.api.get<R>(`${this.flag}/UpdateRead/${id}`, payload);
+        return this.api.get(
+            `${this.flag}/UpdateRead/${id}`,
+            undefined,
+            payload
+        );
     }
 }

@@ -1,3 +1,4 @@
+import { IApiPayload } from '@etsoo/restclient';
 import { DataTypes, ListType, ListType1 } from '@etsoo/shared';
 import { Currency } from '../business/Currency';
 import { ProductUnit } from '../business/ProductUnit';
@@ -22,7 +23,9 @@ export class PublicApi extends BaseApi {
     ): Promise<T extends undefined ? CurrencyDto[] | undefined : ListType1[]> {
         if (currencyNames == null)
             return (await this.api.get<CurrencyDto[]>(
-                'Public/GetCurrencies'
+                'Public/GetCurrencies',
+                undefined,
+                { defaultValue: [], showLoading: false }
             )) as any;
         else
             return currencyNames.map((name) => ({
@@ -34,23 +37,37 @@ export class PublicApi extends BaseApi {
     /**
      * Get exchange rate
      * @param currency Currency
+     * @param payload Payload
      * @returns Result
      */
-    exchangeRate(currency: Currency | string) {
-        return this.api.get<ExchangeRateDto>(`Public/ExchangeRate/${currency}`);
+    exchangeRate(
+        currency: Currency | string,
+        payload?: IApiPayload<ExchangeRateDto>
+    ) {
+        return this.api.get(
+            `Public/ExchangeRate/${currency}`,
+            undefined,
+            payload
+        );
     }
 
     /**
      * Get exchange rate history
      * @param currencies Currencies
      * @param months Max months
+     * @param payload Payload
      * @returns Result
      */
-    exchangeRateHistory(currencies: (Currency | string)[], months?: number) {
-        return this.api.post<ExchangeRateHistoryDto[]>(
+    exchangeRateHistory(
+        currencies: (Currency | string)[],
+        months?: number,
+        payload?: IApiPayload<ExchangeRateHistoryDto[]>
+    ) {
+        payload ??= { defaultValue: [] };
+        return this.api.post(
             'Public/ExchangeRateHistory',
             { currencies, months },
-            { defaultValue: [] }
+            payload
         );
     }
 
@@ -83,24 +100,29 @@ export class PublicApi extends BaseApi {
      * Get mobile base64 QRCode
      * @param id User id
      * @param host Host URL
+     * @param payload Payload
      */
-    mobileQRCode(id?: string, host?: string) {
-        return this.api.post<string>('Public/MobileQRCode', { id, host });
+    mobileQRCode(id?: string, host?: string, payload?: IApiPayload<string>) {
+        return this.api.post('Public/MobileQRCode', { id, host }, payload);
     }
 
     /**
      * Get public and valid product data
      * @param id Product/Service Id or Uid
      * @param culture Language
+     * @param payload Payload
      * @returns Result
      */
     product<T extends number | string>(
         id: T,
-        culture?: string
+        culture?: string,
+        payload?: IApiPayload<PublicProductDto>
     ): T extends number ? PublicProductDto : PublicOrgProductDto {
         culture = this.app.checkLanguage(culture);
-        return this.api.post<PublicProductDto>(
-            `Public/Product/${id}/${culture}`
+        return this.api.get(
+            `Public/Product/${id}/${culture}`,
+            undefined,
+            payload
         ) as any;
     }
 
