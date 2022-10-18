@@ -117,7 +117,9 @@ export class PublicApi extends BaseApi {
         id: T,
         culture?: string,
         payload?: IApiPayload<PublicProductDto>
-    ): T extends number ? PublicProductDto : PublicOrgProductDto {
+    ): Promise<
+        (T extends number ? PublicProductDto : PublicOrgProductDto) | undefined
+    > {
         culture = this.app.checkLanguage(culture);
         return this.api.get(
             `Public/Product/${id}/${culture}`,
