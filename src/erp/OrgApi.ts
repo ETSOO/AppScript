@@ -1,12 +1,12 @@
 import { IApiPayload } from '@etsoo/restclient';
 import { DataTypes, ListType } from '@etsoo/shared';
 import { IApp } from '../app/IApp';
+import { OrgDto } from './dto/OrgDto';
 import { OrgQueryDto } from './dto/OrgQueryDto';
 import { IdResultPayload } from './dto/ResultPayload';
 import { EntityApi } from './EntityApi';
 import { OrgListRQ } from './rq/OrgListRQ';
 import { OrgQueryRQ } from './rq/OrgQueryRQ';
-import { OrgRQ } from './rq/OrgRQ';
 
 /**
  * Organization API
@@ -89,9 +89,19 @@ export class OrgApi extends EntityApi {
      * @returns Result
      */
     update(
-        data: DataTypes.AddOrEditType<OrgRQ, true>,
+        data: DataTypes.AddOrEditType<OrgDto, true>,
         payload?: IdResultPayload
     ) {
         return super.updateBase(data, payload);
+    }
+
+    /**
+     * Read for update
+     * @param id Id
+     * @param payload Payload
+     * @returns Result
+     */
+    updateRead(id: number, payload?: IApiPayload<OrgDto>) {
+        return super.updateReadBase(id, payload);
     }
 }

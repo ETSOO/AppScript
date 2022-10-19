@@ -1,7 +1,7 @@
 /**
- * Organization add/edit request data
+ * Organization data
  */
-export type OrgRQ = {
+export type OrgDto = {
     /**
      * Id
      */
@@ -31,4 +31,9 @@ export type OrgRQ = {
      * Trade as
      */
     tradeAs?: string;
+
+    /**
+     * Parent organization
+     */
+    parentId?: number;
 };

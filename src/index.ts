@@ -33,6 +33,7 @@ export * from './erp/dto/ExchangeRateHistoryDto';
 export * from './erp/dto/IdLabelDto';
 export * from './erp/dto/IdLabelPrimaryDto';
 export * from './erp/dto/InitCallDto';
+export * from './erp/dto/OrgDto';
 export * from './erp/dto/OrgQueryDto';
 export * from './erp/dto/PublicProductDto';
 export * from './erp/dto/ResultPayload';
@@ -40,7 +41,6 @@ export * from './erp/dto/ResultPayload';
 // erp rq
 export * from './erp/rq/OrgListRQ';
 export * from './erp/rq/OrgQueryRQ';
-export * from './erp/rq/OrgRQ';
 export * from './erp/rq/QueryRQ';
 export * from './erp/rq/RefreshTokenRQ';
 export * from './erp/rq/TiplistRQ';
