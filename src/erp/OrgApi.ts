@@ -28,15 +28,24 @@ export class OrgApi extends EntityApi {
      * @returns Result
      */
     list(items?: number, serviceId?: number): Promise<ListType[] | undefined>;
-    list(rq: OrgListRQ): Promise<ListType[] | undefined>;
     list(
-        items?: number | OrgListRQ,
-        serviceId?: number,
+        rq: OrgListRQ,
         payload?: IApiPayload<ListType[]>
+    ): Promise<ListType[] | undefined>;
+    list<T extends number | OrgListRQ>(
+        items?: T,
+        serviceId?: T extends number ? number : IApiPayload<ListType[]>
     ) {
-        payload ??= { defaultValue: [], showLoading: false };
-        const rq = typeof items === 'object' ? items : { items, serviceId };
-        return this.listBase(rq, payload);
+        if (typeof items === 'object') {
+            if (typeof serviceId === 'number') return undefined;
+            return this.listBase(items, serviceId);
+        } else {
+            if (typeof serviceId !== 'number') return undefined;
+            return this.listBase<OrgListRQ, ListType>(
+                { items, serviceId },
+                { defaultValue: [], showLoading: false }
+            );
+        }
     }
 
     /**
