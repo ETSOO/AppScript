@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.3.18",
+    "version": "1.3.19",
     "description": "Applications shared TypeScript framework",
     "main": "lib/cjs/index.js",
     "module": "lib/mjs/index.js",
@@ -54,16 +54,16 @@
     "dependencies": {
         "@etsoo/notificationbase": "^1.1.13",
         "@etsoo/restclient": "^1.0.75",
-        "@etsoo/shared": "^1.1.65",
+        "@etsoo/shared": "^1.1.66",
         "@types/crypto-js": "^4.1.1",
         "crypto-js": "^4.1.1"
     },
     "devDependencies": {
         "@babel/cli": "^7.19.3",
-        "@babel/core": "^7.19.3",
-        "@babel/plugin-transform-runtime": "^7.19.1",
+        "@babel/core": "^7.19.6",
+        "@babel/plugin-transform-runtime": "^7.19.6",
         "@babel/preset-env": "^7.19.4",
-        "@babel/runtime-corejs3": "^7.19.4",
+        "@babel/runtime-corejs3": "^7.19.6",
         "@types/jest": "^29.2.0",
         "@typescript-eslint/eslint-plugin": "^5.40.1",
         "@typescript-eslint/parser": "^5.40.1",
