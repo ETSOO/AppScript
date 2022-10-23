@@ -1,6 +1,6 @@
 import { IApiPayload } from '@etsoo/restclient';
 import { DataTypes, ListType, ListType1 } from '@etsoo/shared';
-import { Currency } from '../business/Currency';
+import { Currencies, Currency } from '../business/Currency';
 import { ProductUnit } from '../business/ProductUnit';
 import { RepeatOption } from '../business/RepeatOption';
 import { BaseApi } from './BaseApi';
@@ -18,20 +18,27 @@ export class PublicApi extends BaseApi {
      * @param currencyNames Limited currency names for local data, undefined will try to retrive remoately
      * @returns Result
      */
-    async currencies<T extends string[] | Currency[] | undefined>(
-        currencyNames?: T
-    ): Promise<T extends undefined ? CurrencyDto[] | undefined : ListType1[]> {
-        if (currencyNames == null)
-            return (await this.api.get<CurrencyDto[]>(
-                'Public/GetCurrencies',
-                undefined,
-                { defaultValue: [], showLoading: false }
-            )) as any;
-        else
-            return currencyNames.map((name) => ({
+    currencies(): Promise<CurrencyDto[] | undefined>;
+    currencies(names: string[] | Currency[] | boolean): ListType1[];
+    currencies(names?: string[] | Currency[] | boolean) {
+        if (typeof names === 'boolean' && names) {
+            return Currencies.map((name) => ({
                 id: name,
                 label: this.app.get(`currency${name}`) ?? name
-            })) as any;
+            }));
+        }
+
+        if (Array.isArray(names)) {
+            return names.map((name) => ({
+                id: name,
+                label: this.app.get(`currency${name}`) ?? name
+            }));
+        }
+
+        return this.api.get<CurrencyDto[]>('Public/GetCurrencies', undefined, {
+            defaultValue: [],
+            showLoading: false
+        });
     }
 
     /**
@@ -106,6 +113,8 @@ export class PublicApi extends BaseApi {
         return this.api.post('Public/MobileQRCode', { id, host }, payload);
     }
 
+    //product(id: number, culture?: string, ): Promise<PublicProductDto | undefined>;
+
     /**
      * Get public and valid product data
      * @param id Product/Service Id or Uid
@@ -116,16 +125,16 @@ export class PublicApi extends BaseApi {
     product<T extends number | string>(
         id: T,
         culture?: string,
-        payload?: IApiPayload<PublicProductDto>
-    ): Promise<
-        (T extends number ? PublicProductDto : PublicOrgProductDto) | undefined
-    > {
+        payload?: IApiPayload<
+            T extends number ? PublicProductDto : PublicOrgProductDto
+        >
+    ) {
         culture = this.app.checkLanguage(culture);
         return this.api.get(
             `Public/Product/${id}/${culture}`,
             undefined,
             payload
-        ) as any;
+        );
     }
 
     /**

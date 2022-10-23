@@ -219,8 +219,12 @@ test('Tests for publicApi', async () => {
     const options = app.publicApi.repeatOptions(['MONTH', 'QUATER', 'YEAR']);
     expect(options[2]).toStrictEqual({ id: 12, label: '每年' });
 
-    const currencies = await app.publicApi.currencies(['NZD', 'AUD', 'USD']);
+    const currencies = app.publicApi.currencies(['NZD', 'AUD', 'USD']);
+    expect(currencies.length).toBe(3);
     expect(currencies[1].id).toBe('AUD');
+
+    const currencies1 = app.publicApi.currencies(true);
+    expect(currencies1.length >= 10).toBeTruthy();
 
     /*
     const orgs = await app.orgApi.list();
