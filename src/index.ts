@@ -39,6 +39,7 @@ export * from './erp/dto/PublicProductDto';
 export * from './erp/dto/ResultPayload';
 
 // erp rq
+export * from './erp/rq/MemberListRQ';
 export * from './erp/rq/OrgListRQ';
 export * from './erp/rq/OrgQueryRQ';
 export * from './erp/rq/QueryRQ';
@@ -49,6 +50,7 @@ export * from './erp/rq/TiplistRQ';
 export * from './erp/AddressApi';
 export * from './erp/BaseApi';
 export * from './erp/EntityApi';
+export * from './erp/MemberApi';
 export * from './erp/OrgApi';
 export * from './erp/PublicApi';
 
