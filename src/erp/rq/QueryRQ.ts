@@ -1,17 +1,19 @@
+import { DataTypes } from '@etsoo/shared';
+
 /**
  * Query request data
  * com.etsoo.CoreFramework.Models.QueryRQ
  */
-export type QueryRQ = {
+export type QueryRQ<T extends DataTypes.IdType = number> = {
     /**
      * Number id
      */
-    id?: number;
+    id?: T;
 
     /**
      * String id
      */
-    sid?: number;
+    sid?: string;
 
     /**
      * Current page

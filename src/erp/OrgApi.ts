@@ -41,7 +41,7 @@ export class OrgApi extends EntityApi {
             return this.listBase(items, serviceId);
         } else {
             if (typeof serviceId === 'object') return undefined;
-            return this.listBase<OrgListRQ, ListType>(
+            return this.listBase<number, OrgListRQ, ListType>(
                 { items, serviceId },
                 { defaultValue: [], showLoading: false }
             );

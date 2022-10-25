@@ -66,10 +66,11 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * @param payload Payload
      * @returns Result
      */
-    protected listBase<RQ extends TiplistRQ, R extends object>(
-        rq: RQ,
-        payload?: IApiPayload<R[]>
-    ) {
+    protected listBase<
+        T extends DataTypes.IdType,
+        RQ extends TiplistRQ<T>,
+        R extends object
+    >(rq: RQ, payload?: IApiPayload<R[]>) {
         return this.api.post(`${this.flag}/List`, rq, payload);
     }
 
@@ -79,10 +80,11 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * @param payload Payload
      * @returns Result
      */
-    protected queryBase<RQ extends QueryRQ, R extends object>(
-        rq: RQ,
-        payload?: IApiPayload<R[]>
-    ) {
+    protected queryBase<
+        T extends DataTypes.IdType,
+        RQ extends QueryRQ<T>,
+        R extends object
+    >(rq: RQ, payload?: IApiPayload<R[]>) {
         return this.api.post(`${this.flag}/Query`, rq, payload);
     }
 
