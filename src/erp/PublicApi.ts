@@ -85,7 +85,7 @@ export class PublicApi extends BaseApi {
      * @param isJoined Add the join label like 'per Kg' for Kg
      * @returns Label
      */
-    getUnitLabel(unit: ProductUnit, isJoined?: boolean | string) {
+    getUnitLabel(unit: ProductUnit | number, isJoined?: boolean | string) {
         const key = ProductUnit[unit];
         const label = this.app.get('unit' + key) ?? key;
         const join = this.getUnitJoin(isJoined);
