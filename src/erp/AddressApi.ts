@@ -37,29 +37,26 @@ export class AddressApi extends BaseApi {
         return this.app.get('continent' + id) ?? (id as string);
     }
 
+    regions(isRemote: true): Promise<AddressRegionDb[] | undefined>;
+    regions(): AddressRegion[];
+
     /**
      * Get region list
-     * @param isLocal Is local version
+     * @param isRemote Is Remote version
      * @returns Result
      */
-    async regions<T extends boolean = true>(
-        isLocal?: T
-    ): Promise<
-        T extends true | undefined
-            ? AddressRegion[]
-            : AddressRegionDb[] | undefined
-    > {
-        if (isLocal == null || isLocal) {
+    regions(isRemote?: boolean) {
+        if (isRemote) {
+            return this.api.get<AddressRegionDb[]>(
+                `Address/RegionList?language=${this.app.culture}`,
+                undefined,
+                { defaultValue: [], showLoading: false }
+            );
+        } else {
             return AddressRegion.all.map((region) => {
                 region.label = this.app.getRegionLabel(region.id);
                 return { ...region };
             });
-        } else {
-            return (await this.api.get<AddressRegionDb[]>(
-                `Address/RegionList?language=${this.app.culture}`,
-                undefined,
-                { defaultValue: [], showLoading: false }
-            )) as any;
         }
     }
 

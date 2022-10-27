@@ -208,7 +208,7 @@ test('Tests for addressApi', async () => {
     const continents = await app.addressApi.continents();
     expect(continents.length).toBe(7);
 
-    const regions = await app.addressApi.regions();
+    const regions = app.addressApi.regions();
     const cn = regions.find((r) => r.id === 'CN');
     expect(cn?.label).toBe('中国大陆');
 });
