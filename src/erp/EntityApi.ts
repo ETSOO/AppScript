@@ -78,14 +78,15 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * Query
      * @param rq Request data
      * @param payload Payload
+     * @param queryKey Additional query key
      * @returns Result
      */
     protected queryBase<
         T extends DataTypes.IdType,
         RQ extends QueryRQ<T>,
         R extends object
-    >(rq: RQ, payload?: IApiPayload<R[]>) {
-        return this.api.post(`${this.flag}/Query`, rq, payload);
+    >(rq: RQ, payload?: IApiPayload<R[]>, queryKey: string = '') {
+        return this.api.post(`${this.flag}/Query${queryKey}`, rq, payload);
     }
 
     /**
