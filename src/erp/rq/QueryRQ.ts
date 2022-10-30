@@ -18,7 +18,7 @@ export type QueryRQ<T extends DataTypes.IdType = number> = {
     /**
      * Current page
      */
-    currentPage: number;
+    currentPage?: number;
 
     /**
      * Batch size
