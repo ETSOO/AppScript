@@ -179,11 +179,11 @@ export interface IApp {
 
     /**
      * Alert action result
-     * @param result Action result
+     * @param result Action result or message
      * @param callback Callback
      */
     alertResult(
-        result: IActionResult,
+        result: IActionResult | string,
         callback?: NotificationReturn<void>
     ): void;
 

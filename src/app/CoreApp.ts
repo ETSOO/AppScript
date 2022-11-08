@@ -648,11 +648,16 @@ export abstract class CoreApp<
 
     /**
      * Alert action result
-     * @param result Action result
+     * @param result Action result or message
      * @param callback Callback
      */
-    alertResult(result: IActionResult, callback?: NotificationReturn<void>) {
-        this.notifier.alert(this.formatResult(result), callback);
+    alertResult(
+        result: IActionResult | string,
+        callback?: NotificationReturn<void>
+    ) {
+        const message =
+            typeof result === 'string' ? result : this.formatResult(result);
+        this.notifier.alert(message, callback);
     }
 
     /**
