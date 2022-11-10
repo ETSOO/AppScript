@@ -27,6 +27,7 @@ export * from './business/RepeatOption';
 export * from './def/ListItem';
 
 // erp dto
+export * from './erp/dto/AuditLineDto';
 export * from './erp/dto/CurrencyDto';
 export * from './erp/dto/ExchangeRateDto';
 export * from './erp/dto/ExchangeRateHistoryDto';

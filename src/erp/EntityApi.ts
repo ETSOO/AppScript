@@ -3,6 +3,7 @@ import { DataTypes } from '@etsoo/shared';
 import { IApp } from '../app/IApp';
 import { IActionResult } from '../result/IActionResult';
 import { BaseApi } from './BaseApi';
+import { AuditLineDto, AuditLinePayload } from './dto/AuditLineDto';
 import { QueryRQ } from './rq/QueryRQ';
 import { TiplistRQ } from './rq/TiplistRQ';
 
@@ -87,6 +88,19 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
         R extends object
     >(rq: RQ, payload?: IApiPayload<R[]>, queryKey: string = '') {
         return this.api.post(`${this.flag}/Query${queryKey}`, rq, payload);
+    }
+
+    /**
+     * Query audit history
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    protected queryAuditBase<T extends DataTypes.IdType, R extends QueryRQ<T>>(
+        rq: R,
+        payload?: AuditLinePayload
+    ) {
+        return this.api.post(`${this.flag}/QueryAudit`, rq, payload);
     }
 
     /**
