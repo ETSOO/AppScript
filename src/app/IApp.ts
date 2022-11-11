@@ -8,7 +8,6 @@ import {
 import { ApiDataError, IApi, IPData } from '@etsoo/restclient';
 import { DataTypes, DateUtils, IStorage, ListType } from '@etsoo/shared';
 import { AddressRegion } from '../address/AddressRegion';
-import { ProductUnit } from '../business/ProductUnit';
 import { IActionResult } from '../result/IActionResult';
 import { IUser } from '../state/User';
 import { IAppSettings } from './AppSettings';
@@ -307,34 +306,10 @@ export interface IApp {
      * @returns Result
      */
     formatMoney(
-        input: null | undefined,
-        isInteger?: boolean,
-        options?: Intl.NumberFormatOptions
-    ): undefined;
-
-    /**
-     * Format money number
-     * @param input Input money number
-     * @param isInteger Is integer
-     * @param options Options
-     * @returns Result
-     */
-    formatMoney(
         input: number | bigint,
         isInteger?: boolean,
         options?: Intl.NumberFormatOptions
     ): string;
-
-    /**
-     * Format number
-     * @param input Input number
-     * @param options Options
-     * @returns Result
-     */
-    formatNumber(
-        input: null | undefined,
-        options?: Intl.NumberFormatOptions
-    ): undefined;
 
     /**
      * Format number
