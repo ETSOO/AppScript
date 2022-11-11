@@ -169,6 +169,7 @@
     "tokenExpiry": "您的會話即將過期。點擊 取消 按鈕繼續使用",
     "type": "類型",
     "yes": "是",
+    "uid": "通用標識",
     "unknownError": "未知錯誤",
     "unitJoin": "每{0}",
     "unitPC": "件",

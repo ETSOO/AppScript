@@ -307,10 +307,23 @@ export interface IApp {
      * @returns Result
      */
     formatMoney(
-        input?: number | bigint,
+        input: null | undefined,
         isInteger?: boolean,
         options?: Intl.NumberFormatOptions
-    ): string | undefined;
+    ): undefined;
+
+    /**
+     * Format money number
+     * @param input Input money number
+     * @param isInteger Is integer
+     * @param options Options
+     * @returns Result
+     */
+    formatMoney(
+        input: number | bigint,
+        isInteger?: boolean,
+        options?: Intl.NumberFormatOptions
+    ): string;
 
     /**
      * Format number
@@ -319,9 +332,20 @@ export interface IApp {
      * @returns Result
      */
     formatNumber(
-        input?: number | bigint,
+        input: null | undefined,
         options?: Intl.NumberFormatOptions
-    ): string | undefined;
+    ): undefined;
+
+    /**
+     * Format number
+     * @param input Input number
+     * @param options Options
+     * @returns Result
+     */
+    formatNumber(
+        input: number | bigint,
+        options?: Intl.NumberFormatOptions
+    ): string;
 
     /**
      * Do refresh token result

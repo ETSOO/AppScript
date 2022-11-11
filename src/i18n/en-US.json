@@ -169,6 +169,7 @@
     "tokenExpiry": "Your session is about to expire. Click the Cancel button to continue",
     "type": "Type",
     "yes": "Yes",
+    "uid": "Universal ID",
     "unknownError": "Unknown Error",
     "unitJoin": "per {0}",
     "unitPC": "PC",

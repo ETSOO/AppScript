@@ -996,6 +996,16 @@ export abstract class CoreApp<
         return DateUtils.format(input, currentCulture.name, options, timeZone);
     }
 
+    formatMoney(
+        input: null | undefined,
+        isInteger?: boolean,
+        options?: Intl.NumberFormatOptions
+    ): undefined;
+    formatMoney(
+        input: number | bigint,
+        isInteger?: boolean,
+        options?: Intl.NumberFormatOptions
+    ): string;
     /**
      * Format money number
      * @param input Input money number
@@ -1004,10 +1014,11 @@ export abstract class CoreApp<
      * @returns Result
      */
     formatMoney(
-        input?: number | bigint,
+        input: number | bigint | null | undefined,
         isInteger: boolean = false,
         options?: Intl.NumberFormatOptions
     ) {
+        if (input == null) return undefined;
         return NumberUtils.formatMoney(
             input,
             this.currency,
@@ -1017,13 +1028,25 @@ export abstract class CoreApp<
         );
     }
 
+    formatNumber(
+        input: null | undefined,
+        options?: Intl.NumberFormatOptions
+    ): undefined;
+    formatNumber(
+        input: number | bigint,
+        options?: Intl.NumberFormatOptions
+    ): string;
     /**
      * Format number
      * @param input Input number
      * @param options Options
      * @returns Result
      */
-    formatNumber(input?: number | bigint, options?: Intl.NumberFormatOptions) {
+    formatNumber(
+        input: number | bigint | null | undefined,
+        options?: Intl.NumberFormatOptions
+    ) {
+        if (input == null) return undefined;
         return NumberUtils.format(input, this.culture, options);
     }
 
