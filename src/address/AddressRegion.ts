@@ -37,6 +37,12 @@ export interface AddressRegionDb {
     readonly exitCode: string;
 
     /**
+     * National (truck) prefix
+     * 国内呼叫的拨号
+     */
+    readonly nationalPrefix?: string;
+
+    /**
      * Area code for international dial, like 86 for China
      * 国际电话区号
      */
@@ -85,7 +91,8 @@ export class AddressRegion implements IAddressRegion {
         '156',
         AddressContinent.AS,
         '00',
-        '86',
+        '+86',
+        '0',
         'CNY',
         ['zh-CN']
     );
@@ -100,7 +107,8 @@ export class AddressRegion implements IAddressRegion {
         '344',
         AddressContinent.AS,
         '001',
-        '852',
+        '+852',
+        undefined,
         'HKD',
         ['zh-HK', 'en-HK']
     );
@@ -115,7 +123,8 @@ export class AddressRegion implements IAddressRegion {
         '702',
         AddressContinent.AS,
         '000',
-        '65',
+        '+65',
+        undefined,
         'SGD',
         ['zh-SG', 'en-SG']
     );
@@ -130,7 +139,8 @@ export class AddressRegion implements IAddressRegion {
         '392',
         AddressContinent.AS,
         '010',
-        '81',
+        '+81',
+        '0',
         'JPY',
         ['ja-JP']
     );
@@ -145,6 +155,7 @@ export class AddressRegion implements IAddressRegion {
         '840',
         AddressContinent.NA,
         '011',
+        '+1',
         '1',
         'USD',
         ['en-US']
@@ -160,6 +171,7 @@ export class AddressRegion implements IAddressRegion {
         '124',
         AddressContinent.NA,
         '011',
+        '+1',
         '1',
         'CAD',
         ['en-CA', 'fr-CA']
@@ -175,7 +187,8 @@ export class AddressRegion implements IAddressRegion {
         '036',
         AddressContinent.OC,
         '0011',
-        '61',
+        '+61',
+        '0',
         'AUD',
         ['en-AU']
     );
@@ -190,7 +203,8 @@ export class AddressRegion implements IAddressRegion {
         '554',
         AddressContinent.OC,
         '00',
-        '64',
+        '+64',
+        '0',
         'NZD',
         ['en-NZ', 'mi-NZ']
     );
@@ -205,7 +219,8 @@ export class AddressRegion implements IAddressRegion {
         '826',
         AddressContinent.EU,
         '00',
-        '44',
+        '+44',
+        '0',
         'GBP',
         ['en-GB']
     );
@@ -220,7 +235,8 @@ export class AddressRegion implements IAddressRegion {
         '372',
         AddressContinent.EU,
         '00',
-        '353',
+        '+353',
+        '0',
         'EUR',
         ['en-IE']
     );
@@ -235,7 +251,8 @@ export class AddressRegion implements IAddressRegion {
         '276',
         AddressContinent.EU,
         '00',
-        '49',
+        '+49',
+        '0',
         'EUR',
         ['de-DE']
     );
@@ -250,7 +267,8 @@ export class AddressRegion implements IAddressRegion {
         '250',
         AddressContinent.EU,
         '00',
-        '33',
+        '+33',
+        '0',
         'EUR',
         ['fr-FR']
     );
@@ -295,6 +313,7 @@ export class AddressRegion implements IAddressRegion {
         public continent: AddressContinent,
         public exitCode: string,
         public idd: string,
+        public nationalPrefix: string | undefined,
         public currency: Currency,
         public languages: string[],
         public label: string = id

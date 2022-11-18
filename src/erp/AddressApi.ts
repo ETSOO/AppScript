@@ -5,6 +5,9 @@ import { AddressState } from '../address/AddressState';
 import { IdLabelConditional } from './dto/IdLabelDto';
 import { BaseApi } from './BaseApi';
 import { IApiPayload } from '@etsoo/restclient';
+import { RegionsRQ } from './rq/RegionsRQ';
+
+const cachedRegions: { [P: string]: AddressRegionDb[] | undefined | null } = {};
 
 /**
  * Address Api
@@ -13,19 +16,21 @@ export class AddressApi extends BaseApi {
     /**
      * Get all continents
      * @param isNumberKey Is number key or key as id
+     * @param includeAntarctica Include Antarctica or not
      * @returns Continents
      */
-    async continents<T extends boolean>(
-        isNumberKey = <T>false
-    ): Promise<IdLabelConditional<T>> {
-        return <IdLabelConditional<T>>DataTypes.getEnumKeys(
-            AddressContinent
-        ).map((key) => ({
-            id: isNumberKey
-                ? <number>DataTypes.getEnumByKey(AddressContinent, key)!
-                : key.toString(),
-            label: this.getContinentLabel(key)
-        }));
+    continents<T extends boolean>(
+        isNumberKey = <T>false,
+        includeAntarctica: boolean = false
+    ): IdLabelConditional<T> {
+        return <IdLabelConditional<T>>DataTypes.getEnumKeys(AddressContinent)
+            .filter((item) => includeAntarctica || item !== 'AN')
+            .map((key) => ({
+                id: isNumberKey
+                    ? <number>DataTypes.getEnumByKey(AddressContinent, key)!
+                    : key.toString(),
+                label: this.getContinentLabel(key)
+            }));
     }
 
     /**
@@ -37,27 +42,69 @@ export class AddressApi extends BaseApi {
         return this.app.get('continent' + id) ?? (id as string);
     }
 
-    regions(isRemote: true): Promise<AddressRegionDb[] | undefined>;
-    regions(): AddressRegion[];
-
     /**
-     * Get region list
-     * @param isRemote Is Remote version
-     * @returns Result
+     * Get all regions
+     * @param rq Rquest data
      */
-    regions(isRemote?: boolean) {
-        if (isRemote) {
-            return this.api.get<AddressRegionDb[]>(
-                `Address/RegionList?language=${this.app.culture}`,
+    async getRegions(rq?: RegionsRQ): Promise<AddressRegionDb[] | undefined> {
+        const culture = this.app.culture;
+        let regions = cachedRegions[culture];
+        if (regions == null) {
+            regions = await this.api.get<AddressRegionDb[]>(
+                `Address/RegionList?language=${culture}`,
                 undefined,
                 { defaultValue: [], showLoading: false }
             );
-        } else {
-            return AddressRegion.all.map((region) => {
-                region.label = this.app.getRegionLabel(region.id);
-                return { ...region };
+            if (regions == null) return undefined;
+            cachedRegions[culture] = regions;
+        }
+
+        const { favoredIds = [], items = 8, keyword } = rq ?? {};
+
+        // Keyword filter
+        if (keyword)
+            regions = regions.filter(
+                (region) =>
+                    region.label.includes(keyword) || region.id === keyword
+            );
+
+        // Order by favoredIds
+        if (favoredIds.length > 0) {
+            regions = [...regions].sort((r1, r2) => {
+                const n1 = favoredIds.indexOf(r1.id);
+                const n2 = favoredIds.indexOf(r2.id);
+
+                if (n1 === n2) return 0;
+                if (n1 === -1) return 1;
+                if (n2 === -1) return -1;
+                return n1 - n2;
             });
         }
+
+        // Return the top items
+        return regions.slice(0, items);
+    }
+
+    /**
+     * Get all local regions
+     */
+    regions(): AddressRegion[];
+
+    /**
+     * Get all local regions limited to favored ids
+     * @param favoredIds Favored ids
+     */
+    regions(favoredIds: string[]): AddressRegion[];
+
+    regions(p?: string[]) {
+        const items =
+            p == null || p.length === 0
+                ? AddressRegion.all
+                : AddressRegion.all.filter((ad) => p.includes(ad.id));
+        return items.map((region) => ({
+            ...region,
+            label: this.app.getRegionLabel(region.id)
+        }));
     }
 
     /**

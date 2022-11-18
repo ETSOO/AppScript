@@ -108,4 +108,6 @@ export class FlutterHost implements IBridgeHost {
     }
 
     onUpdate(func: (app: string, version: string) => void) {}
+
+    setTitle(title: string) {}
 }

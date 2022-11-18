@@ -204,13 +204,34 @@ test('Tests for isValidPassword', () => {
     expect(app.isValidPassword('1234abcd')).toBeTruthy();
 });
 
-test('Tests for addressApi', async () => {
-    const continents = await app.addressApi.continents();
-    expect(continents.length).toBe(7);
-
+test('Tests for addressApi', () => {
     const regions = app.addressApi.regions();
     const cn = regions.find((r) => r.id === 'CN');
     expect(cn?.label).toBe('中国大陆');
+
+    const favoredRegions = app.addressApi.regions(['US', 'CA']);
+    expect(favoredRegions.length).toBe(2);
+    expect(favoredRegions.find((region) => region.id === 'US')?.label).toBe(
+        '美国'
+    );
+});
+
+test('Tests for addressApi Async', async () => {
+    const regions = await app.addressApi.getRegions({
+        items: 3,
+        favoredIds: ['US', 'AU', 'CA', 'NZ']
+    });
+    expect(regions?.length).toBe(3);
+    expect(regions![2].id).toBe('CA');
+});
+
+test('Tests for addressApi.continents', () => {
+    const continents1 = app.addressApi.continents();
+    const continents2 = app.addressApi.continents(true, true);
+    expect(continents1.length).toBe(6);
+    expect(continents1.some((item) => item.id === 'AN')).toBeFalsy();
+    expect(continents2.length).toBe(7);
+    expect(continents2[0].id).toBe(1);
 });
 
 test('Tests for publicApi', async () => {
