@@ -104,6 +104,19 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
     }
 
     /**
+     * Query favored country ids
+     * @returns Result
+     */
+    protected async queryFavoredCountryIdsBase(api?: string) {
+        api ??= `${this.flag}/QueryFavoredCountryIds`;
+        const result = await this.api.get<{ id: string }[]>(api, undefined, {
+            showLoading: false
+        });
+        if (result == null) return [];
+        return result.map((item) => item.id);
+    }
+
+    /**
      * Read
      * @param id Id
      * @param payload Payload
