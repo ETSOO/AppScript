@@ -45,6 +45,7 @@ export * from './erp/rq/OrgListRQ';
 export * from './erp/rq/OrgQueryRQ';
 export * from './erp/rq/QueryRQ';
 export * from './erp/rq/RefreshTokenRQ';
+export * from './erp/rq/RegionsRQ';
 export * from './erp/rq/TiplistRQ';
 
 // erp api

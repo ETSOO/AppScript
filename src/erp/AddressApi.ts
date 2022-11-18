@@ -59,7 +59,12 @@ export class AddressApi extends BaseApi {
             cachedRegions[culture] = regions;
         }
 
-        const { favoredIds = [], items = 8, keyword } = rq ?? {};
+        const { id, favoredIds = [], items = 8, keyword } = rq ?? {};
+
+        // Id first
+        if (id) {
+            return regions.filter((region) => region.id === id);
+        }
 
         // Keyword filter
         if (keyword)
