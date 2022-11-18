@@ -216,6 +216,7 @@ test('Tests for addressApi', () => {
     );
 });
 
+/*
 test('Tests for addressApi Async', async () => {
     const regions = await app.addressApi.getRegions({
         items: 3,
@@ -224,6 +225,7 @@ test('Tests for addressApi Async', async () => {
     expect(regions?.length).toBe(3);
     expect(regions![2].id).toBe('CA');
 });
+*/
 
 test('Tests for addressApi.continents', () => {
     const continents1 = app.addressApi.continents();
