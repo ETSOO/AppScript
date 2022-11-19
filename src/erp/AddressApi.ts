@@ -70,7 +70,9 @@ export class AddressApi extends BaseApi {
         if (keyword)
             regions = regions.filter(
                 (region) =>
-                    region.label.includes(keyword) || region.id === keyword
+                    region.label.includes(keyword) ||
+                    region.py?.includes(keyword.toUpperCase()) ||
+                    region.id === keyword.toUpperCase()
             );
 
         // Order by favoredIds

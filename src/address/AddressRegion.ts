@@ -59,6 +59,12 @@ export interface AddressRegionDb {
      * 名称
      */
     label: string;
+
+    /**
+     * Pinyin or other query assistant data
+     * 拼音或其他辅助查询字符串
+     */
+    py?: string;
 }
 
 /**
