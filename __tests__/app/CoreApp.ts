@@ -214,6 +214,11 @@ test('Tests for addressApi', () => {
     expect(favoredRegions.find((region) => region.id === 'US')?.label).toBe(
         '美国'
     );
+
+    const region = app.addressApi.region('US');
+    expect(region?.label).toBe('美国');
+    const regionFailed = app.addressApi.region('ABC');
+    expect(regionFailed).toBeUndefined();
 });
 
 /*

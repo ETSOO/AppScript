@@ -43,6 +43,18 @@ export class AddressApi extends BaseApi {
     }
 
     /**
+     * Get region by id
+     * @param id Region id
+     * @returns Result
+     */
+    async getRegion(id?: string) {
+        if (!id) return this.app.defaultRegion;
+        const regions = await this.getRegions({ id });
+        if (regions == null || regions.length === 0) return undefined;
+        return regions[0];
+    }
+
+    /**
      * Get all regions
      * @param rq Rquest data
      */
@@ -103,6 +115,16 @@ export class AddressApi extends BaseApi {
                 ? this.regions().find((region) => region.id === regionId)
                 : null) ?? this.app.settings.currentRegion;
         return region.currency;
+    }
+
+    /**
+     * Get local region by id
+     * @param id Region id
+     * @returns Result
+     */
+    region(id?: string) {
+        if (!id) return this.app.defaultRegion;
+        return this.regions().find((region) => region.id === id);
     }
 
     /**
