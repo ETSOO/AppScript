@@ -254,7 +254,7 @@ test('Tests for publicApi', async () => {
     const currencies1 = app.publicApi.currencies(true);
     expect(currencies1.length >= 10).toBeTruthy();
 
-    expect(app.publicApi.getCurrencyLabel('USD')).toBe('美元$');
+    expect(app.publicApi.getCurrencyLabel('USD')).toBe('美元');
 
     const defaultExchangeRate = await app.publicApi.exchangeRate('CNY', {
         showLoading: false
