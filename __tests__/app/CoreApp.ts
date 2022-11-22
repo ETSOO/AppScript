@@ -249,7 +249,18 @@ test('Tests for publicApi', async () => {
     const currencies1 = app.publicApi.currencies(true);
     expect(currencies1.length >= 10).toBeTruthy();
 
+    expect(app.publicApi.getCurrencyLabel('USD')).toBe('美元$');
+
+    const defaultExchangeRate = await app.publicApi.exchangeRate('CNY', {
+        showLoading: false
+    });
+    expect(defaultExchangeRate?.exchangeRate).toBe(100);
+
     /*
+    const amount1 = await app.publicApi.exchangeAmount(1000, 'NZD', 'CNY');
+    const amount2 = await app.publicApi.exchangeAmount(100, 'NZD', 'USD');
+    console.log(amount1, amount2);
+
     const orgs = await app.orgApi.list();
     console.log(orgs);
 

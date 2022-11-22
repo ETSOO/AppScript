@@ -90,6 +90,11 @@ export interface IApp {
     readonly settings: IAppSettings;
 
     /**
+     * Default region
+     */
+    readonly defaultRegion: AddressRegion;
+
+    /**
      * Fields
      */
     readonly fields: IAppFields;

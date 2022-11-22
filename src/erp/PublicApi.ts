@@ -9,13 +9,22 @@ import { ExchangeRateDto } from './dto/ExchangeRateDto';
 import { ExchangeRateHistoryDto } from './dto/ExchangeRateHistoryDto';
 import { PublicOrgProductDto, PublicProductDto } from './dto/PublicProductDto';
 
+const cachedCurrencyRates: {
+    [P: Currency | string]: ExchangeRateDto | undefined | null;
+} = {};
+
 /**
  * Public API
  */
 export class PublicApi extends BaseApi {
     /**
+     * Default currency
+     */
+    defaultCurrency: string | Currency = this.app.defaultRegion.currency;
+
+    /**
      * Get currencies
-     * @param currencyNames Limited currency names for local data, undefined will try to retrive remoately
+     * @param names Limited currency names for local data, undefined will try to retrive remoately
      * @returns Result
      */
     currencies(): Promise<CurrencyDto[] | undefined>;
@@ -42,20 +51,63 @@ export class PublicApi extends BaseApi {
     }
 
     /**
+     * Get exchange amount
+     * @param amount Amount
+     * @param sourceCurrency Source currency
+     * @param targetCurrency Target currency
+     * @returns Result
+     */
+    async exchangeAmount(
+        amount: number,
+        sourceCurrency: Currency | string,
+        targetCurrency?: Currency | string
+    ) {
+        targetCurrency ??= this.app.defaultRegion.currency;
+
+        const [sourceRate, targetRate] = await Promise.all([
+            this.exchangeRate(sourceCurrency, {
+                showLoading: false
+            }),
+            this.exchangeRate(targetCurrency, {
+                showLoading: false
+            })
+        ]);
+        if (sourceRate == null || targetRate == null) return undefined;
+
+        const result =
+            Math.round(
+                (1000 * amount * sourceRate.exchangeRate) /
+                    targetRate.exchangeRate
+            ) / 1000;
+        return result;
+    }
+
+    /**
      * Get exchange rate
      * @param currency Currency
      * @param payload Payload
+     * @param reload Reload data
      * @returns Result
      */
-    exchangeRate(
+    async exchangeRate(
         currency: Currency | string,
-        payload?: IApiPayload<ExchangeRateDto>
+        payload?: IApiPayload<ExchangeRateDto>,
+        reload = false
     ) {
-        return this.api.get(
-            `Public/ExchangeRate/${currency}`,
-            undefined,
-            payload
-        );
+        let rate = cachedCurrencyRates[currency];
+        if (rate == null || reload) {
+            rate =
+                currency === this.defaultCurrency
+                    ? { exchangeRate: 100, updateTime: new Date() }
+                    : await this.api.get(
+                          `Public/ExchangeRate/${currency}`,
+                          undefined,
+                          payload
+                      );
+            if (rate == null) return undefined;
+            cachedCurrencyRates[currency] = rate;
+        }
+        return rate;
     }
 
     /**
@@ -76,6 +128,16 @@ export class PublicApi extends BaseApi {
             { currencies, months },
             payload
         );
+    }
+
+    /**
+     * Get currency label
+     * @param currency Currency
+     * @returns Label
+     */
+    getCurrencyLabel(currency: Currency | string) {
+        const c = `currency${currency}`;
+        return this.app.get(c) ?? c;
     }
 
     /**

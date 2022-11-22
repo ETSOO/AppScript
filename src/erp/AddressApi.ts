@@ -93,6 +93,19 @@ export class AddressApi extends BaseApi {
     }
 
     /**
+     * Get region's currency, current region's currency as default
+     * @param regionId Region id
+     * @returns Result
+     */
+    regionCurrency(regionId?: string) {
+        const region =
+            (regionId
+                ? this.regions().find((region) => region.id === regionId)
+                : null) ?? this.app.settings.currentRegion;
+        return region.currency;
+    }
+
+    /**
      * Get all local regions
      */
     regions(): AddressRegion[];

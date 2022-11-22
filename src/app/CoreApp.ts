@@ -90,6 +90,11 @@ export abstract class CoreApp<
     readonly settings: S;
 
     /**
+     * Default region
+     */
+    readonly defaultRegion: AddressRegion;
+
+    /**
      * Fields
      */
     readonly fields: IAppFields;
@@ -246,7 +251,17 @@ export abstract class CoreApp<
         storage: IStorage,
         name: string
     ) {
+        if (settings?.regions?.length === 0) {
+            throw new Error('No regions defined');
+        }
         this.settings = settings;
+
+        const region = AddressRegion.getById(settings.regions[0]);
+        if (region == null) {
+            throw new Error('No default region defined');
+        }
+        this.defaultRegion = region;
+
         this.api = api;
         this.notifier = notifier;
         this.storage = storage;
