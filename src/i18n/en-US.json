@@ -107,6 +107,7 @@
     "passwordRepeatError": "The two passwords entered are inconsistent",
     "passwordTip": "The password cannot be less than 6 characters and contains at least one letter and number",
     "previousStep": "Previous",
+    "print": "Print",
     "prompt": "Input",
     "pullToRefresh": "Pull down to refresh",
     "quarters": ["Q1", "Q2", "Q3", "Q4"],

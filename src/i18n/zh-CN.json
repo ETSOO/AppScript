@@ -107,6 +107,7 @@
     "passwordRepeatError": "两次输入的密码不一致",
     "passwordTip": "密码不能少于6个字符，且至少包含一个字母和数字",
     "previousStep": "上一步",
+    "print": "打印",
     "prompt": "输入",
     "pullToRefresh": "下拉刷新",
     "quarters": ["一季度", "二季度", "三季度", "四季度"],
