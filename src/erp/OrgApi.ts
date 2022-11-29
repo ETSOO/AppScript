@@ -3,6 +3,7 @@ import { DataTypes, ListType } from '@etsoo/shared';
 import { IApp } from '../app/IApp';
 import { OrgDto } from './dto/OrgDto';
 import { OrgQueryDto } from './dto/OrgQueryDto';
+import { OrgViewDto } from './dto/OrgViewDto';
 import { IdResultPayload } from './dto/ResultPayload';
 import { EntityApi } from './EntityApi';
 import { OrgListRQ } from './rq/OrgListRQ';
@@ -59,6 +60,16 @@ export class OrgApi extends EntityApi {
     }
 
     /**
+     * Read
+     * @param id Id
+     * @param payload Payload
+     * @returns Result
+     */
+    read(id: number, payload?: IApiPayload<OrgQueryDto[]>) {
+        return this.readBase(id, payload);
+    }
+
+    /**
      * Switch organization
      * @param id Organization id
      * @param serviceId Service id
@@ -89,7 +100,7 @@ export class OrgApi extends EntityApi {
      * @returns Result
      */
     update(
-        data: DataTypes.AddOrEditType<OrgDto, true>,
+        data: DataTypes.AddOrEditType<OrgViewDto, true>,
         payload?: IdResultPayload
     ) {
         return super.updateBase(data, payload);

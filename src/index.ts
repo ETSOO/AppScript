@@ -36,6 +36,7 @@ export * from './erp/dto/IdLabelPrimaryDto';
 export * from './erp/dto/InitCallDto';
 export * from './erp/dto/OrgDto';
 export * from './erp/dto/OrgQueryDto';
+export * from './erp/dto/OrgViewDto';
 export * from './erp/dto/PublicProductDto';
 export * from './erp/dto/ResultPayload';
 
