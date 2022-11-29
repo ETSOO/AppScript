@@ -9,6 +9,8 @@ import { EntityApi } from './EntityApi';
 import { OrgListRQ } from './rq/OrgListRQ';
 import { OrgQueryRQ } from './rq/OrgQueryRQ';
 
+const cachedOrgs: { [P: number]: OrgViewDto | undefined | null } = {};
+
 /**
  * Organization API
  */
@@ -63,10 +65,20 @@ export class OrgApi extends EntityApi {
      * Read
      * @param id Id
      * @param payload Payload
+     * @param reload Reload data
      * @returns Result
      */
-    read(id: number, payload?: IApiPayload<OrgQueryDto[]>) {
-        return this.readBase(id, payload);
+    async read(
+        id: number,
+        payload?: IApiPayload<OrgViewDto>,
+        reload: boolean = false
+    ) {
+        let data = cachedOrgs[id];
+        if (data == null || reload) {
+            data = await this.readBase(id, payload);
+            if (data != null) cachedOrgs[id] = data;
+        }
+        return data;
     }
 
     /**
@@ -100,7 +112,7 @@ export class OrgApi extends EntityApi {
      * @returns Result
      */
     update(
-        data: DataTypes.AddOrEditType<OrgViewDto, true>,
+        data: DataTypes.AddOrEditType<OrgDto, true>,
         payload?: IdResultPayload
     ) {
         return super.updateBase(data, payload);
