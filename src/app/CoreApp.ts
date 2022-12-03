@@ -783,11 +783,12 @@ export abstract class CoreApp<
      */
     checkLanguage(language?: string) {
         if (language) {
-            const item = this.settings.cultures.find(
-                (c) =>
-                    c.name === language || c.compatibleName?.includes(language)
+            const [cultrue, match] = DomUtils.getCulture(
+                this.settings.cultures,
+                language
             );
-            if (item) return item.name;
+            if (cultrue != null && match != DomUtils.CultureMatch.Default)
+                return cultrue.name;
         }
 
         // Default language

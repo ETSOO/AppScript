@@ -112,7 +112,7 @@ class CoreAppTest extends CoreApp<
                 currentCulture: DomUtils.getCulture(
                     supportedCultures,
                     detectedCulture
-                )!
+                )![0]
             }),
             createClient(),
             container,
