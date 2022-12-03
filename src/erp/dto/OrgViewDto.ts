@@ -67,6 +67,11 @@ export type OrgViewDto = {
     entityStatus: EntityStatus;
 
     /**
+     * Parent organization id
+     */
+    parentId?: number;
+
+    /**
      * Creation
      */
     creation: string | Date;
