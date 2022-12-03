@@ -10,17 +10,17 @@ import { ApiAuthorizationScheme, createClient } from '@etsoo/restclient';
 import { DataTypes, DomUtils, Utils, WindowStorage } from '@etsoo/shared';
 import {
     AddressApi,
-    enUS,
+    en,
     ExternalSettings,
     IUser,
     OrgApi,
     PublicApi,
-    UserRole
+    UserRole,
+    zhHans
 } from '../../src';
 import { AddressUtils } from '../../src/address/AddressUtils';
 import { IAppSettings } from '../../src/app/AppSettings';
 import { CoreApp } from '../../src/app/CoreApp';
-import { zhCN } from '../../src/i18n/zhCN';
 import { InitCallResultData } from '../../src/result/InitCallResult';
 
 // Detected country or region
@@ -30,7 +30,7 @@ const { detectedCountry } = DomUtils;
 const { detectedCulture } = DomUtils;
 
 // Supported cultures
-const supportedCultures: DataTypes.CultureDefinition[] = [zhCN({}), enUS({})];
+const supportedCultures: DataTypes.CultureDefinition[] = [zhHans({}), en({})];
 
 // Supported regions
 const supportedRegions = ['CN'];

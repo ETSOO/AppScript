@@ -6,7 +6,7 @@ import enUSResources from './en.json';
  * @param localResources Local resources
  * @returns Full culture
  */
-export const enUS = (localResources: object): DataTypes.CultureDefinition => ({
+export const en = (localResources: object): DataTypes.CultureDefinition => ({
     name: 'en',
     label: 'English',
     resources: { ...enUSResources, ...localResources },
