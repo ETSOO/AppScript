@@ -58,9 +58,9 @@ export * from './erp/OrgApi';
 export * from './erp/PublicApi';
 
 // i18n
-export * from './i18n/enUS';
-export * from './i18n/zhCN';
-export * from './i18n/zhHK';
+export * from './i18n/en';
+export * from './i18n/zhHans';
+export * from './i18n/zhHant';
 
 // @etsoo/restclient
 export { ApiAuthorizationScheme, createClient } from '@etsoo/restclient';
