@@ -41,16 +41,20 @@ export * from './erp/dto/PublicProductDto';
 export * from './erp/dto/ResultPayload';
 
 // erp rq
+export * from './erp/rq/LoginIdRQ';
+export * from './erp/rq/LoginRQ';
 export * from './erp/rq/MemberListRQ';
 export * from './erp/rq/OrgListRQ';
 export * from './erp/rq/OrgQueryRQ';
 export * from './erp/rq/QueryRQ';
 export * from './erp/rq/RefreshTokenRQ';
 export * from './erp/rq/RegionsRQ';
+export * from './erp/rq/ResetPasswordRQ';
 export * from './erp/rq/TiplistRQ';
 
 // erp api
 export * from './erp/AddressApi';
+export * from './erp/AuthApi';
 export * from './erp/BaseApi';
 export * from './erp/EntityApi';
 export * from './erp/MemberApi';
