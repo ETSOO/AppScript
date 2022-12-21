@@ -1,5 +1,5 @@
 import { DataTypes } from '@etsoo/shared';
-import zhHKResources from './zh-Hant.json';
+import zhHantResources from './zh-Hant.json';
 
 /**
  * Get zh-Hant neutral cultrue
@@ -11,6 +11,6 @@ export const zhHant = (
 ): DataTypes.CultureDefinition => ({
     name: 'zh-Hant',
     label: '繁體中文',
-    resources: { ...zhHKResources, ...localResources },
+    resources: { ...zhHantResources, ...localResources },
     compatibleNames: ['zh-HK', 'zh-TW', 'zh-MO']
 });
