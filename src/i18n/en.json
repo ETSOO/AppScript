@@ -114,6 +114,7 @@
     "prompt": "Input",
     "pullToRefresh": "Pull down to refresh",
     "quarters": ["Q1", "Q2", "Q3", "Q4"],
+    "reactivateTip": "The operation timed out, please click the OK button to reactivate",
     "record": "Record",
     "refresh": "Refresh",
     "refreshing": "Refreshing",

@@ -114,6 +114,7 @@
     "prompt": "输入",
     "pullToRefresh": "下拉刷新",
     "quarters": ["一季度", "二季度", "三季度", "四季度"],
+    "reactivateTip": "等待超时，请点击确定按钮重新激活",
     "record": "记录",
     "refresh": "刷新",
     "refreshing": "正在刷新",
