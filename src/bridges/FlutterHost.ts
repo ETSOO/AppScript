@@ -1,5 +1,5 @@
 import { DataTypes, ExtendUtils } from '@etsoo/shared';
-import { IBridgeHost } from './IBridgeHost';
+import { BridgeHostName, IBridgeHost } from './IBridgeHost';
 
 // Call handler type
 type CallHandlerType = (
@@ -12,6 +12,11 @@ type CallHandlerType = (
  * https://inappwebview.dev/docs/javascript/communication/
  */
 export class FlutterHost implements IBridgeHost {
+    /**
+     * Name
+     */
+    readonly name = BridgeHostName.Flutter;
+
     /**
      * Start Url
      */

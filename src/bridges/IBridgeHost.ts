@@ -1,7 +1,20 @@
 /**
+ * Bridge host names enum
+ */
+export enum BridgeHostName {
+    Electron = 0,
+    Flutter = 1
+}
+
+/**
  * Bridge host interface
  */
 export interface IBridgeHost {
+    /**
+     * Name
+     */
+    readonly name: BridgeHostName;
+
     /**
      * Change culture
      * @param locale Locale
