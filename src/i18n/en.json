@@ -109,6 +109,7 @@
     "passwordRepeatError": "The two passwords entered are inconsistent",
     "passwordTip": "The password cannot be less than 6 characters and contains at least one letter and number",
     "pdf": "PDF",
+    "pinYin": "Pinyin Initials",
     "previousStep": "Previous",
     "print": "Print",
     "prompt": "Input",

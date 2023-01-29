@@ -108,6 +108,7 @@
     "passwordChangeSuccess": "密码修改成功，请重新登录",
     "passwordRepeatError": "两次输入的密码不一致",
     "passwordTip": "密码不能少于6个字符，且至少包含一个字母和数字",
+    "pinYin": "拼音首字母",
     "pdf": "PDF",
     "previousStep": "上一步",
     "print": "打印",
