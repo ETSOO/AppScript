@@ -1362,6 +1362,30 @@ export abstract class CoreApp<
     }
 
     /**
+     * Is admin user
+     * @returns Result
+     */
+    isAdminUser() {
+        return this.hasPermission([UserRole.Admin, UserRole.Founder]);
+    }
+
+    /**
+     * Is Finance user
+     * @returns Result
+     */
+    isFinanceUser() {
+        return this.hasPermission(UserRole.Finance) || this.isAdminUser();
+    }
+
+    /**
+     * Is HR user
+     * @returns Result
+     */
+    isHRUser() {
+        return this.hasPermission(UserRole.HRManager) || this.isAdminUser();
+    }
+
+    /**
      * Navigate to Url or delta
      * @param url Url or delta
      * @param options Options

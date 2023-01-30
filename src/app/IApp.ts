@@ -458,6 +458,24 @@ export interface IApp {
     ): Promise<void>;
 
     /**
+     * Is admin user
+     * @returns Result
+     */
+    isAdminUser(): boolean;
+
+    /**
+     * Is Finance user
+     * @returns Result
+     */
+    isFinanceUser(): boolean;
+
+    /**
+     * Is HR user
+     * @returns Result
+     */
+    isHRUser(): boolean;
+
+    /**
      * Is valid password, override to implement custom check
      * @param password Input password
      */
