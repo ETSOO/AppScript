@@ -1195,7 +1195,7 @@ export abstract class CoreApp<
      * @param filter Filter
      * @returns List
      */
-    protected getEnumList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
+    getEnumList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
         em: E,
         prefix: string,
         filter?: (
@@ -1226,7 +1226,7 @@ export abstract class CoreApp<
      * @param filter Filter
      * @returns List
      */
-    protected getEnumStrList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
+    getEnumStrList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
         em: E,
         prefix: string,
         filter?: (

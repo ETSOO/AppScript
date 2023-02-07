@@ -1,7 +1,7 @@
 import { IApiPayload } from '@etsoo/restclient';
 import { DataTypes, ListType, ListType1 } from '@etsoo/shared';
 import { Currencies, Currency } from '../business/Currency';
-import { ProductUnit } from '../business/ProductUnit';
+import { AssetUnits, ProductUnit } from '../business/ProductUnit';
 import { RepeatOption } from '../business/RepeatOption';
 import { BaseApi } from './BaseApi';
 import { CurrencyDto } from './dto/CurrencyDto';
@@ -13,6 +13,8 @@ const cachedCurrencyRates: {
     [P: Currency | string]: ExchangeRateDto | undefined | null;
 } = {};
 
+const unitPrefix = 'unit';
+
 /**
  * Public API
  */
@@ -21,6 +23,22 @@ export class PublicApi extends BaseApi {
      * Default currency
      */
     defaultCurrency: string | Currency = this.app.defaultRegion.currency;
+
+    /**
+     * Asset units
+     * @returns Result
+     */
+    assetUnits() {
+        return this.app.getEnumStrList(AssetUnits, unitPrefix);
+    }
+
+    /**
+     * Base units
+     * @returns Result
+     */
+    basetUnits() {
+        return this.app.getEnumStrList(ProductUnit, unitPrefix);
+    }
 
     /**
      * Get currencies
@@ -149,7 +167,7 @@ export class PublicApi extends BaseApi {
      */
     getUnitLabel(unit: ProductUnit | number, isJoined?: boolean | string) {
         const key = ProductUnit[unit];
-        const label = this.app.get('unit' + key) ?? key;
+        const label = this.app.get(unitPrefix + key) ?? key;
         const join = this.getUnitJoin(isJoined);
         if (join) {
             return join.format(label);

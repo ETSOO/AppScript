@@ -6,7 +6,13 @@ import {
     NotificationReturn
 } from '@etsoo/notificationbase';
 import { ApiDataError, IApi, IPData } from '@etsoo/restclient';
-import { DataTypes, DateUtils, IStorage, ListType } from '@etsoo/shared';
+import {
+    DataTypes,
+    DateUtils,
+    IStorage,
+    ListType,
+    ListType1
+} from '@etsoo/shared';
 import { AddressRegion } from '../address/AddressRegion';
 import { IActionResult } from '../result/IActionResult';
 import { IUser } from '../state/User';
@@ -378,6 +384,38 @@ export interface IApp {
      * @returns Cached token
      */
     getCacheToken(): string | undefined;
+
+    /**
+     * Get enum item number id list
+     * @param em Enum
+     * @param prefix Label prefix
+     * @param filter Filter
+     * @returns List
+     */
+    getEnumList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
+        em: E,
+        prefix: string,
+        filter?: (
+            id: E[keyof E],
+            key: keyof E & string
+        ) => E[keyof E] | undefined
+    ): ListType[];
+
+    /**
+     * Get enum item string id list
+     * @param em Enum
+     * @param prefix Label prefix
+     * @param filter Filter
+     * @returns List
+     */
+    getEnumStrList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
+        em: E,
+        prefix: string,
+        filter?: (
+            id: E[keyof E],
+            key: keyof E & string
+        ) => E[keyof E] | undefined
+    ): ListType1[];
 
     /**
      * Get region label

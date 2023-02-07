@@ -194,6 +194,8 @@
     "unitGRAM": "g",
     "unitJIN": "½Kg",
     "unitKILOGRAM": "Kg",
+    "unitTIME": "Time",
+    "unitTON": "Ton",
     "update": "Update",
     "updateReady": "Update ready",
     "updateTip": "Restart the application to use the latest features",

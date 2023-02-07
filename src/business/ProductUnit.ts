@@ -18,6 +18,14 @@ export enum ProductBaseUnit {
     SET = 2
 }
 
+enum ProductAssetUnit {
+    /**
+     * Time
+     * 次
+     */
+    TIME = 99
+}
+
 /**
  * Product weight units
  * Range 40 - 49
@@ -56,6 +64,20 @@ export enum ProductWeightUnit {
 export const ProductUnit = {
     ...ProductBaseUnit,
     ...RepeatOption,
+    ...ProductAssetUnit,
     ...ProductWeightUnit
 };
-export type ProductUnit = ProductBaseUnit | RepeatOption | ProductWeightUnit;
+export type ProductUnit =
+    | ProductBaseUnit
+    | RepeatOption
+    | ProductAssetUnit
+    | ProductWeightUnit;
+
+/**
+ * Product asset units enum
+ */
+export const AssetUnits = {
+    ...RepeatOption,
+    ...ProductAssetUnit
+};
+export type AssetUnits = RepeatOption | ProductAssetUnit;
