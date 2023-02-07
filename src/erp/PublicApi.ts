@@ -36,7 +36,7 @@ export class PublicApi extends BaseApi {
      * Base units
      * @returns Result
      */
-    basetUnits() {
+    baseUnits() {
         return this.app.getEnumStrList(ProductUnit, unitPrefix);
     }
 
