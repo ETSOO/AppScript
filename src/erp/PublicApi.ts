@@ -29,6 +29,14 @@ export class PublicApi extends BaseApi {
      * @returns Result
      */
     assetUnits() {
+        return this.app.getEnumList(AssetUnits, unitPrefix);
+    }
+
+    /**
+     * Asset string id units
+     * @returns Result
+     */
+    assetStrUnits() {
         return this.app.getEnumStrList(AssetUnits, unitPrefix);
     }
 
