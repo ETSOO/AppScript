@@ -55,11 +55,28 @@ export class AddressApi extends BaseApi {
     }
 
     /**
+     * Get region label
+     * @param id Region id
+     * @returns Label
+     */
+    getRegionLabel(id: string) {
+        // Local defined region label
+        let label = this.app.getRegionLabel(id);
+        if (label === id) {
+            // Cache data, make sure called getRegions first
+            const regions = cachedRegions[this.app.culture];
+            const region = regions?.find((region) => region.id === id);
+            if (region) return region.label;
+        }
+        return label;
+    }
+
+    /**
      * Get all regions
      * @param rq Rquest data
      */
     async getRegions(rq?: RegionsRQ): Promise<AddressRegionDb[] | undefined> {
-        const culture = this.app.culture;
+        const culture = rq?.culture ?? this.app.culture;
         let regions = cachedRegions[culture];
         if (regions == null) {
             regions = await this.api.get<AddressRegionDb[]>(

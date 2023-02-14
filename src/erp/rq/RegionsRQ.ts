@@ -18,4 +18,9 @@ export type RegionsRQ = {
      * Filter keyword
      */
     keyword?: string;
+
+    /**
+     * Cultrue
+     */
+    culture?: string;
 };
