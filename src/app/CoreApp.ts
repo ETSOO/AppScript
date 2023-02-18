@@ -1179,6 +1179,18 @@ export abstract class CoreApp<
     }
 
     /**
+     * Get bool items
+     * @returns Bool items
+     */
+    getBools(): ListType1[] {
+        const { no = 'No', yes = 'Yes' } = this.getLabels('no', 'yes');
+        return [
+            { id: 'false', label: no },
+            { id: 'true', label: yes }
+        ];
+    }
+
+    /**
      * Get cached token
      * @returns Cached token
      */

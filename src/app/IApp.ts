@@ -380,6 +380,12 @@ export interface IApp {
     getLabels<T extends string>(...keys: T[]): { [K in T]: string };
 
     /**
+     * Get bool items
+     * @returns Bool items
+     */
+    getBools(): ListType1[];
+
+    /**
      * Get cached token
      * @returns Cached token
      */
