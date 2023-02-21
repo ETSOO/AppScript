@@ -1105,6 +1105,24 @@ export abstract class CoreApp<
     }
 
     /**
+     * Format as full name
+     * @param familyName Family name
+     * @param givenName Given name
+     */
+    formatFullName(
+        familyName: string | undefined | null,
+        givenName: string | undefined | null
+    ) {
+        if (!familyName) return givenName ?? '';
+        if (!givenName) return familyName ?? '';
+        const wf = givenName + ' ' + familyName;
+        if (wf.containChinese() || wf.containJapanese() || wf.containKorean()) {
+            return familyName + givenName;
+        }
+        return wf;
+    }
+
+    /**
      * Format refresh token result
      * @param result Refresh token result
      * @returns Message

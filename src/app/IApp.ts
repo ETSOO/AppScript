@@ -346,6 +346,16 @@ export interface IApp {
     ): void;
 
     /**
+     * Format as full name
+     * @param familyName Family name
+     * @param givenName Given name
+     */
+    formatFullName(
+        familyName: string | undefined | null,
+        givenName: string | undefined | null
+    ): string;
+
+    /**
      * Format refresh token result
      * @param result Refresh token result
      * @returns Message

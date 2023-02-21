@@ -192,6 +192,13 @@ test('Tests for initCallUpdateLocal', () => {
     expect(passphrase).not.toBeNull();
 });
 
+test('Tests for formatFullName', () => {
+    expect(app.formatFullName('亿速', null)).toBe('亿速');
+    expect(app.formatFullName(null, null)).toBe('');
+    expect(app.formatFullName('亿速', '思维')).toBe('亿速思维');
+    expect(app.formatFullName('Xiao', 'Garry')).toBe('Garry Xiao');
+});
+
 test('Tests for getRoles', () => {
     var roles = app.getRoles(UserRole.User | UserRole.Manager | UserRole.Admin);
     expect(roles.length).toBe(3);
