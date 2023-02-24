@@ -19,6 +19,7 @@ export * from './bridges/IBridgeHost';
 export * from './business/BusinessTax';
 export * from './business/BusinessUtils';
 export * from './business/Currency';
+export * from './business/DataPrivacy';
 export * from './business/EntityStatus';
 export * from './business/ProductUnit';
 export * from './business/RepeatOption';

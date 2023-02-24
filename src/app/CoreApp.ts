@@ -31,6 +31,7 @@ import {
 } from 'crypto-js';
 import { AddressRegion } from '../address/AddressRegion';
 import { BridgeUtils } from '../bridges/BridgeUtils';
+import { DataPrivacy } from '../business/DataPrivacy';
 import { EntityStatus } from '../business/EntityStatus';
 import { InitCallDto } from '../erp/dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
@@ -1216,6 +1217,14 @@ export abstract class CoreApp<
         // Temp refresh token
         if (this.cachedRefreshToken) return this.cachedRefreshToken;
         return this.storage.getData<string>(this.fields.headerToken);
+    }
+
+    /**
+     * Get data privacies
+     * @returns Result
+     */
+    getDataPrivacies() {
+        return this.getEnumList(DataPrivacy, 'dataPrivacy');
     }
 
     /**

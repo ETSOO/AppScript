@@ -402,6 +402,12 @@ export interface IApp {
     getCacheToken(): string | undefined;
 
     /**
+     * Get data privacies
+     * @returns Result
+     */
+    getDataPrivacies(): ListType[];
+
+    /**
      * Get enum item number id list
      * @param em Enum
      * @param prefix Label prefix
