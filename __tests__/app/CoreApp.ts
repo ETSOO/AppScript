@@ -211,7 +211,7 @@ test('Tests for isValidPassword', () => {
     expect(app.isValidPassword('1234abcd')).toBeTruthy();
 });
 
-test('Tests for addressApi', () => {
+test('Tests for addressApi', async () => {
     const regions = app.addressApi.regions();
     const cn = regions.find((r) => r.id === 'CN');
     expect(cn?.label).toBe('中国大陆');
@@ -226,6 +226,14 @@ test('Tests for addressApi', () => {
     expect(region?.label).toBe('美国');
     const regionFailed = app.addressApi.region('ABC');
     expect(regionFailed).toBeUndefined();
+
+    /*
+    const cities = await app.addressApi.cities('CNHN');
+    console.log(cities);
+
+    const districts = await app.addressApi.districts(1181);
+    console.log(districts);
+    */
 });
 
 /*

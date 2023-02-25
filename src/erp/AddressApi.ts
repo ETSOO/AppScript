@@ -6,6 +6,8 @@ import { IdLabelConditional } from './dto/IdLabelDto';
 import { BaseApi } from './BaseApi';
 import { IApiPayload } from '@etsoo/restclient';
 import { RegionsRQ } from './rq/RegionsRQ';
+import { AddressCity } from '../address/AddressCity';
+import { AddressDistrict } from '../address/AddressDistrict';
 
 const cachedRegions: { [P: string]: AddressRegionDb[] | undefined | null } = {};
 
@@ -170,13 +172,63 @@ export class AddressApi extends BaseApi {
      * Get state list
      * @param regionId Region id
      * @param payload Payload
+     * @param culture Culture
      * @returns Result
      */
-    states(regionId: string, payload?: IApiPayload<AddressState[]>) {
+    states(
+        regionId: string,
+        payload?: IApiPayload<AddressState[]>,
+        culture?: string
+    ) {
         payload ??= { defaultValue: [], showLoading: false };
+        culture ??= this.app.culture;
 
         return this.api.get(
-            `Address/StateList?regionId=${regionId}&language=${this.app.culture}`,
+            `Address/StateList?regionId=${regionId}&language=${culture}`,
+            undefined,
+            payload
+        );
+    }
+
+    /**
+     * Get city list
+     * @param stateId State id
+     * @param payload Payload
+     * @param culture Culture
+     * @returns Result
+     */
+    cities(
+        stateId: string,
+        payload?: IApiPayload<AddressCity[]>,
+        culture?: string
+    ) {
+        payload ??= { defaultValue: [], showLoading: false };
+        culture ??= this.app.culture;
+
+        return this.api.get(
+            `Address/CityList?stateId=${stateId}&language=${culture}`,
+            undefined,
+            payload
+        );
+    }
+
+    /**
+     * Get district list
+     * @param cityId City id
+     * @param payload Payload
+     * @param culture Culture
+     * @returns Result
+     */
+    districts(
+        cityId: number,
+        payload?: IApiPayload<AddressDistrict[]>,
+        culture?: string
+    ) {
+        payload ??= { defaultValue: [], showLoading: false };
+        culture ??= this.app.culture;
+
+        return this.api.get(
+            `Address/DistrictList?cityId=${cityId}&language=${culture}`,
             undefined,
             payload
         );

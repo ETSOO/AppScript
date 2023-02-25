@@ -1,5 +1,7 @@
 // address
+export * from './address/AddressCity';
 export * from './address/AddressContinent';
+export * from './address/AddressDistrict';
 export * from './address/AddressRegion';
 export * from './address/AddressState';
 export * from './address/AddressUtils';
