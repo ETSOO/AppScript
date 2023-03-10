@@ -28,6 +28,8 @@ export class AddressApi extends BaseApi {
         rq: PlaceQueryRQ,
         payload?: IApiPayload<AddressAutocomplete[]>
     ) {
+        if (rq.query === '') return Promise.resolve(undefined);
+        rq.language ??= this.app.culture;
         return this.api.post('Address/Autocomplete', rq, payload);
     }
 
@@ -190,6 +192,8 @@ export class AddressApi extends BaseApi {
         payload?: IApiPayload<AddressState[]>,
         culture?: string
     ) {
+        if (regionId === '') return Promise.resolve(undefined);
+
         payload ??= { defaultValue: [], showLoading: false };
         culture ??= this.app.culture;
 
@@ -218,6 +222,8 @@ export class AddressApi extends BaseApi {
         payload?: IApiPayload<AddressCity[]>,
         culture?: string
     ) {
+        if (stateId === '') return Promise.resolve(undefined);
+
         payload ??= { defaultValue: [], showLoading: false };
         culture ??= this.app.culture;
 
@@ -245,6 +251,8 @@ export class AddressApi extends BaseApi {
         payload?: IApiPayload<AddressDistrict[]>,
         culture?: string
     ) {
+        if (cityId < 1) return Promise.resolve(undefined);
+
         payload ??= { defaultValue: [], showLoading: false };
         culture ??= this.app.culture;
 
@@ -270,9 +278,9 @@ export class AddressApi extends BaseApi {
         language?: string,
         payload?: IApiPayload<AddressPlace>
     ) {
-        const url = `Address/GetPlaceDetails/${placeId}/${
-            language == null ? '' : language
-        }`;
+        if (placeId === '') return Promise.resolve(undefined);
+        language ??= this.app.culture;
+        const url = `Address/GetPlaceDetails/${placeId}/${language}`;
         return this.api.get(url, undefined, payload);
     }
 
@@ -283,6 +291,8 @@ export class AddressApi extends BaseApi {
      * @returns Result
      */
     searchPlace(rq: PlaceQueryRQ, payload?: IApiPayload<AddressPlace[]>) {
+        if (rq.query === '') return Promise.resolve(undefined);
+        rq.language ??= this.app.culture;
         return this.api.post('Address/SearchPlace', rq, payload);
     }
 }
