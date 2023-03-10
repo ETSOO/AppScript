@@ -10,6 +10,15 @@ export enum PlaceQueryOutput {
 }
 
 /**
+ * Place query API provider
+ * 地址查询接口供应商
+ */
+export enum PlaceQueryProvider {
+    Google,
+    Baidu
+}
+
+/**
  * Place query request data
  * 地址查询请求数据
  */
@@ -25,6 +34,12 @@ export type PlaceQueryRQ = {
      * 输出类型
      */
     output?: PlaceQueryOutput;
+
+    /**
+     * API provider
+     * 接口供应商
+     */
+    provider?: PlaceQueryProvider;
 
     /**
      * Language
