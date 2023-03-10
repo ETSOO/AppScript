@@ -1,7 +1,11 @@
 // address
+export * from './address/AddressAutocomplete';
 export * from './address/AddressCity';
 export * from './address/AddressContinent';
 export * from './address/AddressDistrict';
+export * from './address/AddressLocation';
+export * from './address/AddressPlace';
+export * from './address/AddressPlaceBase';
 export * from './address/AddressRegion';
 export * from './address/AddressState';
 export * from './address/AddressUtils';
@@ -49,6 +53,7 @@ export * from './erp/rq/LoginRQ';
 export * from './erp/rq/MemberListRQ';
 export * from './erp/rq/OrgListRQ';
 export * from './erp/rq/OrgQueryRQ';
+export * from './erp/rq/PlaceQueryRQ';
 export * from './erp/rq/QueryRQ';
 export * from './erp/rq/RefreshTokenRQ';
 export * from './erp/rq/RegionsRQ';

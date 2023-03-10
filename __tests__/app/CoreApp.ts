@@ -228,6 +228,33 @@ test('Tests for addressApi', async () => {
     expect(regionFailed).toBeUndefined();
 
     /*
+    const results1 = await app.addressApi.autocomplete({
+        query: '青岛市玫瑰庭院',
+        region: 'CN',
+        language: 'zh-CN'
+    });
+
+    const results2 = await app.addressApi.autocomplete({
+        query: '青岛市玫瑰庭院',
+        language: 'zh-CN'
+    });
+
+    const results1 = await app.addressApi.searchPlace({
+        query: '青岛市玫瑰庭院',
+        region: 'CN',
+        language: 'zh-CN'
+    });
+
+    const result = await app.addressApi.GetPlaceDetails(
+        'ChIJczySyo1qljUR1Jnq4Uqak2I',
+        'zh-CN'
+    );
+
+    const results2 = await app.addressApi.searchPlace({
+        query: '青岛市玫瑰庭院',
+        language: 'zh-CN'
+    });
+
     const cities = await app.addressApi.cities('CNHN');
     console.log(cities);
 

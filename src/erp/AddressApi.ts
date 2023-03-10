@@ -1,4 +1,4 @@
-import { DataTypes } from '@etsoo/shared';
+import { DataTypes, Utils } from '@etsoo/shared';
 import { AddressContinent } from '../address/AddressContinent';
 import { AddressRegion, AddressRegionDb } from '../address/AddressRegion';
 import { AddressState } from '../address/AddressState';
@@ -8,6 +8,9 @@ import { IApiPayload } from '@etsoo/restclient';
 import { RegionsRQ } from './rq/RegionsRQ';
 import { AddressCity } from '../address/AddressCity';
 import { AddressDistrict } from '../address/AddressDistrict';
+import { PlaceQueryRQ } from './rq/PlaceQueryRQ';
+import { AddressAutocomplete } from '../address/AddressAutocomplete';
+import { AddressPlace } from '../address/AddressPlace';
 
 const cachedRegions: { [P: string]: AddressRegionDb[] | undefined | null } = {};
 
@@ -15,6 +18,19 @@ const cachedRegions: { [P: string]: AddressRegionDb[] | undefined | null } = {};
  * Address Api
  */
 export class AddressApi extends BaseApi {
+    /**
+     * Place autocomplete
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    autocomplete(
+        rq: PlaceQueryRQ,
+        payload?: IApiPayload<AddressAutocomplete[]>
+    ) {
+        return this.api.post('Address/Autocomplete', rq, payload);
+    }
+
     /**
      * Get all continents
      * @param isNumberKey Is number key or key as id
@@ -108,15 +124,7 @@ export class AddressApi extends BaseApi {
 
         // Order by favoredIds
         if (favoredIds.length > 0) {
-            regions = [...regions].sort((r1, r2) => {
-                const n1 = favoredIds.indexOf(r1.id);
-                const n2 = favoredIds.indexOf(r2.id);
-
-                if (n1 === n2) return 0;
-                if (n1 === -1) return 1;
-                if (n2 === -1) return -1;
-                return n1 - n2;
-            });
+            regions = Utils.sortByFieldFavor([...regions], 'id', favoredIds);
         }
 
         // Return the top items
@@ -171,66 +179,110 @@ export class AddressApi extends BaseApi {
     /**
      * Get state list
      * @param regionId Region id
+     * @param favoredIds Favored ids
      * @param payload Payload
      * @param culture Culture
      * @returns Result
      */
-    states(
+    async states(
         regionId: string,
+        favoredIds: string[] = [],
         payload?: IApiPayload<AddressState[]>,
         culture?: string
     ) {
         payload ??= { defaultValue: [], showLoading: false };
         culture ??= this.app.culture;
 
-        return this.api.get(
+        var items = await this.api.get(
             `Address/StateList?regionId=${regionId}&language=${culture}`,
             undefined,
             payload
         );
+
+        if (items == null || favoredIds.length === 0) return items;
+        return Utils.sortByFieldFavor(items, 'id', favoredIds);
     }
 
     /**
      * Get city list
      * @param stateId State id
+     * @param favoredIds Favored ids
      * @param payload Payload
      * @param culture Culture
+     *
      * @returns Result
      */
-    cities(
+    async cities(
         stateId: string,
+        favoredIds: number[] = [],
         payload?: IApiPayload<AddressCity[]>,
         culture?: string
     ) {
         payload ??= { defaultValue: [], showLoading: false };
         culture ??= this.app.culture;
 
-        return this.api.get(
+        const items = await this.api.get(
             `Address/CityList?stateId=${stateId}&language=${culture}`,
             undefined,
             payload
         );
+
+        if (items == null || favoredIds.length === 0) return items;
+        return Utils.sortByFieldFavor(items, 'id', favoredIds);
     }
 
     /**
      * Get district list
      * @param cityId City id
+     * @param favoredIds Favored ids
      * @param payload Payload
      * @param culture Culture
      * @returns Result
      */
-    districts(
+    async districts(
         cityId: number,
+        favoredIds: number[] = [],
         payload?: IApiPayload<AddressDistrict[]>,
         culture?: string
     ) {
         payload ??= { defaultValue: [], showLoading: false };
         culture ??= this.app.culture;
 
-        return this.api.get(
+        const items = await this.api.get(
             `Address/DistrictList?cityId=${cityId}&language=${culture}`,
             undefined,
             payload
         );
+
+        if (items == null || favoredIds.length === 0) return items;
+        return Utils.sortByFieldFavor(items, 'id', favoredIds);
+    }
+
+    /**
+     * Get place details
+     * @param placeId Place id
+     * @param language Language
+     * @param payload Payload
+     * @returns Result
+     */
+    GetPlaceDetails(
+        placeId: string,
+        language?: string,
+        payload?: IApiPayload<AddressPlace>
+    ) {
+        const url = `Address/GetPlaceDetails/${placeId}/${
+            language == null ? '' : language
+        }`;
+        return this.api.get(url, undefined, payload);
+    }
+
+    /**
+     * Place autocomplete
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    searchPlace(rq: PlaceQueryRQ, payload?: IApiPayload<AddressPlace[]>) {
+        return this.api.post('Address/SearchPlace', rq, payload);
     }
 }
