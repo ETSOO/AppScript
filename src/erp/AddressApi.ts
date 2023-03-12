@@ -11,6 +11,8 @@ import { AddressDistrict } from '../address/AddressDistrict';
 import { PlaceQueryRQ } from './rq/PlaceQueryRQ';
 import { AddressAutocomplete } from '../address/AddressAutocomplete';
 import { AddressPlace } from '../address/AddressPlace';
+import { PlaceParseRQ } from './rq/PlaceParseRQ';
+import { PlaceParsedDto } from './dto/PlaceParsedDto';
 
 const cachedRegions: { [P: string]: AddressRegionDb[] | undefined | null } = {};
 
@@ -282,6 +284,16 @@ export class AddressApi extends BaseApi {
         language ??= this.app.culture;
         const url = `Address/GetPlaceDetails/${placeId}/${language}`;
         return this.api.get(url, undefined, payload);
+    }
+
+    /**
+     * Parse place
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    parsePlace(rq: PlaceParseRQ, payload?: IApiPayload<PlaceParsedDto>) {
+        return this.api.post('Address/ParsePlace', rq, payload);
     }
 
     /**

@@ -245,6 +245,11 @@ test('Tests for addressApi', async () => {
         language: 'zh-CN'
     });
 
+    const result = await app.addressApi.parsePlace({
+        city: '青岛',
+        district: '市南'
+    });
+
     const result = await app.addressApi.GetPlaceDetails(
         'ChIJczySyo1qljUR1Jnq4Uqak2I',
         'zh-CN'
