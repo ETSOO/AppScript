@@ -7,7 +7,9 @@ import { BaseApi } from './BaseApi';
 import { CurrencyDto } from './dto/CurrencyDto';
 import { ExchangeRateDto } from './dto/ExchangeRateDto';
 import { ExchangeRateHistoryDto } from './dto/ExchangeRateHistoryDto';
+import { PinDto } from './dto/PinDto';
 import { PublicOrgProductDto, PublicProductDto } from './dto/PublicProductDto';
+import { ParsePinRQ } from './rq/ParsePinRQ';
 
 const cachedCurrencyRates: {
     [P: Currency | string]: ExchangeRateDto | undefined | null;
@@ -201,7 +203,16 @@ export class PublicApi extends BaseApi {
         return this.api.post('Public/MobileQRCode', { id, host }, payload);
     }
 
-    //product(id: number, culture?: string, ): Promise<PublicProductDto | undefined>;
+    /**
+     * Parse Pin data
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    parsePin(rq: ParsePinRQ, payload?: IApiPayload<PinDto>) {
+        rq.language ??= this.app.culture;
+        return this.api.post('Public/ParsePin', rq, payload);
+    }
 
     /**
      * Get public and valid product data
