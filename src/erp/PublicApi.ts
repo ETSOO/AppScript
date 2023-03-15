@@ -205,11 +205,12 @@ export class PublicApi extends BaseApi {
 
     /**
      * Parse Pin data
-     * @param rq Request data
+     * @param input Request data
      * @param payload Payload
      * @returns Result
      */
-    parsePin(rq: ParsePinRQ, payload?: IApiPayload<PinDto>) {
+    parsePin(input: ParsePinRQ | string, payload?: IApiPayload<PinDto>) {
+        const rq = typeof input === 'string' ? { pin: input } : input;
         rq.language ??= this.app.culture;
         return this.api.post('Public/ParsePin', rq, payload);
     }
