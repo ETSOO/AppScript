@@ -10,14 +10,18 @@ export class ActionResultError extends Error {
      */
     static format(result: IActionResult) {
         // Additional data
-        var addtions = [];
+        const addtions = [];
         if (result.status != null) addtions.push(result.status);
         if (result.type) addtions.push(result.type);
         if (result.field) addtions.push(result.field);
 
-        var add = addtions.length > 0 ? ` (${addtions.join(', ')})` : '';
+        const add = addtions.length > 0 ? ` (${addtions.join(', ')})` : '';
+        let title = result.title;
+        if (title && result.traceId) {
+            title += ` [${result.traceId}]`;
+        }
 
-        return `${result.title || 'Error'}${add}`;
+        return `${title || 'Error'}${add}`;
     }
 
     /**
