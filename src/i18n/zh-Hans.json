@@ -98,6 +98,7 @@
     "more": "更多",
     "moreTag": "({0}+)",
     "name": "姓名",
+    "nameB": "名称",
     "newPassword": "新密码",
     "newPasswordRequired": "请输入新密码",
     "newPasswordTip": "请设置一个和现在的密码不一样的新密码",
