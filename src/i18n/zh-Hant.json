@@ -49,6 +49,7 @@
     "dataPrivacyInternal": "所有用户",
     "dataPrivacyPrivate": "創建者私有",
     "dataPrivacyPublic": "完全公開",
+    "default": "默認",
     "delete": "刪除",
     "deleteConfirm": "確定要永久刪除此{0}嗎？",
     "description": "描述",

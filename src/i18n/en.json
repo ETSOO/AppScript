@@ -49,6 +49,7 @@
     "dataPrivacyInternal": "All users",
     "dataPrivacyPrivate": "Creator only",
     "dataPrivacyPublic": "Full public",
+    "default": "Default",
     "delete": "Delete",
     "deleteConfirm": "Are you sure you want to permanently delete this {0}?",
     "description": "Description",
