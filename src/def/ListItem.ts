@@ -13,7 +13,7 @@ export type ListItem<T> = {
     icon?: T;
 
     /**
-     * Action, string for URL
+     * Action, string for URL, any for state
      */
-    action?: string | (() => PromiseLike<void> | void);
+    action?: string | [string, any] | (() => PromiseLike<void> | void);
 };
