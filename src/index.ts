@@ -53,6 +53,7 @@ export * from './erp/dto/ResultPayload';
 export * from './erp/rq/LoginIdRQ';
 export * from './erp/rq/LoginRQ';
 export * from './erp/rq/MemberListRQ';
+export * from './erp/rq/MergeRQ';
 export * from './erp/rq/OrgListRQ';
 export * from './erp/rq/OrgQueryRQ';
 export * from './erp/rq/ParsePinRQ';

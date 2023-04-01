@@ -4,6 +4,8 @@ import { IApp } from '../app/IApp';
 import { IActionResult } from '../result/IActionResult';
 import { BaseApi } from './BaseApi';
 import { AuditLineDto, AuditLinePayload } from './dto/AuditLineDto';
+import { ResultPayload } from './dto/ResultPayload';
+import { MergeRQ } from './rq/MergeRQ';
 import { QueryRQ } from './rq/QueryRQ';
 import { TiplistRQ } from './rq/TiplistRQ';
 
@@ -73,6 +75,19 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
         R extends object
     >(rq: RQ, payload?: IApiPayload<R[]>) {
         return this.api.post(`${this.flag}/List`, rq, payload);
+    }
+
+    /**
+     * Merge
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    protected mergeBase<T extends DataTypes.IdType = number>(
+        rq: MergeRQ<T>,
+        payload?: ResultPayload
+    ) {
+        return this.api.put(`${this.flag}/Merge`, rq, payload);
     }
 
     /**
