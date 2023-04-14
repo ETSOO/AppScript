@@ -434,10 +434,12 @@ export interface IApp {
     getEnumStrList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
         em: E,
         prefix: string,
-        filter?: (
-            id: E[keyof E],
-            key: keyof E & string
-        ) => E[keyof E] | undefined
+        filter?:
+            | ((
+                  id: E[keyof E],
+                  key: keyof E & string
+              ) => E[keyof E] | undefined)
+            | E[keyof E][]
     ): ListType1[];
 
     /**

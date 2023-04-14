@@ -215,7 +215,7 @@ test('Tests for getStatusList', () => {
         EntityStatus.Deleted
     ]);
     expect(statuses.length).toBe(5);
-    expect(statuses.some((s) => s.id === EntityStatus.Doing)).toBeTruthy();
+    expect(statuses.map((s) => s.id)).toStrictEqual([0, 100, 110, 250, 255]);
 
     expect(app.getStatusList().length).toBe(9);
 });

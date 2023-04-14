@@ -1237,23 +1237,35 @@ export abstract class CoreApp<
     getEnumList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
         em: E,
         prefix: string,
-        filter?: (
-            id: E[keyof E],
-            key: keyof E & string
-        ) => E[keyof E] | undefined
+        filter?:
+            | ((
+                  id: E[keyof E],
+                  key: keyof E & string
+              ) => E[keyof E] | undefined)
+            | E[keyof E][]
     ): ListType[] {
         const list: ListType[] = [];
-        const keys = DataTypes.getEnumKeys(em);
-        for (const key of keys) {
-            let id = em[key as keyof E];
-            if (filter) {
-                const fid = filter(id, key);
-                if (fid == null) continue;
-                id = fid;
+
+        if (Array.isArray(filter)) {
+            filter.forEach((id) => {
+                if (typeof id !== 'number') return;
+                const key = DataTypes.getEnumKey(em, id);
+                var label = this.get<string>(prefix + key) ?? key;
+                list.push({ id, label });
+            });
+        } else {
+            const keys = DataTypes.getEnumKeys(em);
+            for (const key of keys) {
+                let id = em[key as keyof E];
+                if (filter) {
+                    const fid = filter(id, key);
+                    if (fid == null) continue;
+                    id = fid;
+                }
+                if (typeof id !== 'number') continue;
+                var label = this.get<string>(prefix + key) ?? key;
+                list.push({ id, label });
             }
-            if (typeof id !== 'number') continue;
-            var label = this.get<string>(prefix + key) ?? key;
-            list.push({ id, label });
         }
         return list;
     }
@@ -1322,14 +1334,8 @@ export abstract class CoreApp<
      * @param ids Limited ids
      * @returns list
      */
-    getStatusList(ids: EntityStatus[] = []) {
-        return this.getEnumList(
-            EntityStatus,
-            'status',
-            ids.length > 0
-                ? (id, _key) => (ids.includes(id) ? id : undefined)
-                : undefined
-        );
+    getStatusList(ids?: EntityStatus[]) {
+        return this.getEnumList(EntityStatus, 'status', ids);
     }
 
     /**
