@@ -11,6 +11,7 @@ import { DataTypes, DomUtils, Utils, WindowStorage } from '@etsoo/shared';
 import {
     AddressApi,
     en,
+    EntityStatus,
     ExternalSettings,
     IUser,
     OrgApi,
@@ -203,6 +204,20 @@ test('Tests for getRoles', () => {
     var roles = app.getRoles(UserRole.User | UserRole.Manager | UserRole.Admin);
     expect(roles.length).toBe(3);
     expect(roles.map((r) => r.id)).toEqual([8, 128, 8192]);
+});
+
+test('Tests for getStatusList', () => {
+    var statuses = app.getStatusList([
+        EntityStatus.Normal,
+        EntityStatus.Approved,
+        EntityStatus.Doing,
+        EntityStatus.Completed,
+        EntityStatus.Deleted
+    ]);
+    expect(statuses.length).toBe(5);
+    expect(statuses.some((s) => s.id === EntityStatus.Doing)).toBeTruthy();
+
+    expect(app.getStatusList().length).toBe(9);
 });
 
 test('Tests for isValidPassword', () => {

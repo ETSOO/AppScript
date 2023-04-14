@@ -177,6 +177,7 @@
     "statusAudited": "Audited",
     "statusCompleted": "Completed",
     "statusDeleted": "Deleted",
+    "statusDoing": "Doing",
     "statusFlaged": "Flaged",
     "statusNormal": "Normla",
     "statusInactivated": "Inactivated",

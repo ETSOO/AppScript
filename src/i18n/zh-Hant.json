@@ -177,6 +177,7 @@
     "statusAudited": "已審核",
     "statusCompleted": "已完成",
     "statusDeleted": "已刪除",
+    "statusDoing": "處理中",
     "statusFlaged": "已標記",
     "statusNormal": "正常",
     "statusInactivated": "已停用",

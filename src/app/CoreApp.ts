@@ -1319,10 +1319,17 @@ export abstract class CoreApp<
 
     /**
      * Get status list
+     * @param ids Limited ids
      * @returns list
      */
-    getStatusList() {
-        return this.getEnumList(EntityStatus, 'status');
+    getStatusList(ids: EntityStatus[] = []) {
+        return this.getEnumList(
+            EntityStatus,
+            'status',
+            ids.length > 0
+                ? (id, _key) => (ids.includes(id) ? id : undefined)
+                : undefined
+        );
     }
 
     /**

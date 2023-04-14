@@ -20,9 +20,14 @@ export enum EntityStatus {
     Approved = 100,
 
     /**
+     * Doing
+     */
+    Doing = 110,
+
+    /**
      * Audited
      */
-    Audited = 111,
+    Audited = 120,
 
     /**
      * Inactivated

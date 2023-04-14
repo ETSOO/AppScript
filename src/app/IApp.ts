@@ -18,6 +18,7 @@ import { IActionResult } from '../result/IActionResult';
 import { IUser } from '../state/User';
 import { IAppSettings } from './AppSettings';
 import { UserRole } from './UserRole';
+import { EntityStatus } from '../business/EntityStatus';
 
 /**
  * Detect IP callback interface
@@ -466,9 +467,10 @@ export interface IApp {
 
     /**
      * Get status list
+     * @param ids Limited ids
      * @returns list
      */
-    getStatusList(): ListType[];
+    getStatusList(ids?: EntityStatus[]): ListType[];
 
     /**
      * Get refresh token from response headers
