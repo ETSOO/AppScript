@@ -29,6 +29,7 @@ export * from './business/DataPrivacy';
 export * from './business/EntityStatus';
 export * from './business/ProductUnit';
 export * from './business/RepeatOption';
+export * from './business/ShoppingCart';
 
 // def
 export * from './def/ListItem';
