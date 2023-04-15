@@ -130,10 +130,11 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * Create identifier key
      * 创建识别键
      * @param currency Currency
+     * @param key Additional key
      * @returns Result
      */
-    static createKey(currency: string) {
-        return `ETSOO-CART-${currency}`;
+    static createKey(currency: string, key: string = 'KEY') {
+        return `ETSOO-CART-${key}-${currency}`;
     }
 
     /**
@@ -262,41 +263,44 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * 构造函数
      * @param currency Currency ISO code
      * @param storage Data storage
+     * @param key Additional key
      */
-    constructor(currency: string, storage?: IStorage);
+    constructor(currency: string, storage?: IStorage, key?: string);
 
     /**
      * Constructor
      * 构造函数
      * @param state Initialization state
      * @param storage Data storage
+     * @param key Additional key
      */
-    constructor(state: ShoppingCartData<T>, storage?: IStorage);
+    constructor(state: ShoppingCartData<T>, storage?: IStorage, key?: string);
 
     /**
      * Constructor
      * 构造函数
      * @param currency Currency ISO code
      * @param storage Data storage
-     * @param state Initialization state
+     * @param key Additional key
      */
     constructor(
         currencyOrState: string | ShoppingCartData<T>,
-        private readonly storage: IStorage = new WindowStorage()
+        private readonly storage: IStorage = new WindowStorage(),
+        key?: string
     ) {
         const isCurrency = typeof currencyOrState === 'string';
         this.currency = isCurrency ? currencyOrState : currencyOrState.currency;
 
-        const key = ShoppingCart.createKey(this.currency);
-        this.identifier = key;
+        const id = ShoppingCart.createKey(this.currency, key);
+        this.identifier = id;
         this.symbol = NumberUtils.getCurrencySymbol(this.currency);
 
         let state: ShoppingCartData<T> | undefined;
         if (isCurrency) {
             try {
                 state =
-                    storage.getPersistedObject<ShoppingCartData<T>>(key) ??
-                    storage.getObject<ShoppingCartData<T>>(key);
+                    storage.getPersistedObject<ShoppingCartData<T>>(id) ??
+                    storage.getObject<ShoppingCartData<T>>(id);
             } catch (error) {
                 console.log('ShoppingCart constructor', error);
             }
