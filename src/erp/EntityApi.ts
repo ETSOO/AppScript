@@ -3,11 +3,12 @@ import { DataTypes } from '@etsoo/shared';
 import { IApp } from '../app/IApp';
 import { IActionResult } from '../result/IActionResult';
 import { BaseApi } from './BaseApi';
-import { AuditLineDto, AuditLinePayload } from './dto/AuditLineDto';
+import { AuditLinePayload } from './dto/AuditLineDto';
 import { ResultPayload } from './dto/ResultPayload';
 import { MergeRQ } from './rq/MergeRQ';
 import { QueryRQ } from './rq/QueryRQ';
 import { TiplistRQ } from './rq/TiplistRQ';
+import { UpdateStatusRQ } from './rq/UpdateStatusRQ';
 
 /**
  * Entity API
@@ -187,5 +188,15 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
             undefined,
             payload
         );
+    }
+
+    /**
+     * Update status
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    protected updateStatusBase(rq: UpdateStatusRQ, payload?: ResultPayload) {
+        return this.api.put(`${this.flag}/UpdateStatus`, rq, payload);
     }
 }

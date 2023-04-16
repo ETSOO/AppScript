@@ -65,6 +65,7 @@ export * from './erp/rq/RefreshTokenRQ';
 export * from './erp/rq/RegionsRQ';
 export * from './erp/rq/ResetPasswordRQ';
 export * from './erp/rq/TiplistRQ';
+export * from './erp/rq/UpdateStatusRQ';
 
 // erp api
 export * from './erp/AddressApi';
