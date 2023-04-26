@@ -205,7 +205,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
                 this.storage,
                 this.identifier
             );
-            this.setCartData(data);
+            if (data) this.setCartData(data);
         }
     }
 
@@ -334,7 +334,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * @param currency Currency ISO code
      * @param storage Data storage
      */
-    constructor(currency: string, storage?: IStorage, key?: string);
+    constructor(currency: string, storage?: IStorage);
 
     /**
      * Constructor
@@ -342,7 +342,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * @param state Initialization state
      * @param storage Data storage
      */
-    constructor(state: ShoppingCartData<T>, storage?: IStorage, key?: string);
+    constructor(state: ShoppingCartData<T>, storage?: IStorage);
 
     /**
      * Constructor
