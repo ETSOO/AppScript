@@ -121,6 +121,8 @@ export type ShoppingCartChangeReason =
     | 'title'
     | 'update';
 
+const ShoppingCartKeyField = 'ETSOO-CART-KEYS';
+
 /**
  * Shopping cart
  * 购物篮
@@ -167,10 +169,45 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     }
 
     /**
+     * Get cart data
+     * 获取购物篮数据
+     * @param storage Storage
+     * @param id Cart id
+     * @returns Result
+     */
+    static getCartData<D extends ShoppingCartItem>(
+        storage: IStorage,
+        id: string
+    ) {
+        try {
+            return (
+                storage.getPersistedObject<ShoppingCartData<D>>(id) ??
+                storage.getObject<ShoppingCartData<D>>(id)
+            );
+        } catch (error) {
+            console.log('ShoppingCart constructor', error);
+        }
+    }
+
+    _owner?: ShoppingCartOwner;
+    /**
      * Owner data
      * 所有者信息
      */
-    owner?: ShoppingCartOwner;
+    get owner() {
+        return this._owner;
+    }
+    set owner(value) {
+        if (this._owner?.id === value?.id) return;
+        this._owner = value;
+        if (value) {
+            const data = ShoppingCart.getCartData<T>(
+                this.storage,
+                this.identifier
+            );
+            this.setCartData(data);
+        }
+    }
 
     /**
      * ISO currency id
@@ -178,17 +215,30 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      */
     readonly currency: string;
 
+    _items: T[] = [];
+
     /**
      * Items
      * 项目
      */
-    readonly items: T[];
+    get items() {
+        return this._items;
+    }
+    private set items(value) {
+        this._items = value;
+    }
 
+    _promotions: ShoppingPromotion[] = [];
     /**
      * Order level promotions
      * 订单层面促销
      */
-    readonly promotions: ShoppingPromotion[];
+    get promotions() {
+        return this._promotions;
+    }
+    private set promotions(value) {
+        this._promotions = value;
+    }
 
     /**
      * Related form data
@@ -206,7 +256,27 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * Cart identifier
      * 购物篮标识
      */
-    private readonly identifier: string;
+    get identifier() {
+        const o = this.owner;
+        return ShoppingCart.createKey(
+            this.currency,
+            o ? `${o.isSupplier ? 'S' : 'C'}${o.id}` : undefined
+        );
+    }
+
+    /**
+     * All data keys
+     * 所有的数据键
+     */
+    get keys() {
+        return this.storage.getPersistedData<string[]>(
+            ShoppingCartKeyField,
+            []
+        );
+    }
+    set keys(items: string[]) {
+        this.storage.setPersistedData(ShoppingCartKeyField, items);
+    }
 
     /**
      * Lines count
@@ -263,7 +333,6 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * 构造函数
      * @param currency Currency ISO code
      * @param storage Data storage
-     * @param key Additional key
      */
     constructor(currency: string, storage?: IStorage, key?: string);
 
@@ -272,7 +341,6 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * 构造函数
      * @param state Initialization state
      * @param storage Data storage
-     * @param key Additional key
      */
     constructor(state: ShoppingCartData<T>, storage?: IStorage, key?: string);
 
@@ -281,35 +349,22 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * 构造函数
      * @param currency Currency ISO code
      * @param storage Data storage
-     * @param key Additional key
      */
     constructor(
         currencyOrState: string | ShoppingCartData<T>,
-        private readonly storage: IStorage = new WindowStorage(),
-        key?: string
+        private readonly storage: IStorage = new WindowStorage()
     ) {
-        const isCurrency = typeof currencyOrState === 'string';
-        this.currency = isCurrency ? currencyOrState : currencyOrState.currency;
-
-        const id = ShoppingCart.createKey(this.currency, key);
-        this.identifier = id;
-        this.symbol = NumberUtils.getCurrencySymbol(this.currency);
-
-        let state: ShoppingCartData<T> | undefined;
-        if (isCurrency) {
-            try {
-                state =
-                    storage.getPersistedObject<ShoppingCartData<T>>(id) ??
-                    storage.getObject<ShoppingCartData<T>>(id);
-            } catch (error) {
-                console.log('ShoppingCart constructor', error);
-            }
+        if (typeof currencyOrState === 'string') {
+            this.currency = currencyOrState;
         } else {
-            state = currencyOrState;
+            this.setCartData(currencyOrState);
+            this.currency = currencyOrState.currency;
         }
+        this.symbol = NumberUtils.getCurrencySymbol(this.currency);
+    }
 
+    private setCartData(state: ShoppingCartData<T> | undefined) {
         const { owner, items = [], promotions = [], formData } = state ?? {};
-
         this.owner = owner;
         this.items = items;
         this.promotions = promotions;
@@ -359,6 +414,13 @@ export class ShoppingCart<T extends ShoppingCartItem> {
             this.save();
         } else {
             ShoppingCart.clear(this.identifier, this.storage);
+
+            const keys = this.keys;
+            const index = keys.indexOf(this.identifier);
+            if (index !== -1) {
+                keys.splice(index, 1);
+                this.keys = keys;
+            }
         }
 
         this.doChange('clear', []);
@@ -411,6 +473,12 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         try {
             if (persisted) {
                 this.storage.setPersistedData(this.identifier, data);
+
+                const keys = this.keys;
+                if (!keys.includes(this.identifier)) {
+                    keys.push(this.identifier);
+                    this.keys = keys;
+                }
             } else {
                 this.storage.setData(this.identifier, data);
             }
