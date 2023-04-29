@@ -397,9 +397,11 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * Cache price
      * @param id Item id
      * @param price Price
+     * @param overrideExisting Override existing price
      */
-    cachePrice(id: T['id'], price: number) {
-        this.prices[id] = price;
+    cachePrice(id: T['id'], price: number, overrideExisting: boolean = false) {
+        if (overrideExisting || this.prices[id] == null)
+            this.prices[id] = price;
     }
 
     /**
@@ -546,10 +548,13 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         } else {
             // Update
             const item = this.items[index];
-            const price = item.price;
+
+            // Price may be cached first
+            const price = this.prices[id] ?? item.price;
             const newItem = {
                 ...item,
                 qty,
+                price,
                 subtotal: price * qty,
                 discount: 0
             };
@@ -566,7 +571,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * @param price New price
      */
     updatePrice(id: T['id'], price: number) {
-        this.cachePrice(id, price);
+        this.cachePrice(id, price, true);
 
         const index = this.items.findIndex((item) => item.id === id);
         if (index !== -1) {
