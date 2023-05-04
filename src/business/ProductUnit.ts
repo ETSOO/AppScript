@@ -23,7 +23,13 @@ enum ProductAssetUnit {
      * Time
      * 次
      */
-    TIME = 99
+    TIME = 99,
+
+    /**
+     * Money
+     * 储值
+     */
+    MONEY = 100
 }
 
 /**
