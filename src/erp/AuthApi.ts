@@ -35,15 +35,15 @@ export class AuthApi extends BaseApi {
      * @param payload Payload
      * @returns Result
      */
-    loginId(id: string, payload?: ResultPayload) {
+    async loginId(id: string, payload?: ResultPayload) {
         const { deviceId, region } = this.app;
-        id = this.app.encrypt(id);
+        id = await this.app.encrypt(id);
         const rq: LoginIdRQ = {
             id,
             deviceId,
             region
         };
-        return this.api.get('Auth/LoginId', rq, payload);
+        return await this.api.get('Auth/LoginId', rq, payload);
     }
 
     /**

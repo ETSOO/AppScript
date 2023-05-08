@@ -157,25 +157,25 @@ test('Tests for addRootUrl', () => {
     expect(app.addRootUrl('home')).toBe('/cms/home');
 });
 
-test('Tests for encrypt / decrypt', () => {
+test('Tests for encrypt / decrypt', async () => {
     // Arrange
     const input = 'Hello, world!';
     const passphrase = 'My password';
 
     // Act
-    const encrypted = app.encrypt(input, passphrase);
-    const plain = app.decrypt(encrypted, passphrase);
+    const encrypted = await app.encrypt(input, passphrase);
+    const plain = await app.decrypt(encrypted, passphrase);
     expect(plain).toEqual(input);
 });
 
-test('Tests for encryptEnhanced / decryptEnhanced', () => {
+test('Tests for encryptEnhanced / decryptEnhanced', async () => {
     // Arrange
     const input = 'Hello, world!';
     const passphrase = 'My password';
 
     // Act
-    const encrypted = app.encryptEnhanced(input, passphrase);
-    const plain = app.decryptEnhanced(encrypted, passphrase);
+    const encrypted = await app.encryptEnhanced(input, passphrase);
+    const plain = await app.decryptEnhanced(encrypted, passphrase);
     expect(plain).toEqual(input);
 });
 

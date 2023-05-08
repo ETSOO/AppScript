@@ -18,17 +18,6 @@ import {
     NumberUtils,
     Utils
 } from '@etsoo/shared';
-import {
-    AES,
-    algo,
-    enc,
-    HmacSHA512,
-    lib,
-    mode,
-    pad,
-    PBKDF2,
-    SHA3
-} from 'crypto-js';
 import { AddressRegion } from '../address/AddressRegion';
 import { BridgeUtils } from '../bridges/BridgeUtils';
 import { DataPrivacy } from '../business/DataPrivacy';
@@ -283,12 +272,9 @@ export abstract class CoreApp<
         this.setApi(api);
 
         const { currentCulture, currentRegion } = settings;
-        this.changeCulture(currentCulture);
+        this.changeCulture(currentCulture, () => this.setup());
 
         this.changeRegion(currentRegion);
-
-        // Setup callback
-        this.setup();
     }
 
     private getDeviceId() {
@@ -337,7 +323,7 @@ export abstract class CoreApp<
     /**
      * Restore settings from persisted source
      */
-    protected restore() {
+    protected async restore() {
         // Devices
         const devices = this.storage.getPersistedData<string[]>(
             this.fields.devices,
@@ -369,7 +355,7 @@ export abstract class CoreApp<
         );
         if (passphraseEncrypted) {
             // this.name to identifier different app's secret
-            const passphraseDecrypted = this.decrypt(
+            const passphraseDecrypted = await this.decrypt(
                 passphraseEncrypted,
                 this.name
             );
@@ -560,7 +546,10 @@ export abstract class CoreApp<
             return;
         }
 
-        const updateResult = this.initCallUpdate(result.data, data.timestamp);
+        const updateResult = await this.initCallUpdate(
+            result.data,
+            data.timestamp
+        );
         if (!updateResult) {
             this.notifier.alert(this.get<string>('noData')! + '(Update)');
         }
@@ -573,16 +562,19 @@ export abstract class CoreApp<
      * @param data Result data
      * @param timestamp Timestamp
      */
-    protected initCallUpdate(
+    protected async initCallUpdate(
         data: InitCallResultData,
         timestamp: number
-    ): boolean {
+    ): Promise<boolean> {
         // Data check
         if (data.deviceId == null || data.passphrase == null) return false;
 
         // Decrypt
         // Should be done within 120 seconds after returning from the backend
-        const passphrase = this.decrypt(data.passphrase, timestamp.toString());
+        const passphrase = await this.decrypt(
+            data.passphrase,
+            timestamp.toString()
+        );
         if (passphrase == null) return false;
 
         // Update device id and cache it
@@ -606,7 +598,7 @@ export abstract class CoreApp<
 
         // Previous passphrase
         if (data.previousPassphrase) {
-            const prev = this.decrypt(
+            const prev = await this.decrypt(
                 data.previousPassphrase,
                 timestamp.toString()
             );
@@ -627,13 +619,13 @@ export abstract class CoreApp<
                 let newValueSource: string | undefined;
 
                 if (enhanced) {
-                    newValueSource = this.decryptEnhanced(
+                    newValueSource = await this.decryptEnhanced(
                         currentValue,
                         prev,
                         12
                     );
                 } else {
-                    newValueSource = this.decrypt(currentValue, prev);
+                    newValueSource = await this.decrypt(currentValue, prev);
                 }
 
                 if (newValueSource == null || newValueSource === '') {
@@ -643,8 +635,8 @@ export abstract class CoreApp<
                 }
 
                 const newValue = enhanced
-                    ? this.encryptEnhanced(newValueSource)
-                    : this.encrypt(newValueSource);
+                    ? await this.encryptEnhanced(newValueSource)
+                    : await this.encrypt(newValueSource);
 
                 this.storage.setData(field, newValue);
             }
@@ -687,9 +679,12 @@ export abstract class CoreApp<
         // Token
         this.api.authorize(this.settings.authScheme, token);
 
-        // Cover the current value
+        // Overwrite the current value
         if (refreshToken !== '') {
-            if (refreshToken != null) refreshToken = this.encrypt(refreshToken);
+            if (refreshToken != null)
+                this.encrypt(refreshToken).then((result) =>
+                    this.storage.setData(this.fields.headerToken, result)
+                );
             this.storage.setData(this.fields.headerToken, refreshToken);
         }
 
@@ -745,8 +740,9 @@ export abstract class CoreApp<
     /**
      * Change culture
      * @param culture New culture definition
+     * @param onReady On ready callback
      */
-    changeCulture(culture: DataTypes.CultureDefinition) {
+    changeCulture(culture: DataTypes.CultureDefinition, onReady?: () => void) {
         // Name
         const { name } = culture;
 
@@ -766,7 +762,16 @@ export abstract class CoreApp<
         // Hold the current resources
         this.settings.currentCulture = culture;
 
-        this.updateRegionLabel();
+        if (typeof culture.resources !== 'object') {
+            culture.resources().then((result) => {
+                culture.resources = result;
+                this.updateRegionLabel();
+                if (onReady) onReady();
+            });
+        } else {
+            this.updateRegionLabel();
+            if (onReady) onReady();
+        }
     }
 
     /**
@@ -818,10 +823,12 @@ export abstract class CoreApp<
      * @param passphrase Secret passphrase
      * @returns Pure text
      */
-    decrypt(messageEncrypted: string, passphrase?: string) {
+    async decrypt(messageEncrypted: string, passphrase?: string) {
         // Iterations
         const iterations = parseInt(messageEncrypted.substring(0, 2), 10);
         if (isNaN(iterations)) return undefined;
+
+        const { PBKDF2, algo, enc, AES, pad, mode } = await import('crypto-js');
 
         try {
             const salt = enc.Hex.parse(messageEncrypted.substring(2, 34));
@@ -852,7 +859,7 @@ export abstract class CoreApp<
      * @param durationSeconds Duration seconds, <= 12 will be considered as month
      * @returns Pure text
      */
-    decryptEnhanced(
+    async decryptEnhanced(
         messageEncrypted: string,
         passphrase?: string,
         durationSeconds?: number
@@ -885,7 +892,7 @@ export abstract class CoreApp<
                 timestamp
             );
 
-            return this.decrypt(message, passphrase);
+            return await this.decrypt(message, passphrase);
         } catch (e) {
             console.log('decryptEnhanced', e);
             return undefined;
@@ -939,9 +946,13 @@ export abstract class CoreApp<
      * @param iterations Iterations, 1000 times, 1 - 99
      * @returns Result
      */
-    encrypt(message: string, passphrase?: string, iterations?: number) {
+    async encrypt(message: string, passphrase?: string, iterations?: number) {
         // Default 1 * 1000
         iterations ??= 1;
+
+        const { lib, PBKDF2, algo, enc, AES, pad, mode } = await import(
+            'crypto-js'
+        );
 
         const bits = 16; // 128 / 8
         const salt = lib.WordArray.random(bits);
@@ -971,7 +982,11 @@ export abstract class CoreApp<
      * @param iterations Iterations, 1000 times, 1 - 99
      * @returns Result
      */
-    encryptEnhanced(message: string, passphrase?: string, iterations?: number) {
+    async encryptEnhanced(
+        message: string,
+        passphrase?: string,
+        iterations?: number
+    ) {
         // Timestamp
         const timestamp = Utils.numberToChars(new Date().getTime());
 
@@ -980,7 +995,9 @@ export abstract class CoreApp<
             timestamp
         );
 
-        return timestamp + '!' + this.encrypt(message, passphrase, iterations);
+        const result = await this.encrypt(message, passphrase, iterations);
+
+        return timestamp + '!' + result;
     }
 
     /**
@@ -1176,7 +1193,10 @@ export abstract class CoreApp<
      * @returns Resource
      */
     get<T = string>(key: string): T | undefined {
-        const value = this.settings.currentCulture.resources[key];
+        // Make sure the resource files are loaded first
+        const resources = this.settings.currentCulture.resources;
+        const value =
+            typeof resources === 'object' ? resources[key] : undefined;
         if (value == null) return undefined;
 
         // No strict type convertion here
@@ -1376,7 +1396,8 @@ export abstract class CoreApp<
      * @param message Message
      * @param passphrase Secret passphrase
      */
-    hash(message: string, passphrase?: string) {
+    async hash(message: string, passphrase?: string) {
+        const { SHA3, enc, HmacSHA512 } = await import('crypto-js');
         if (passphrase == null)
             return SHA3(message, { outputLength: 512 }).toString(enc.Base64);
         else return HmacSHA512(message, passphrase).toString(enc.Base64);
@@ -1388,7 +1409,8 @@ export abstract class CoreApp<
      * @param message Message
      * @param passphrase Secret passphrase
      */
-    hashHex(message: string, passphrase?: string) {
+    async hashHex(message: string, passphrase?: string) {
+        const { SHA3, enc, HmacSHA512 } = await import('crypto-js');
         if (passphrase == null)
             return SHA3(message, { outputLength: 512 }).toString(enc.Hex);
         else return HmacSHA512(message, passphrase).toString(enc.Hex);
@@ -1585,7 +1607,9 @@ export abstract class CoreApp<
         if (keep) {
             this.authorize(user.token, refreshToken);
         } else {
-            this.cachedRefreshToken = this.encrypt(refreshToken);
+            this.encrypt(refreshToken).then(
+                (result) => (this.cachedRefreshToken = result)
+            );
             this.authorize(user.token, undefined);
         }
     }

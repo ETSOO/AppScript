@@ -85,7 +85,7 @@ export const appFields = [
 /**
  * Basic type template
  */
-export type IAppFields = { [key in typeof appFields[number]]: string };
+export type IAppFields = { [key in (typeof appFields)[number]]: string };
 
 /**
  * Application interface, for generic version, see ICoreApp
@@ -214,8 +214,12 @@ export interface IApp {
     /**
      * Change culture
      * @param culture New culture definition
+     * @param onReady On ready callback
      */
-    changeCulture(culture: DataTypes.CultureDefinition): void;
+    changeCulture(
+        culture: DataTypes.CultureDefinition,
+        onReady?: () => void
+    ): void;
 
     /**
      * Check the action result is about device invalid
@@ -247,7 +251,10 @@ export interface IApp {
      * @param passphrase Secret passphrase
      * @returns Pure text
      */
-    decrypt(messageEncrypted: string, passphrase?: string): string | undefined;
+    decrypt(
+        messageEncrypted: string,
+        passphrase?: string
+    ): Promise<string | undefined>;
 
     /**
      * Enhanced decrypt message
@@ -260,7 +267,7 @@ export interface IApp {
         messageEncrypted: string,
         passphrase?: string,
         durationSeconds?: number
-    ): string | undefined;
+    ): Promise<string | undefined>;
 
     /**
      * Detect IP data, call only one time
@@ -275,7 +282,11 @@ export interface IApp {
      * @param iterations Iterations, 1000 times, 1 - 99
      * @returns Result
      */
-    encrypt(message: string, passphrase?: string, iterations?: number): string;
+    encrypt(
+        message: string,
+        passphrase?: string,
+        iterations?: number
+    ): Promise<string>;
 
     /**
      * Enhanced encrypt message
@@ -288,7 +299,7 @@ export interface IApp {
         message: string,
         passphrase?: string,
         iterations?: number
-    ): string;
+    ): Promise<string>;
 
     /**
      * Format date to string
@@ -493,7 +504,7 @@ export interface IApp {
      * @param message Message
      * @param passphrase Secret passphrase
      */
-    hash(message: string, passphrase?: string): string;
+    hash(message: string, passphrase?: string): Promise<string>;
 
     /**
      * Hash message Hex, SHA3 or HmacSHA512, 512 as Base64
@@ -501,7 +512,7 @@ export interface IApp {
      * @param message Message
      * @param passphrase Secret passphrase
      */
-    hashHex(message: string, passphrase?: string): string;
+    hashHex(message: string, passphrase?: string): Promise<string>;
 
     /**
      * Check use has the specific role permission or not

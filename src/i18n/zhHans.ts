@@ -1,14 +1,10 @@
-import { DataTypes } from '@etsoo/shared';
-import zhHansResources from './zh-Hans.json';
+import { DomUtils } from '@etsoo/shared';
+import { i18nResource, i18nResourceCreator } from './i18nResources';
 
 /**
  * Get zh-Hans neutral cultrue
  * @param localResources Local resources
  * @returns Full culture
  */
-export const zhHans = (localResources: {}): DataTypes.CultureDefinition => ({
-    name: 'zh-Hans',
-    label: '简体中文',
-    resources: { ...zhHansResources, ...localResources },
-    compatibleNames: ['zh-CN', 'zh-SG']
-});
+export const zhHans = (resources: i18nResource) =>
+    DomUtils.en(i18nResourceCreator('./zh-Hans.json', resources));
