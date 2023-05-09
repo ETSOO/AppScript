@@ -86,7 +86,8 @@ export {
     ApiAuthorizationScheme,
     ApiMethod,
     ApiResponseType,
-    createClient
+    createClient,
+    createClientAsync
 } from '@etsoo/restclient';
 export type { IApi, IApiPayload } from '@etsoo/restclient';
 
