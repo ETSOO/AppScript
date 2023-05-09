@@ -38,6 +38,11 @@ import {
     RefreshTokenResult
 } from './IApp';
 import { UserRole } from './UserRole';
+import type CryptoJS from 'crypto-js';
+
+type CJType = typeof CryptoJS;
+let CJ: CJType;
+import('crypto-js').then((result) => (CJ = result));
 
 /**
  * Core application interface
@@ -681,10 +686,7 @@ export abstract class CoreApp<
 
         // Overwrite the current value
         if (refreshToken !== '') {
-            if (refreshToken != null)
-                this.encrypt(refreshToken).then((result) =>
-                    this.storage.setData(this.fields.headerToken, result)
-                );
+            if (refreshToken != null) refreshToken = this.encrypt(refreshToken);
             this.storage.setData(this.fields.headerToken, refreshToken);
         }
 
@@ -826,12 +828,12 @@ export abstract class CoreApp<
      * @param passphrase Secret passphrase
      * @returns Pure text
      */
-    async decrypt(messageEncrypted: string, passphrase?: string) {
+    decrypt(messageEncrypted: string, passphrase?: string) {
         // Iterations
         const iterations = parseInt(messageEncrypted.substring(0, 2), 10);
         if (isNaN(iterations)) return undefined;
 
-        const { PBKDF2, algo, enc, AES, pad, mode } = await import('crypto-js');
+        const { PBKDF2, algo, enc, AES, pad, mode } = CJ;
 
         try {
             const salt = enc.Hex.parse(messageEncrypted.substring(2, 34));
@@ -862,7 +864,7 @@ export abstract class CoreApp<
      * @param durationSeconds Duration seconds, <= 12 will be considered as month
      * @returns Pure text
      */
-    async decryptEnhanced(
+    decryptEnhanced(
         messageEncrypted: string,
         passphrase?: string,
         durationSeconds?: number
@@ -895,7 +897,7 @@ export abstract class CoreApp<
                 timestamp
             );
 
-            return await this.decrypt(message, passphrase);
+            return this.decrypt(message, passphrase);
         } catch (e) {
             console.log('decryptEnhanced', e);
             return undefined;
@@ -949,13 +951,11 @@ export abstract class CoreApp<
      * @param iterations Iterations, 1000 times, 1 - 99
      * @returns Result
      */
-    async encrypt(message: string, passphrase?: string, iterations?: number) {
+    encrypt(message: string, passphrase?: string, iterations?: number) {
         // Default 1 * 1000
         iterations ??= 1;
 
-        const { lib, PBKDF2, algo, enc, AES, pad, mode } = await import(
-            'crypto-js'
-        );
+        const { lib, PBKDF2, algo, enc, AES, pad, mode } = CJ;
 
         const bits = 16; // 128 / 8
         const salt = lib.WordArray.random(bits);
@@ -985,11 +985,7 @@ export abstract class CoreApp<
      * @param iterations Iterations, 1000 times, 1 - 99
      * @returns Result
      */
-    async encryptEnhanced(
-        message: string,
-        passphrase?: string,
-        iterations?: number
-    ) {
+    encryptEnhanced(message: string, passphrase?: string, iterations?: number) {
         // Timestamp
         const timestamp = Utils.numberToChars(new Date().getTime());
 
@@ -998,7 +994,7 @@ export abstract class CoreApp<
             timestamp
         );
 
-        const result = await this.encrypt(message, passphrase, iterations);
+        const result = this.encrypt(message, passphrase, iterations);
 
         return timestamp + '!' + result;
     }
@@ -1399,8 +1395,8 @@ export abstract class CoreApp<
      * @param message Message
      * @param passphrase Secret passphrase
      */
-    async hash(message: string, passphrase?: string) {
-        const { SHA3, enc, HmacSHA512 } = await import('crypto-js');
+    hash(message: string, passphrase?: string) {
+        const { SHA3, enc, HmacSHA512 } = CJ;
         if (passphrase == null)
             return SHA3(message, { outputLength: 512 }).toString(enc.Base64);
         else return HmacSHA512(message, passphrase).toString(enc.Base64);
@@ -1412,8 +1408,8 @@ export abstract class CoreApp<
      * @param message Message
      * @param passphrase Secret passphrase
      */
-    async hashHex(message: string, passphrase?: string) {
-        const { SHA3, enc, HmacSHA512 } = await import('crypto-js');
+    hashHex(message: string, passphrase?: string) {
+        const { SHA3, enc, HmacSHA512 } = CJ;
         if (passphrase == null)
             return SHA3(message, { outputLength: 512 }).toString(enc.Hex);
         else return HmacSHA512(message, passphrase).toString(enc.Hex);
@@ -1610,9 +1606,7 @@ export abstract class CoreApp<
         if (keep) {
             this.authorize(user.token, refreshToken);
         } else {
-            this.encrypt(refreshToken).then(
-                (result) => (this.cachedRefreshToken = result)
-            );
+            this.cachedRefreshToken = this.encrypt(refreshToken);
             this.authorize(user.token, undefined);
         }
     }

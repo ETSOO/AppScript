@@ -251,10 +251,7 @@ export interface IApp {
      * @param passphrase Secret passphrase
      * @returns Pure text
      */
-    decrypt(
-        messageEncrypted: string,
-        passphrase?: string
-    ): Promise<string | undefined>;
+    decrypt(messageEncrypted: string, passphrase?: string): string | undefined;
 
     /**
      * Enhanced decrypt message
@@ -267,7 +264,7 @@ export interface IApp {
         messageEncrypted: string,
         passphrase?: string,
         durationSeconds?: number
-    ): Promise<string | undefined>;
+    ): string | undefined;
 
     /**
      * Detect IP data, call only one time
@@ -282,11 +279,7 @@ export interface IApp {
      * @param iterations Iterations, 1000 times, 1 - 99
      * @returns Result
      */
-    encrypt(
-        message: string,
-        passphrase?: string,
-        iterations?: number
-    ): Promise<string>;
+    encrypt(message: string, passphrase?: string, iterations?: number): string;
 
     /**
      * Enhanced encrypt message
@@ -299,7 +292,7 @@ export interface IApp {
         message: string,
         passphrase?: string,
         iterations?: number
-    ): Promise<string>;
+    ): string;
 
     /**
      * Format date to string
@@ -504,7 +497,7 @@ export interface IApp {
      * @param message Message
      * @param passphrase Secret passphrase
      */
-    hash(message: string, passphrase?: string): Promise<string>;
+    hash(message: string, passphrase?: string): string;
 
     /**
      * Hash message Hex, SHA3 or HmacSHA512, 512 as Base64
@@ -512,7 +505,7 @@ export interface IApp {
      * @param message Message
      * @param passphrase Secret passphrase
      */
-    hashHex(message: string, passphrase?: string): Promise<string>;
+    hashHex(message: string, passphrase?: string): string;
 
     /**
      * Check use has the specific role permission or not
