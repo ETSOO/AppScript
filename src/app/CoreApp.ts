@@ -593,7 +593,7 @@ export abstract class CoreApp<
         this.passphrase = passphrase;
         this.storage.setData(
             this.fields.devicePassphrase,
-            this.encrypt(passphrase, this.name)
+            await this.encrypt(passphrase, this.name)
         );
 
         // Previous passphrase
