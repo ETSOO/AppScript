@@ -1,10 +1,21 @@
-import { DomUtils } from '@etsoo/shared';
-import { i18nResource, i18nResourceCreator } from './i18nResources';
+import { DataTypes, DomUtils } from '@etsoo/shared';
 
 /**
  * Get zh-Hans neutral cultrue
  * @param localResources Local resources
  * @returns Full culture
  */
-export const zhHans = (resources: i18nResource) =>
-    DomUtils.en(i18nResourceCreator('./zh-Hans.json', resources));
+export const zhHans = (resources: object | (() => Promise<object>)) =>
+    DomUtils.en(async () => {
+        const [r1, r2] = await Promise.all([
+            import('./zh-Hans.json'),
+            new Promise<object>((resolve) => {
+                if (typeof resources === 'object') {
+                    resolve(resources);
+                } else {
+                    resources().then((result) => resolve(result));
+                }
+            })
+        ]);
+        return { ...r1, ...r2 } as DataTypes.StringRecord;
+    });
