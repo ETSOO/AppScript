@@ -742,7 +742,10 @@ export abstract class CoreApp<
      * @param culture New culture definition
      * @param onReady On ready callback
      */
-    changeCulture(culture: DataTypes.CultureDefinition, onReady?: () => void) {
+    changeCulture(
+        culture: DataTypes.CultureDefinition,
+        onReady?: (resources: DataTypes.StringRecord) => void
+    ) {
         // Name
         const { name } = culture;
 
@@ -766,11 +769,11 @@ export abstract class CoreApp<
             culture.resources().then((result) => {
                 culture.resources = result;
                 this.updateRegionLabel();
-                if (onReady) onReady();
+                if (onReady) onReady(result);
             });
         } else {
             this.updateRegionLabel();
-            if (onReady) onReady();
+            if (onReady) onReady(culture.resources);
         }
     }
 

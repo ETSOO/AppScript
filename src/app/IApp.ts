@@ -218,7 +218,7 @@ export interface IApp {
      */
     changeCulture(
         culture: DataTypes.CultureDefinition,
-        onReady?: () => void
+        onReady?: (resources: DataTypes.StringRecord) => void
     ): void;
 
     /**
