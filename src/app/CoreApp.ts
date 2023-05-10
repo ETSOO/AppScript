@@ -42,7 +42,6 @@ import type CryptoJS from 'crypto-js';
 
 type CJType = typeof CryptoJS;
 let CJ: CJType;
-import('crypto-js').then((result) => (CJ = result));
 
 /**
  * Core application interface
@@ -271,15 +270,18 @@ export abstract class CoreApp<
         // Device id
         this._deviceId = storage.getData(this.fields.deviceId, '');
 
-        // Restore
-        this.restore();
-
         this.setApi(api);
 
         const { currentCulture, currentRegion } = settings;
-        this.changeCulture(currentCulture, () => this.setup());
 
-        this.changeRegion(currentRegion);
+        // Load resources
+        Promise.all([
+            import('crypto-js'),
+            this.changeCulture(currentCulture)
+        ]).then(([cj, _resources]) => {
+            (CJ = cj), this.changeRegion(currentRegion);
+            this.setup();
+        });
     }
 
     private getDeviceId() {
@@ -744,15 +746,14 @@ export abstract class CoreApp<
      * @param culture New culture definition
      * @param onReady On ready callback
      */
-    changeCulture(
-        culture: DataTypes.CultureDefinition,
-        onReady?: (resources: DataTypes.StringRecord) => void
-    ) {
+    async changeCulture(culture: DataTypes.CultureDefinition) {
         // Name
         const { name } = culture;
 
         // Same?
-        if (this._culture === name) return;
+        let resources = culture.resources;
+        if (this._culture === name && typeof resources === 'object')
+            return resources;
 
         // Save the cultrue to local storage
         this.storage.setPersistedData(DomUtils.CultureField, name);
@@ -767,16 +768,15 @@ export abstract class CoreApp<
         // Hold the current resources
         this.settings.currentCulture = culture;
 
-        if (typeof culture.resources !== 'object') {
-            culture.resources().then((result) => {
-                culture.resources = result;
-                this.updateRegionLabel();
-                if (onReady) onReady(result);
-            });
-        } else {
-            this.updateRegionLabel();
-            if (onReady) onReady(culture.resources);
+        if (typeof resources !== 'object') {
+            resources = await resources();
+
+            // Set static resources back
+            culture.resources = resources;
         }
+        this.updateRegionLabel();
+
+        return resources;
     }
 
     /**
@@ -1544,7 +1544,10 @@ export abstract class CoreApp<
     /**
      * Setup callback
      */
-    setup() {}
+    setup() {
+        // Restore
+        this.restore();
+    }
 
     /**
      * Signout

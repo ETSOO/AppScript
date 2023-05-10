@@ -214,12 +214,10 @@ export interface IApp {
     /**
      * Change culture
      * @param culture New culture definition
-     * @param onReady On ready callback
      */
     changeCulture(
-        culture: DataTypes.CultureDefinition,
-        onReady?: (resources: DataTypes.StringRecord) => void
-    ): void;
+        culture: DataTypes.CultureDefinition
+    ): Promise<DataTypes.StringRecord>;
 
     /**
      * Check the action result is about device invalid
