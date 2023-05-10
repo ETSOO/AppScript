@@ -6,7 +6,7 @@ import { DataTypes, DomUtils } from '@etsoo/shared';
  * @returns Full culture
  */
 export const zhHant = (resources: object | (() => Promise<object>)) =>
-    DomUtils.en(async () => {
+    DomUtils.zhHant(async () => {
         const [r1, r2] = await Promise.all([
             import('./zh-Hant.json'),
             new Promise<object>((resolve) => {

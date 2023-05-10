@@ -6,7 +6,7 @@ import { DataTypes, DomUtils } from '@etsoo/shared';
  * @returns Full culture
  */
 export const zhHans = (resources: object | (() => Promise<object>)) =>
-    DomUtils.en(async () => {
+    DomUtils.zhHans(async () => {
         const [r1, r2] = await Promise.all([
             import('./zh-Hans.json'),
             new Promise<object>((resolve) => {

@@ -163,8 +163,8 @@ test('Tests for encrypt / decrypt', async () => {
     const passphrase = 'My password';
 
     // Act
-    const encrypted = await app.encrypt(input, passphrase);
-    const plain = await app.decrypt(encrypted, passphrase);
+    const encrypted = app.encrypt(input, passphrase);
+    const plain = app.decrypt(encrypted, passphrase);
     expect(plain).toEqual(input);
 });
 
@@ -174,8 +174,8 @@ test('Tests for encryptEnhanced / decryptEnhanced', async () => {
     const passphrase = 'My password';
 
     // Act
-    const encrypted = await app.encryptEnhanced(input, passphrase);
-    const plain = await app.decryptEnhanced(encrypted, passphrase);
+    const encrypted = app.encryptEnhanced(input, passphrase);
+    const plain = app.decryptEnhanced(encrypted, passphrase);
     expect(plain).toEqual(input);
 });
 

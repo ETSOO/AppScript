@@ -362,7 +362,7 @@ export abstract class CoreApp<
         );
         if (passphraseEncrypted) {
             // this.name to identifier different app's secret
-            const passphraseDecrypted = await this.decrypt(
+            const passphraseDecrypted = this.decrypt(
                 passphraseEncrypted,
                 this.name
             );
@@ -578,10 +578,7 @@ export abstract class CoreApp<
 
         // Decrypt
         // Should be done within 120 seconds after returning from the backend
-        const passphrase = await this.decrypt(
-            data.passphrase,
-            timestamp.toString()
-        );
+        const passphrase = this.decrypt(data.passphrase, timestamp.toString());
         if (passphrase == null) return false;
 
         // Update device id and cache it
@@ -600,12 +597,12 @@ export abstract class CoreApp<
         this.passphrase = passphrase;
         this.storage.setData(
             this.fields.devicePassphrase,
-            await this.encrypt(passphrase, this.name)
+            this.encrypt(passphrase, this.name)
         );
 
         // Previous passphrase
         if (data.previousPassphrase) {
-            const prev = await this.decrypt(
+            const prev = this.decrypt(
                 data.previousPassphrase,
                 timestamp.toString()
             );
@@ -626,13 +623,13 @@ export abstract class CoreApp<
                 let newValueSource: string | undefined;
 
                 if (enhanced) {
-                    newValueSource = await this.decryptEnhanced(
+                    newValueSource = this.decryptEnhanced(
                         currentValue,
                         prev,
                         12
                     );
                 } else {
-                    newValueSource = await this.decrypt(currentValue, prev);
+                    newValueSource = this.decrypt(currentValue, prev);
                 }
 
                 if (newValueSource == null || newValueSource === '') {
@@ -642,8 +639,8 @@ export abstract class CoreApp<
                 }
 
                 const newValue = enhanced
-                    ? await this.encryptEnhanced(newValueSource)
-                    : await this.encrypt(newValueSource);
+                    ? this.encryptEnhanced(newValueSource)
+                    : this.encrypt(newValueSource);
 
                 this.storage.setData(field, newValue);
             }
