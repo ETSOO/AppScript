@@ -157,6 +157,11 @@ export interface IApp {
     readonly name: string;
 
     /**
+     * Access token
+     */
+    accessToken?: string;
+
+    /**
      * IP data
      */
     ipData?: IPData;

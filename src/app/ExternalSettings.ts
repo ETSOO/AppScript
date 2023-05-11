@@ -8,6 +8,11 @@ export interface IExternalSettings {
     readonly endpoint: string;
 
     /**
+     * Message hub endpoint
+     */
+    readonly messageHub?: string;
+
+    /**
      * Core system app root url
      */
     readonly homepage: string;

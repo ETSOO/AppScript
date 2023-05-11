@@ -113,6 +113,11 @@ export abstract class CoreApp<
      */
     readonly storage: IStorage;
 
+    /**
+     * Access token
+     */
+    accessToken?: string;
+
     private _culture!: string;
     /**
      * Culture, like zh-CN
@@ -678,6 +683,7 @@ export abstract class CoreApp<
      */
     authorize(token?: string, refreshToken?: string) {
         // State, when token is null, means logout
+        this.accessToken = token;
         this.authorized = token != null;
 
         // Token
