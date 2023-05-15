@@ -114,9 +114,9 @@ export abstract class CoreApp<
     readonly storage: IStorage;
 
     /**
-     * Access token
+     * Pending actions
      */
-    accessToken?: string;
+    readonly pendings: (() => any)[] = [];
 
     private _culture!: string;
     /**
@@ -197,6 +197,18 @@ export abstract class CoreApp<
 
     private set authorized(value: boolean) {
         this._authorized = value;
+    }
+
+    private _isReady: boolean = false;
+    /**
+     * Is the app ready
+     */
+    get isReady() {
+        return this._isReady;
+    }
+
+    private set isReady(value: boolean) {
+        this._isReady = value;
     }
 
     private _isTryingLogin = false;
@@ -683,7 +695,6 @@ export abstract class CoreApp<
      */
     authorize(token?: string, refreshToken?: string) {
         // State, when token is null, means logout
-        this.accessToken = token;
         this.authorized = token != null;
 
         // Token
@@ -1548,8 +1559,14 @@ export abstract class CoreApp<
      * Setup callback
      */
     setup() {
+        // Ready
+        this.isReady = true;
+
         // Restore
         this.restore();
+
+        // Pending actions
+        this.pendings.forEach((p) => p());
     }
 
     /**

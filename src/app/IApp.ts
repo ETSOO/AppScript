@@ -152,14 +152,19 @@ export interface IApp {
     readonly authorized: boolean;
 
     /**
+     * Is the app ready
+     */
+    readonly isReady: boolean;
+
+    /**
      * Application name
      */
     readonly name: string;
 
     /**
-     * Access token
+     * Pending actions
      */
-    accessToken?: string;
+    readonly pendings: (() => any)[];
 
     /**
      * IP data
