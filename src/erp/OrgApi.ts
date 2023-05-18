@@ -8,6 +8,7 @@ import { IdResultPayload } from './dto/ResultPayload';
 import { EntityApi } from './EntityApi';
 import { OrgListRQ } from './rq/OrgListRQ';
 import { OrgQueryRQ } from './rq/OrgQueryRQ';
+import { SendActionMessageRQ } from './rq/SendActionMessageRQ';
 
 const cachedOrgs: { [P: number]: OrgViewDto | undefined | null } = {};
 
@@ -79,6 +80,23 @@ export class OrgApi extends EntityApi {
             if (data != null) cachedOrgs[id] = data;
         }
         return data;
+    }
+
+    /**
+     * Send action message
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    sendActionMessage(rq: SendActionMessageRQ, payload?: IApiPayload<void>) {
+        const appId =
+            'serviceId' in this.app.settings ? this.app.settings.serviceId : 0;
+        payload ??= { showLoading: false };
+        return this.api.post(
+            'System/SendActionMessage',
+            { ...rq, appId },
+            payload
+        );
     }
 
     /**
