@@ -151,6 +151,16 @@ test('Test for properties', () => {
     expect(app.settings.currentRegion.label).toBe('中国大陆');
 });
 
+test('Test for formatAction', () => {
+    Object.assign(app.settings.currentCulture.resources, {
+        appName: '司友®云ERP'
+    });
+    expect(app.formatAction('修改', '客户A')).toBe('[司友®云ERP] 修改 - 客户A');
+    expect(app.formatAction('修改', '客户A', '企业')).toBe(
+        '[司友®云ERP] 修改 - 客户A, 企业'
+    );
+});
+
 test('Tests for addRootUrl', () => {
     expect(app.addRootUrl('/home')).toBe('/cms/home');
     expect(app.addRootUrl('./home')).toBe('/cms/./home');

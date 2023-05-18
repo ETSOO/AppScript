@@ -316,6 +316,15 @@ export interface IApp {
     ): string | undefined;
 
     /**
+     * Format action
+     * @param action Action
+     * @param target Target name or title
+     * @param items More items
+     * @returns Result
+     */
+    formatAction(action: string, target: string, ...items: string[]): string;
+
+    /**
      * Format error
      * @param error Error
      * @returns Error message

@@ -1026,6 +1026,20 @@ export abstract class CoreApp<
     }
 
     /**
+     * Format action
+     * @param action Action
+     * @param target Target name or title
+     * @param items More items
+     * @returns Result
+     */
+    formatAction(action: string, target: string, ...items: string[]) {
+        let more = items.join(', ');
+        return `[${this.get('appName')}] ${action} - ${target}${
+            more ? `, ${more}` : more
+        }`;
+    }
+
+    /**
      * Format date to string
      * @param input Input date
      * @param options Options
