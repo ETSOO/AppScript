@@ -48,6 +48,7 @@ export * from './erp/dto/OrgViewDto';
 export * from './erp/dto/PinDto';
 export * from './erp/dto/PlaceParsedDto';
 export * from './erp/dto/PublicProductDto';
+export * from './erp/dto/ResponseActionMessageDto';
 export * from './erp/dto/ResultPayload';
 
 // erp rq
