@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.4.14",
+    "version": "1.4.15",
     "description": "Applications shared TypeScript framework",
     "main": "lib/cjs/index.js",
     "module": "lib/mjs/index.js",
@@ -58,16 +58,16 @@
         "crypto-js": "^4.1.1"
     },
     "devDependencies": {
-        "@babel/cli": "^7.21.5",
-        "@babel/core": "^7.22.1",
-        "@babel/plugin-transform-runtime": "^7.22.4",
-        "@babel/preset-env": "^7.22.4",
-        "@babel/runtime-corejs3": "^7.22.3",
-        "@types/jest": "^29.5.1",
+        "@babel/cli": "^7.22.5",
+        "@babel/core": "^7.22.5",
+        "@babel/plugin-transform-runtime": "^7.22.5",
+        "@babel/preset-env": "^7.22.5",
+        "@babel/runtime-corejs3": "^7.22.5",
+        "@types/jest": "^29.5.2",
         "@types/crypto-js": "^4.1.1",
         "jest": "^29.5.0",
         "jest-environment-jsdom": "^29.5.0",
         "ts-jest": "^29.1.0",
-        "typescript": "^5.0.4"
+        "typescript": "^5.1.3"
     }
 }
