@@ -22,6 +22,7 @@ export * from './bridges/BridgeUtils';
 export * from './bridges/IBridgeHost';
 
 // business
+export * from './business/ApiService';
 export * from './business/BusinessTax';
 export * from './business/BusinessUtils';
 export * from './business/Currency';

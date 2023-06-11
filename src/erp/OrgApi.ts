@@ -9,6 +9,7 @@ import { EntityApi } from './EntityApi';
 import { OrgListRQ } from './rq/OrgListRQ';
 import { OrgQueryRQ } from './rq/OrgQueryRQ';
 import { SendActionMessageRQ } from './rq/SendActionMessageRQ';
+import { ApiService } from '../business/ApiService';
 
 const cachedOrgs: { [P: number]: OrgViewDto | undefined | null } = {};
 
@@ -22,6 +23,17 @@ export class OrgApi extends EntityApi {
      */
     constructor(app: IApp) {
         super('Organization', app);
+    }
+
+    /**
+     * Check API service's availability
+     * @param api API service id
+     * @param payload Payload
+     * @returns Result
+     */
+    checkApiService(api: ApiService, payload?: IApiPayload<boolean>) {
+        payload ??= { showLoading: false };
+        return this.api.get(`${this.flag}/CheckApiService`, { api }, payload);
     }
 
     /**
