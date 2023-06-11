@@ -4,7 +4,7 @@ import { IApp } from '../app/IApp';
 import { OrgDto } from './dto/OrgDto';
 import { OrgQueryDto } from './dto/OrgQueryDto';
 import { OrgViewDto } from './dto/OrgViewDto';
-import { IdResultPayload } from './dto/ResultPayload';
+import { IdResultPayload, StringIdResultPayload } from './dto/ResultPayload';
 import { EntityApi } from './EntityApi';
 import { OrgListRQ } from './rq/OrgListRQ';
 import { OrgQueryRQ } from './rq/OrgQueryRQ';
@@ -31,7 +31,10 @@ export class OrgApi extends EntityApi {
      * @param payload Payload
      * @returns Result
      */
-    checkApiService(api: ApiService, payload?: IApiPayload<boolean>) {
+    checkApiService(
+        api: ApiService,
+        payload?: IApiPayload<StringIdResultPayload>
+    ) {
         payload ??= { showLoading: false };
         return this.api.get(`${this.flag}/CheckApiService`, { api }, payload);
     }

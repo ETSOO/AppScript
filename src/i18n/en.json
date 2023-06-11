@@ -168,6 +168,7 @@
     "send": "Send",
     "setAsDefault": "Set as default",
     "settings": "Settings",
+    "serviceDisabled": "The service is not enabled or has been disabled",
     "showIt": "Show it",
     "signout": "Sign out",
     "smartERP": "SmartERP",
