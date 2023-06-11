@@ -31,10 +31,7 @@ export class OrgApi extends EntityApi {
      * @param payload Payload
      * @returns Result
      */
-    checkApiService(
-        api: ApiService,
-        payload?: IApiPayload<StringIdResultPayload>
-    ) {
+    checkApiService(api: ApiService, payload?: StringIdResultPayload) {
         payload ??= { showLoading: false };
         return this.api.get(`${this.flag}/CheckApiService`, { api }, payload);
     }
