@@ -281,6 +281,18 @@ export interface IApp {
     detectIP(callback?: IDetectIPCallback): void;
 
     /**
+     * Download file
+     * @param stream File stream
+     * @param filename File name
+     * @param callback callback
+     */
+    download(
+        stream: ReadableStream,
+        filename?: string,
+        callback?: (success: boolean | undefined) => void
+    ): Promise<void>;
+
+    /**
      * Encrypt message
      * @param message Message
      * @param passphrase Secret passphrase

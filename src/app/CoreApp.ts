@@ -959,6 +959,49 @@ export abstract class CoreApp<
     }
 
     /**
+     * Download file
+     * @param stream File stream
+     * @param filename File name
+     * @param callback callback
+     */
+    async download(
+        stream: ReadableStream,
+        filename?: string,
+        callback?: (success: boolean | undefined) => void
+    ) {
+        const downloadFile = async () => {
+            let success = await DomUtils.downloadFile(
+                stream,
+                filename,
+                BridgeUtils.host == null
+            );
+            if (success == null) {
+                success = await DomUtils.downloadFile(stream, filename, false);
+            }
+
+            if (callback) {
+                callback(success);
+            } else if (success)
+                this.notifier.message(
+                    NotificationMessageType.Success,
+                    this.get('fileDownloaded')!
+                );
+        };
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/UserActivation/isActive
+        if (
+            'userActivation' in navigator &&
+            !(navigator.userActivation as any).isActive
+        ) {
+            this.notifier.alert(this.get('reactivateTip')!, async () => {
+                await downloadFile();
+            });
+        } else {
+            await downloadFile();
+        }
+    }
+
+    /**
      * Encrypt message
      * @param message Message
      * @param passphrase Secret passphrase
