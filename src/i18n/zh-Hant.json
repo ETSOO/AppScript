@@ -218,6 +218,8 @@
     "unitJIN": "斤",
     "unitKILOGRAM": "公斤",
     "unitTIME": "次",
+    "unitTON": "噸",
+    "unitM3": "立方米",
     "update": "更新",
     "updateReady": "更新就緒",
     "updateTime": "更新時間",

@@ -63,6 +63,17 @@ export enum ProductWeightUnit {
 }
 
 /**
+ * Product other units
+ */
+export enum ProductOtherUnit {
+    /**
+     * Cubic meter
+     * 立方米
+     */
+    M3 = 50
+}
+
+/**
  * Product units enum
  * Repeat options take range 10 - 39
  * @see com.etsoo.CoreFramework.Business.ProductUnit
@@ -71,13 +82,15 @@ export const ProductUnit = {
     ...ProductBaseUnit,
     ...RepeatOption,
     ...ProductAssetUnit,
-    ...ProductWeightUnit
+    ...ProductWeightUnit,
+    ...ProductOtherUnit
 };
 export type ProductUnit =
     | ProductBaseUnit
     | RepeatOption
     | ProductAssetUnit
-    | ProductWeightUnit;
+    | ProductWeightUnit
+    | ProductOtherUnit;
 
 /**
  * Product asset units enum
