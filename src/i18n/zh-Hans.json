@@ -50,7 +50,7 @@
     "dataPrivacyInternal": "所有用户",
     "dataPrivacyPrivate": "创建者私有",
     "dataPrivacyPublic": "完全公开",
-    "default": "默认",
+    "defaultItem": "默认",
     "delete": "删除",
     "deleteConfirm": "确定要永久删除此{0}吗？",
     "description": "描述",
