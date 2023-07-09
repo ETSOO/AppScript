@@ -254,6 +254,11 @@ export interface IApp {
     clearCacheToken(): void;
 
     /**
+     * Clear device id
+     */
+    clearDeviceId(): void;
+
+    /**
      * Decrypt message
      * @param messageEncrypted Encrypted message
      * @param passphrase Secret passphrase

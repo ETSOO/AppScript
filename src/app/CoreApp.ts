@@ -492,9 +492,20 @@ export abstract class CoreApp<
      * @returns true means device is invalid
      */
     checkDeviceResult(result: IActionResult): boolean {
-        if (result.type === 'NoValidData' && result.field === 'Device')
+        if (
+            result.type === 'DataProcessingFailed' ||
+            (result.type === 'NoValidData' && result.field === 'Device')
+        )
             return true;
         return false;
+    }
+
+    /**
+     * Clear device id
+     */
+    clearDeviceId() {
+        this._deviceId = '';
+        this.storage.setData(this.fields.deviceId, undefined);
     }
 
     /**
@@ -506,7 +517,7 @@ export abstract class CoreApp<
     async initCall(callback?: (result: boolean) => void, resetKeys?: boolean) {
         // Reset keys
         if (resetKeys) {
-            this._deviceId = '';
+            this.clearDeviceId();
             this.resetKeys();
         }
 
