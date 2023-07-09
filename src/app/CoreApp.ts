@@ -505,7 +505,8 @@ export abstract class CoreApp<
      */
     clearDeviceId() {
         this._deviceId = '';
-        this.storage.setData(this.fields.deviceId, undefined);
+        this.storage.clear([this.fields.deviceId], false);
+        this.storage.clear([this.fields.deviceId], true);
     }
 
     /**
@@ -576,7 +577,7 @@ export abstract class CoreApp<
             if (callback) callback(false);
 
             // Clear device id
-            this.storage.setData(this.fields.deviceId, undefined);
+            this.clearDeviceId();
 
             return;
         }
