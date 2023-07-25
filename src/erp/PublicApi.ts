@@ -159,6 +159,15 @@ export class PublicApi extends BaseApi {
     }
 
     /**
+     * Get organization's avatar URL
+     * @param id Organization id
+     * @returns Result
+     */
+    getOrgAvatar(id: number) {
+        return `${this.api.baseUrl}Storage/OrgAvatar/${id}`;
+    }
+
+    /**
      * Get currency label
      * @param currency Currency
      * @returns Label

@@ -333,6 +333,11 @@ test('Tests for publicApi', async () => {
     });
     expect(defaultExchangeRate?.exchangeRate).toBe(100);
 
+    const url = app.publicApi.getOrgAvatar(1);
+    expect(url).toBe(
+        'http://localhost/com.etsoo.SmartERPApi/api/Storage/OrgAvatar/1'
+    );
+
     /*
     const amount1 = await app.publicApi.exchangeAmount(1000, 'NZD', 'CNY');
     const amount2 = await app.publicApi.exchangeAmount(100, 'NZD', 'USD');
@@ -343,5 +348,6 @@ test('Tests for publicApi', async () => {
 
     const orgsQuery = await app.orgApi.query({ currentPage: 1, batchSize: 2 });
     console.log(orgsQuery);
+
     */
 });
