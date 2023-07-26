@@ -1667,7 +1667,10 @@ export abstract class CoreApp<
      * @param tryLogin Try to login again
      */
     toLoginPage(tryLogin?: boolean) {
-        const url = '/' + (tryLogin ? '' : '?tryLogin=false');
+        const url =
+            '/?url=' +
+            encodeURIComponent(location.href) +
+            (tryLogin ? '' : '&tryLogin=false');
         this.navigate(url);
     }
 
