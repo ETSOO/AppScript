@@ -11,6 +11,7 @@
     "back": "Back",
     "cancel": "Cancel",
     "changePassword": "Change password",
+    "changeReload": "{0} has just changed data, do you want to reload? Reloading will cause the current modification to be lost!",
     "clickForDetails": "Click for details",
     "city": "City",
     "clear": "Clear",
