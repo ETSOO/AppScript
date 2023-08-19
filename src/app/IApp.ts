@@ -607,7 +607,7 @@ export interface IApp {
     ): Promise<boolean>;
 
     /**
-     * Signout
+     * Signout, with userLogout and toLoginPage
      */
     signout(): Promise<void>;
 
@@ -641,8 +641,9 @@ export interface IApp {
     /**
      * User logout
      * @param clearToken Clear refresh token or not
+     * @param noTrigger No trigger for state change
      */
-    userLogout(clearToken: boolean): void;
+    userLogout(clearToken: boolean, noTrigger?: boolean): void;
 
     /**
      * User unauthorized

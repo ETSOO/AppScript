@@ -1639,7 +1639,7 @@ export abstract class CoreApp<
     }
 
     /**
-     * Signout
+     * Signout, with userLogout and toLoginPage
      * @param apiUrl Signout API URL
      */
     async signout() {
@@ -1655,8 +1655,8 @@ export abstract class CoreApp<
             }
         );
 
-        // Clear
-        this.userLogout();
+        // Clear, noTrigger = true, avoid state update
+        this.userLogout(true, true);
 
         // Go to login page
         this.toLoginPage(false, true);
@@ -1710,8 +1710,9 @@ export abstract class CoreApp<
     /**
      * User logout
      * @param clearToken Clear refresh token or not
+     * @param noTrigger No trigger for state change
      */
-    userLogout(clearToken: boolean = true) {
+    userLogout(clearToken: boolean = true, noTrigger: boolean = false) {
         this.authorize(undefined, clearToken ? undefined : '');
     }
 
