@@ -619,8 +619,9 @@ export interface IApp {
     /**
      * Go to the login page
      * @param tryLogin Try to login again
+     * @param removeUrl Remove current URL for reuse
      */
-    toLoginPage(tryLogin?: boolean): void;
+    toLoginPage(tryLogin?: boolean, removeUrl?: boolean): void;
 
     /**
      * Try login, returning false means is loading

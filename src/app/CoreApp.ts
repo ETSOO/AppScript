@@ -1659,18 +1659,19 @@ export abstract class CoreApp<
         this.userLogout();
 
         // Go to login page
-        this.toLoginPage();
+        this.toLoginPage(false, true);
     }
 
     /**
      * Go to the login page
      * @param tryLogin Try to login again
+     * @param removeUrl Remove current URL for reuse
      */
-    toLoginPage(tryLogin?: boolean) {
+    toLoginPage(tryLogin?: boolean, removeUrl?: boolean) {
         const url =
-            '/?url=' +
-            encodeURIComponent(location.href) +
-            (tryLogin ? '' : '&tryLogin=false');
+            `/?tryLogin=${tryLogin ?? false}` +
+            (removeUrl ? '' : '&url=' + encodeURIComponent(location.href));
+
         this.navigate(url);
     }
 
