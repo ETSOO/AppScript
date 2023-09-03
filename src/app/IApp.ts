@@ -607,6 +607,19 @@ export interface IApp {
     ): Promise<boolean>;
 
     /**
+     * Setup Api error handler
+     * @param api Api
+     * @param handlerFor401 Handler for 401 error
+     */
+    setApiErrorHandler(api: IApi, handlerFor401?: boolean): void;
+
+    /**
+     * Setup Api loading
+     * @param api Api
+     */
+    setApiLoading(api: IApi): void;
+
+    /**
      * Signout, with userLogout and toLoginPage
      */
     signout(): Promise<void>;

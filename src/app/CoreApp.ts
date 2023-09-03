@@ -455,22 +455,30 @@ export abstract class CoreApp<
     /**
      * Setup Api error handler
      * @param api Api
-     * @param ignore401 Ignore 401 error try login
+     * @param handlerFor401 Handler for 401 error
      */
-    protected setApiErrorHandler(api: IApi, ignore401: boolean = false) {
+    public setApiErrorHandler(
+        api: IApi,
+        handlerFor401?: boolean | (() => void)
+    ) {
         api.onError = (error: ApiDataError) => {
             // Error code
             const status = error.response
                 ? api.transformResponse(error.response).status
                 : undefined;
 
-            if (status === 401 && !ignore401) {
-                // When status is equal to 401, unauthorized, try login
-                this.tryLogin();
-            } else {
-                // Report the error
-                this.notifier.alert(this.formatError(error));
+            if (status === 401) {
+                if (handlerFor401 === false) return;
+                if (typeof handlerFor401 === 'function') {
+                    handlerFor401();
+                } else {
+                    this.tryLogin();
+                }
+                return;
             }
+
+            // Report the error
+            this.notifier.alert(this.formatError(error));
         };
     }
 
@@ -478,7 +486,7 @@ export abstract class CoreApp<
      * Setup Api loading
      * @param api Api
      */
-    protected setApiLoading(api: IApi) {
+    public setApiLoading(api: IApi) {
         // onRequest, show loading or not, rewrite the property to override default action
         api.onRequest = (data) => {
             if (data.showLoading == null || data.showLoading) {
