@@ -215,18 +215,6 @@ export interface IApp {
     ): void;
 
     /**
-     * Service application API login
-     * @param appApi Service application API
-     * @param relogin Relogin try
-     * @param callback Callback
-     */
-    apiLogin(
-        appApi: IAppApi,
-        relogin?: boolean,
-        callback?: (result: RefreshTokenResult, successData?: string) => void
-    ): Promise<boolean>;
-
-    /**
      * Authorize
      * @param token New token
      * @param refreshToken Refresh token

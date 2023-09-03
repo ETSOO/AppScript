@@ -39,7 +39,6 @@ import {
 } from './IApp';
 import { UserRole } from './UserRole';
 import type CryptoJS from 'crypto-js';
-import { IAppApi } from './IAppApi';
 
 type CJType = typeof CryptoJS;
 let CJ: CJType;
@@ -447,6 +446,40 @@ export abstract class CoreApp<
         api.baseUrl = this.settings.endpoint;
 
         // onRequest, show loading or not, rewrite the property to override default action
+        this.setApiLoading(api);
+
+        // Global API error handler
+        this.setApiErrorHandler(api);
+    }
+
+    /**
+     * Setup Api error handler
+     * @param api Api
+     * @param ignore401 Ignore 401 error try login
+     */
+    protected setApiErrorHandler(api: IApi, ignore401: boolean = false) {
+        api.onError = (error: ApiDataError) => {
+            // Error code
+            const status = error.response
+                ? api.transformResponse(error.response).status
+                : undefined;
+
+            if (status === 401 && !ignore401) {
+                // When status is equal to 401, unauthorized, try login
+                this.tryLogin();
+            } else {
+                // Report the error
+                this.notifier.alert(this.formatError(error));
+            }
+        };
+    }
+
+    /**
+     * Setup Api loading
+     * @param api Api
+     */
+    protected setApiLoading(api: IApi) {
+        // onRequest, show loading or not, rewrite the property to override default action
         api.onRequest = (data) => {
             if (data.showLoading == null || data.showLoading) {
                 this.notifier.showLoading();
@@ -459,22 +492,6 @@ export abstract class CoreApp<
                 this.notifier.hideLoading();
             }
             this.lastCalled = true;
-        };
-
-        // Global API error handler
-        api.onError = (error: ApiDataError) => {
-            // Error code
-            const status = error.response
-                ? api.transformResponse(error.response).status
-                : undefined;
-
-            if (status === 401) {
-                // When status is equal to 401, unauthorized, try login
-                this.tryLogin();
-            } else {
-                // Report the error
-                this.notifier.alert(this.formatError(error));
-            }
         };
     }
 
@@ -699,26 +716,6 @@ export abstract class CoreApp<
         const message =
             typeof result === 'string' ? result : this.formatResult(result);
         this.notifier.alert(message, callback);
-    }
-
-    /**
-     * Service application API login
-     * @param appApi Service application API
-     * @param relogin Relogin try
-     * @param callback Callback
-     */
-    apiLogin(
-        appApi: IAppApi,
-        relogin: boolean = true,
-        callback?: (result: RefreshTokenResult, successData?: string) => void
-    ) {
-        return this.refreshToken({
-            callback,
-            data: appApi.getrefreshTokenData(),
-            relogin,
-            showLoading: false,
-            appApi
-        });
     }
 
     /**
