@@ -39,6 +39,7 @@ import {
 } from './IApp';
 import { UserRole } from './UserRole';
 import type CryptoJS from 'crypto-js';
+import { IAppApi } from './IAppApi';
 
 type CJType = typeof CryptoJS;
 let CJ: CJType;
@@ -698,6 +699,26 @@ export abstract class CoreApp<
         const message =
             typeof result === 'string' ? result : this.formatResult(result);
         this.notifier.alert(message, callback);
+    }
+
+    /**
+     * Service application API login
+     * @param appApi Service application API
+     * @param relogin Relogin try
+     * @param callback Callback
+     */
+    apiLogin(
+        appApi: IAppApi,
+        relogin: boolean = true,
+        callback?: (result: RefreshTokenResult, successData?: string) => void
+    ) {
+        return this.refreshToken({
+            callback,
+            data: appApi.getrefreshTokenData(),
+            relogin,
+            showLoading: false,
+            appApi
+        });
     }
 
     /**

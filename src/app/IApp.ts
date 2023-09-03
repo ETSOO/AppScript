@@ -19,6 +19,7 @@ import { IUser } from '../state/User';
 import { IAppSettings } from './AppSettings';
 import { UserRole } from './UserRole';
 import { EntityStatus } from '../business/EntityStatus';
+import { IAppApi } from './IAppApi';
 
 /**
  * Detect IP callback interface
@@ -69,6 +70,11 @@ export interface RefreshTokenProps<D extends object> {
      * Show loading bar or not
      */
     showLoading?: boolean;
+
+    /**
+     * Service application API
+     */
+    appApi?: IAppApi;
 }
 
 /**
@@ -207,6 +213,18 @@ export interface IApp {
         result: IActionResult | string,
         callback?: NotificationReturn<void>
     ): void;
+
+    /**
+     * Service application API login
+     * @param appApi Service application API
+     * @param relogin Relogin try
+     * @param callback Callback
+     */
+    apiLogin(
+        appApi: IAppApi,
+        relogin?: boolean,
+        callback?: (result: RefreshTokenResult, successData?: string) => void
+    ): Promise<boolean>;
 
     /**
      * Authorize

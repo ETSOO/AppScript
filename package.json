@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.4.34",
+    "version": "1.4.35",
     "description": "Applications shared TypeScript framework",
     "main": "lib/cjs/index.js",
     "module": "lib/mjs/index.js",
@@ -52,7 +52,7 @@
     },
     "homepage": "https://github.com/ETSOO/AppScript#readme",
     "dependencies": {
-        "@etsoo/notificationbase": "^1.1.27",
+        "@etsoo/notificationbase": "^1.1.28",
         "@etsoo/restclient": "^1.0.89",
         "@etsoo/shared": "^1.2.10",
         "crypto-js": "^4.1.1"
