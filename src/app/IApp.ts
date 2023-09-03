@@ -19,7 +19,6 @@ import { IUser } from '../state/User';
 import { IAppSettings } from './AppSettings';
 import { UserRole } from './UserRole';
 import { EntityStatus } from '../business/EntityStatus';
-import { IAppApi } from './IAppApi';
 
 /**
  * Detect IP callback interface
@@ -70,11 +69,6 @@ export interface RefreshTokenProps<D extends object> {
      * Show loading bar or not
      */
     showLoading?: boolean;
-
-    /**
-     * Service application API
-     */
-    appApi?: IAppApi;
 }
 
 /**

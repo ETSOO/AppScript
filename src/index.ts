@@ -15,7 +15,6 @@ export * from './app/AppSettings';
 export * from './app/CoreApp';
 export * from './app/ExternalSettings';
 export * from './app/IApp';
-export * from './app/IAppApi';
 export * from './app/UserRole';
 
 // bridges
