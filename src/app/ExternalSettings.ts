@@ -40,7 +40,9 @@ export namespace ExternalSettings {
     /**
      * Create instance
      */
-    export function Create(): IExternalSettings | undefined {
+    export function create<T extends IExternalSettings = IExternalSettings>():
+        | T
+        | undefined {
         if ('settings' in globalThis) {
             const settings = Reflect.get(globalThis, 'settings');
             if (typeof settings === 'object') {
@@ -52,7 +54,7 @@ export namespace ExternalSettings {
                     format(settings, hostname);
                 }
 
-                return settings as IExternalSettings;
+                return settings as T;
             }
         }
         return undefined;
