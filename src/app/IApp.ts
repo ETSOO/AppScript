@@ -611,7 +611,10 @@ export interface IApp {
      * @param api Api
      * @param handlerFor401 Handler for 401 error
      */
-    setApiErrorHandler(api: IApi, handlerFor401?: boolean): void;
+    setApiErrorHandler(
+        api: IApi,
+        handlerFor401?: boolean | (() => Promise<void>)
+    ): void;
 
     /**
      * Setup Api loading

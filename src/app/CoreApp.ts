@@ -459,7 +459,7 @@ export abstract class CoreApp<
      */
     public setApiErrorHandler(
         api: IApi,
-        handlerFor401?: boolean | (() => void)
+        handlerFor401?: boolean | (() => Promise<void>)
     ) {
         api.onError = (error: ApiDataError) => {
             // Error code
