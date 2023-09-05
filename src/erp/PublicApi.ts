@@ -259,6 +259,15 @@ export class PublicApi extends BaseApi {
     }
 
     /**
+     * Get all supported cultures
+     * @param payload Payload
+     * @returns Result
+     */
+    supportedCultures(payload?: IApiPayload<ListType1[]>) {
+        return this.api.get('Public/SupportedCultures', undefined, payload);
+    }
+
+    /**
      * Get all product units
      * @returns Units
      */

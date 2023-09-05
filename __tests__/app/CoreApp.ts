@@ -349,5 +349,7 @@ test('Tests for publicApi', async () => {
     const orgsQuery = await app.orgApi.query({ currentPage: 1, batchSize: 2 });
     console.log(orgsQuery);
 
+    const cultures = await app.publicApi.supportedCultures();
+    expect(cultures?.some((culture) => culture.id === 'zh-Hans')).toBeTruthy();
     */
 });
