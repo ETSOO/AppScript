@@ -19,6 +19,7 @@ import { IUser } from '../state/User';
 import { IAppSettings } from './AppSettings';
 import { UserRole } from './UserRole';
 import { EntityStatus } from '../business/EntityStatus';
+import { Currency } from '../business/Currency';
 
 /**
  * Detect IP callback interface
@@ -129,7 +130,7 @@ export interface IApp {
     /**
      * Currency, like USD for US dollar
      */
-    readonly currency: string;
+    readonly currency: Currency;
 
     /**
      * Device id

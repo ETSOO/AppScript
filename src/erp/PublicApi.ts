@@ -52,7 +52,7 @@ export class PublicApi extends BaseApi {
 
     /**
      * Get currencies
-     * @param names Limited currency names for local data, undefined will try to retrive remoately
+     * @param names Limited currency names for local data, undefined will try to retrive remotely
      * @returns Result
      */
     currencies(): Promise<CurrencyDto[] | undefined>;

@@ -39,6 +39,7 @@ import {
 } from './IApp';
 import { UserRole } from './UserRole';
 import type CryptoJS from 'crypto-js';
+import { Currency } from '../business/Currency';
 
 type CJType = typeof CryptoJS;
 let CJ: CJType;
@@ -126,7 +127,7 @@ export abstract class CoreApp<
         return this._culture;
     }
 
-    private _currency!: string;
+    private _currency!: Currency;
     /**
      * Currency, like USD for US dollar
      */
