@@ -1359,13 +1359,13 @@ export abstract class CoreApp<
     /**
      * Get enum item number id list
      * @param em Enum
-     * @param prefix Label prefix
+     * @param prefix Label prefix or callback
      * @param filter Filter
      * @returns List
      */
     getEnumList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
         em: E,
-        prefix: string,
+        prefix: string | ((key: string) => string),
         filter?:
             | ((
                   id: E[keyof E],
@@ -1375,11 +1375,16 @@ export abstract class CoreApp<
     ): ListType[] {
         const list: ListType[] = [];
 
+        const getKey =
+            typeof prefix === 'function'
+                ? prefix
+                : (key: string) => prefix + key;
+
         if (Array.isArray(filter)) {
             filter.forEach((id) => {
                 if (typeof id !== 'number') return;
                 const key = DataTypes.getEnumKey(em, id);
-                var label = this.get<string>(prefix + key) ?? key;
+                const label = this.get<string>(getKey(key)) ?? key;
                 list.push({ id, label });
             });
         } else {
@@ -1392,7 +1397,7 @@ export abstract class CoreApp<
                     id = fid;
                 }
                 if (typeof id !== 'number') continue;
-                var label = this.get<string>(prefix + key) ?? key;
+                const label = this.get<string>(getKey(key)) ?? key;
                 list.push({ id, label });
             }
         }
@@ -1402,19 +1407,25 @@ export abstract class CoreApp<
     /**
      * Get enum item string id list
      * @param em Enum
-     * @param prefix Label prefix
+     * @param prefix Label prefix or callback
      * @param filter Filter
      * @returns List
      */
     getEnumStrList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
         em: E,
-        prefix: string,
+        prefix: string | ((key: string) => string),
         filter?: (
             id: E[keyof E],
             key: keyof E & string
         ) => E[keyof E] | undefined
     ): ListType1[] {
         const list: ListType1[] = [];
+
+        const getKey =
+            typeof prefix === 'function'
+                ? prefix
+                : (key: string) => prefix + key;
+
         const keys = DataTypes.getEnumKeys(em);
         for (const key of keys) {
             let id = em[key as keyof E];
@@ -1423,7 +1434,7 @@ export abstract class CoreApp<
                 if (fid == null) continue;
                 id = fid;
             }
-            var label = this.get<string>(prefix + key) ?? key;
+            var label = this.get<string>(getKey(key)) ?? key;
             list.push({ id: id.toString(), label });
         }
         return list;

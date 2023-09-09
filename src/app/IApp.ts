@@ -450,13 +450,13 @@ export interface IApp {
     /**
      * Get enum item number id list
      * @param em Enum
-     * @param prefix Label prefix
+     * @param prefix Label prefix or callback
      * @param filter Filter
      * @returns List
      */
     getEnumList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
         em: E,
-        prefix: string,
+        prefix: string | ((key: string) => string),
         filter?: (
             id: E[keyof E],
             key: keyof E & string
@@ -466,13 +466,13 @@ export interface IApp {
     /**
      * Get enum item string id list
      * @param em Enum
-     * @param prefix Label prefix
+     * @param prefix Label prefix or callback
      * @param filter Filter
      * @returns List
      */
     getEnumStrList<E extends DataTypes.EnumBase = DataTypes.EnumBase>(
         em: E,
-        prefix: string,
+        prefix: string | ((key: string) => string),
         filter?:
             | ((
                   id: E[keyof E],

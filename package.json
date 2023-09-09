@@ -1,6 +1,6 @@
 {
     "name": "@etsoo/appscript",
-    "version": "1.4.43",
+    "version": "1.4.44",
     "description": "Applications shared TypeScript framework",
     "main": "lib/cjs/index.js",
     "module": "lib/mjs/index.js",
@@ -59,7 +59,7 @@
     },
     "devDependencies": {
         "@babel/cli": "^7.22.15",
-        "@babel/core": "^7.22.15",
+        "@babel/core": "^7.22.17",
         "@babel/plugin-transform-runtime": "^7.22.15",
         "@babel/preset-env": "^7.22.15",
         "@babel/runtime-corejs3": "^7.22.15",
