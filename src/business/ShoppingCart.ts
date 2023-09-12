@@ -1,4 +1,5 @@
 import { DataTypes, IStorage, NumberUtils, WindowStorage } from '@etsoo/shared';
+import { Currency } from './Currency';
 
 /**
  * Shopping cart owner
@@ -6,6 +7,8 @@ import { DataTypes, IStorage, NumberUtils, WindowStorage } from '@etsoo/shared';
  */
 export type ShoppingCartOwner = DataTypes.IdNameItem & {
     isSupplier?: boolean;
+    culture?: string;
+    currency?: Currency;
 };
 
 /**
@@ -13,7 +16,8 @@ export type ShoppingCartOwner = DataTypes.IdNameItem & {
  * 购物篮数据
  */
 export type ShoppingCartData<T extends ShoppingCartItem> = {
-    currency: string;
+    culture: string;
+    currency: Currency;
     owner: ShoppingCartOwner;
     items: T[];
     promotions: ShoppingPromotion[];
@@ -132,11 +136,12 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * Create identifier key
      * 创建识别键
      * @param currency Currency
+     * @param culture Culture
      * @param key Additional key
      * @returns Result
      */
-    static createKey(currency: string, key: string = 'KEY') {
-        return `ETSOO-CART-${key}-${currency}`;
+    static createKey(currency: Currency, culture: string, key: string = 'KEY') {
+        return `ETSOO-CART-${culture}-${key}-${currency}`;
     }
 
     /**
@@ -158,13 +163,15 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * Clear shopping cart
      * 清除购物篮
      * @param currency Currency
+     * @param culture Culture
      * @param storage Storage
      */
     static clearWith(
-        currency: string,
+        currency: Currency,
+        culture: string,
         storage: IStorage = new WindowStorage()
     ) {
-        const identifier = this.createKey(currency);
+        const identifier = this.createKey(currency, culture);
         this.clear(identifier, storage);
     }
 
@@ -213,7 +220,13 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * ISO currency id
      * 标准货币编号
      */
-    readonly currency: string;
+    readonly currency: Currency;
+
+    /**
+     * ISO culture id, like zh-Hans
+     * 标准语言文化编号
+     */
+    readonly culture: string;
 
     _items: T[] = [];
 
@@ -260,6 +273,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         const o = this.owner;
         return ShoppingCart.createKey(
             this.currency,
+            this.culture,
             o ? `${o.isSupplier ? 'S' : 'C'}${o.id}` : undefined
         );
     }
@@ -331,10 +345,10 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     /**
      * Constructor
      * 构造函数
-     * @param currency Currency ISO code
+     * @param init Currency & culture ISO code array
      * @param storage Data storage
      */
-    constructor(currency: string, storage?: IStorage);
+    constructor(init: [Currency, string], storage?: IStorage);
 
     /**
      * Constructor
@@ -351,14 +365,16 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * @param storage Data storage
      */
     constructor(
-        currencyOrState: string | ShoppingCartData<T>,
+        currencyOrState: [Currency, string] | ShoppingCartData<T>,
         private readonly storage: IStorage = new WindowStorage()
     ) {
-        if (typeof currencyOrState === 'string') {
-            this.currency = currencyOrState;
+        if (Array.isArray(currencyOrState)) {
+            this.currency = currencyOrState[0];
+            this.culture = currencyOrState[1];
         } else {
             this.setCartData(currencyOrState);
             this.currency = currencyOrState.currency;
+            this.culture = currencyOrState.culture;
         }
         this.symbol = NumberUtils.getCurrencySymbol(this.currency);
     }
@@ -463,9 +479,10 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     save(persisted: boolean = true) {
         if (this.owner == null) return;
 
-        const { currency, owner, items, promotions, formData } = this;
+        const { currency, culture, owner, items, promotions, formData } = this;
         const data: ShoppingCartData<T> = {
             currency,
+            culture,
             owner,
             items,
             promotions,
