@@ -22,3 +22,23 @@ export type CultureItem = {
      */
     jsonData?: string;
 };
+
+/**
+ * Culture grid item for editing
+ */
+export type CultureGridItem = {
+    /**
+     * Culture
+     */
+    id: string;
+
+    /**
+     * Title /  label
+     */
+    title: string;
+
+    /**
+     * JSON data related
+     */
+    jsonData?: string;
+};
