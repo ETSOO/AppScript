@@ -1,4 +1,5 @@
-import { DataTypes, ListType } from '@etsoo/shared';
+import { DataTypes, ListType, ListType1 } from '@etsoo/shared';
+import { CultureGridItem } from './CultureItem';
 
 /**
  * Business utils
@@ -41,6 +42,37 @@ export namespace BusinessUtils {
         if (flen <= maxChars) return firstLetters;
 
         return defaultTitle;
+    }
+
+    /**
+     * Format cultures for data
+     * @param cultures Supported cultures
+     * @param data Data to format
+     */
+    export function formatCultues(
+        cultures: ListType1[],
+        data: { cultures?: CultureGridItem[] }
+    ) {
+        // Add the lost cultures
+        const allCultures = data.cultures ?? [];
+        cultures.forEach((culture) => {
+            if (!allCultures.some((a) => a.id === culture.id)) {
+                allCultures.push({ id: culture.id, title: '' });
+            }
+        });
+
+        // Remove the default culture
+        const index = allCultures.findIndex((a) => a.id === cultures[0].id);
+        if (index !== -1) allCultures.splice(index, 1);
+
+        // Sort
+        allCultures.sortByProperty(
+            'id',
+            cultures.map((c) => c.id)
+        );
+
+        // Set back
+        data.cultures = allCultures;
     }
 
     /**
