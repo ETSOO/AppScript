@@ -25,6 +25,7 @@ export * from './bridges/IBridgeHost';
 export * from './business/ApiService';
 export * from './business/BusinessTax';
 export * from './business/BusinessUtils';
+export * from './business/CultureItem';
 export * from './business/Currency';
 export * from './business/DataPrivacy';
 export * from './business/EntityStatus';
