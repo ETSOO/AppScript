@@ -216,17 +216,30 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         }
     }
 
+    _currency!: Currency;
+
     /**
      * ISO currency id
      * 标准货币编号
      */
-    readonly currency: Currency;
+    get currency() {
+        return this._currency;
+    }
+    private set currency(value: Currency) {
+        this._currency = value;
+    }
 
+    _culture!: string;
     /**
      * ISO culture id, like zh-Hans
      * 标准语言文化编号
      */
-    readonly culture: string;
+    get culture() {
+        return this._culture;
+    }
+    private set culture(value: string) {
+        this._culture = value;
+    }
 
     _items: T[] = [];
 
@@ -259,11 +272,17 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      */
     formData: any;
 
+    _symbol: string | undefined;
     /**
      * Currency symbol
      * 币种符号
      */
-    readonly symbol: string | undefined;
+    get symbol() {
+        return this._symbol;
+    }
+    private set symbol(value: string | undefined) {
+        this._symbol = value;
+    }
 
     /**
      * Cart identifier
@@ -369,14 +388,13 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         private readonly storage: IStorage = new WindowStorage()
     ) {
         if (Array.isArray(currencyOrState)) {
-            this.currency = currencyOrState[0];
-            this.culture = currencyOrState[1];
+            this.changeCurrency(currencyOrState[0]);
+            this.changeCulture(currencyOrState[1]);
         } else {
             this.setCartData(currencyOrState);
-            this.currency = currencyOrState.currency;
-            this.culture = currencyOrState.culture;
+            this.changeCurrency(currencyOrState.currency);
+            this.changeCulture(currencyOrState.culture);
         }
-        this.symbol = NumberUtils.getCurrencySymbol(this.currency);
     }
 
     private setCartData(state: ShoppingCartData<T> | undefined) {
@@ -418,6 +436,23 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     cachePrice(id: T['id'], price: number, overrideExisting: boolean = false) {
         if (overrideExisting || this.prices[id] == null)
             this.prices[id] = price;
+    }
+
+    /**
+     * Change currency
+     * @param currency Currency
+     */
+    changeCurrency(currency: Currency) {
+        this.currency = currency;
+        this.symbol = NumberUtils.getCurrencySymbol(this.currency);
+    }
+
+    /**
+     * Change culture
+     * @param culture Culture
+     */
+    changeCulture(culture: string) {
+        this.culture = culture;
     }
 
     /**
@@ -464,10 +499,21 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     }
 
     /**
-     * Reset
+     * Reset currency and culture
+     * @param currency New currency
+     * @param culture New culture
+     */
+    reset(currency: Currency, culture: string) {
+        this.clear(true);
+        this.changeCurrency(currency);
+        this.changeCulture(culture);
+    }
+
+    /**
+     * Reset item
      * @param item Shopping cart item
      */
-    reset(item: ShoppingCartItem) {
+    resetItem(item: ShoppingCartItem) {
         item.discount = 0;
         item.currentPrice = undefined;
         item.promotions = [];
