@@ -353,7 +353,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * Cached prices
      * 缓存的价格
      */
-    private prices: Record<T['id'], number> = {} as any;
+    private prices = <Record<T['id'], number>>{};
 
     /**
      * Onchange callback
@@ -462,7 +462,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     clear(keepOwner?: boolean) {
         this.items.length = 0;
         this.promotions.length = 0;
-        this.prices = {} as any;
+        this.prices = <Record<T['id'], number>>{};
 
         if (keepOwner) {
             this.save();
@@ -604,7 +604,8 @@ export class ShoppingCart<T extends ShoppingCartItem> {
                     price,
                     qty,
                     subtotal: price * qty,
-                    discount: 0
+                    discount: 0,
+                    promotions: Array<ShoppingPromotion>()
                 } as T;
                 this.addItem(newItem);
             }
