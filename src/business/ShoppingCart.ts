@@ -334,7 +334,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * Cached prices
      * 缓存的价格
      */
-    private readonly prices: Record<T['id'], number> = {} as any;
+    private prices: Record<T['id'], number> = {} as any;
 
     /**
      * Onchange callback
@@ -427,6 +427,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     clear(keepOwner?: boolean) {
         this.items.length = 0;
         this.promotions.length = 0;
+        this.prices = {} as any;
 
         if (keepOwner) {
             this.save();
