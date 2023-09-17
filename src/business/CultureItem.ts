@@ -18,6 +18,11 @@ export type CultureItem = {
     title: string;
 
     /**
+     * Description
+     */
+    description?: string;
+
+    /**
      * JSON data related
      */
     jsonData?: string;
@@ -36,6 +41,11 @@ export type CultureGridItem = {
      * Title /  label
      */
     title: string;
+
+    /**
+     * Description
+     */
+    description?: string;
 
     /**
      * JSON data related
