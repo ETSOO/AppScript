@@ -80,6 +80,7 @@
     "info": "Info",
     "item": "Item",
     "itemExists": "'{0}' already exists",
+    "jsonData": "Extended data",
     "keywords": "Keywords",
     "loading": "Loading...",
     "login": "Login",
