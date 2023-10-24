@@ -605,6 +605,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
                     ...data,
                     id,
                     price,
+                    assetQty,
                     subtotal: price * qty * assetQty,
                     discount: 0,
                     promotions: Array<ShoppingPromotion>()
@@ -623,6 +624,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
             const newItem = {
                 ...item,
                 price,
+                assetQty,
                 subtotal: price * qty * assetQty,
                 discount: 0
             };
