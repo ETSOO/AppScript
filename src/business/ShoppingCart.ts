@@ -78,6 +78,11 @@ export type ShoppingCartItemBase = {
     qty: number;
 
     /**
+     * Asset qty
+     */
+    assetQty?: number;
+
+    /**
      * Product level promotions
      * 产品层次促销
      */
@@ -572,6 +577,63 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     }
 
     /**
+     * Update asset item
+     * 更新资产项目
+     * @param id Product id
+     * @param qty Asset qty
+     * @param itemCreator New item creator
+     * @returns Updated or not
+     */
+    updateAssetItem(
+        id: T['id'],
+        assetQty: number | undefined,
+        itemCreator?: () => Omit<
+            T,
+            'id' | 'price' | 'assetQty' | 'subtotal' | 'discount' | 'promotions'
+        >
+    ) {
+        if (assetQty == null || assetQty <= 0) assetQty = 1;
+
+        const index = this.items.findIndex((item) => item.id === id);
+        if (index === -1) {
+            // New
+            if (itemCreator) {
+                const price = this.prices[id];
+                const data = itemCreator();
+                const qty = data.qty;
+                const newItem = {
+                    ...data,
+                    id,
+                    price,
+                    subtotal: price * qty * assetQty,
+                    discount: 0,
+                    promotions: Array<ShoppingPromotion>()
+                } as T;
+                this.addItem(newItem);
+            }
+            return false;
+        } else {
+            // Update
+            const item = this.items[index];
+
+            // Price may be cached first
+            const price = this.prices[id] ?? item.price;
+            const qty = item.qty;
+
+            const newItem = {
+                ...item,
+                price,
+                subtotal: price * qty * assetQty,
+                discount: 0
+            };
+            this.items.splice(index, 1, newItem);
+            this.doChange('update', [item, newItem]);
+        }
+
+        return true;
+    }
+
+    /**
      * Update item
      * 更新项目
      * @param id Product id
@@ -598,12 +660,13 @@ export class ShoppingCart<T extends ShoppingCartItem> {
             // New
             if (itemCreator) {
                 const price = this.prices[id];
+                const data = itemCreator();
                 const newItem = {
-                    ...itemCreator(),
+                    ...data,
                     id,
                     price,
                     qty,
-                    subtotal: price * qty,
+                    subtotal: price * qty * (data.assetQty || 1),
                     discount: 0,
                     promotions: Array<ShoppingPromotion>()
                 } as T;
@@ -620,7 +683,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
                 ...item,
                 qty,
                 price,
-                subtotal: price * qty,
+                subtotal: price * qty * (item.assetQty || 1),
                 discount: 0
             };
             this.items.splice(index, 1, newItem);
@@ -642,7 +705,12 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         if (index !== -1) {
             const item = this.items[index];
             const qty = item.qty;
-            const newItem = { ...item, price, subtotal: price * qty };
+            const assetQty = item.assetQty || 1;
+            const newItem = {
+                ...item,
+                price,
+                subtotal: price * qty * assetQty
+            };
             this.items.splice(index, 1, newItem);
             this.doChange('update', [item, newItem]);
         }
