@@ -6,7 +6,6 @@ import { Currency } from './Currency';
  * 购物篮所有人
  */
 export type ShoppingCartOwner = DataTypes.IdNameItem & {
-    isSupplier?: boolean;
     culture?: string;
     currency?: Currency;
 };
@@ -22,6 +21,7 @@ export type ShoppingCartData<T extends ShoppingCartItem> = {
     items: T[];
     promotions: ShoppingPromotion[];
     formData?: any;
+    cache?: Record<string, unknown>;
 };
 
 /**
@@ -145,7 +145,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * @param key Additional key
      * @returns Result
      */
-    static createKey(currency: Currency, culture: string, key: string = 'KEY') {
+    static createKey(currency: Currency, culture: string, key: string) {
         return `ETSOO-CART-${culture}-${key}-${currency}`;
     }
 
@@ -162,22 +162,6 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         } catch (error) {
             console.log('ShoppingCart clear', error);
         }
-    }
-
-    /**
-     * Clear shopping cart
-     * 清除购物篮
-     * @param currency Currency
-     * @param culture Culture
-     * @param storage Storage
-     */
-    static clearWith(
-        currency: Currency,
-        culture: string,
-        storage: IStorage = new WindowStorage()
-    ) {
-        const identifier = this.createKey(currency, culture);
-        this.clear(identifier, storage);
     }
 
     /**
@@ -277,6 +261,12 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      */
     formData: any;
 
+    /**
+     * Cache
+     * 缓存对象
+     */
+    cache?: Record<string, unknown>;
+
     _symbol: string | undefined;
     /**
      * Currency symbol
@@ -290,16 +280,17 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     }
 
     /**
+     * Key for identifier
+     */
+    readonly key: string;
+
+    /**
      * Cart identifier
      * 购物篮标识
      */
     get identifier() {
         const o = this.owner;
-        return ShoppingCart.createKey(
-            this.currency,
-            this.culture,
-            o ? `${o.isSupplier ? 'S' : 'C'}${o.id}` : undefined
-        );
+        return ShoppingCart.createKey(this.currency, this.culture, this.key);
     }
 
     /**
@@ -369,32 +360,43 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     /**
      * Constructor
      * 构造函数
+     * @param key Key for identifier
      * @param init Currency & culture ISO code array
      * @param storage Data storage
      */
-    constructor(init: [Currency, string], storage?: IStorage);
+    constructor(key: string, init: [Currency, string], storage?: IStorage);
 
     /**
      * Constructor
      * 构造函数
+     * @param key Key for identifier
      * @param state Initialization state
      * @param storage Data storage
      */
-    constructor(state: ShoppingCartData<T>, storage?: IStorage);
+    constructor(key: string, state: ShoppingCartData<T>, storage?: IStorage);
 
     /**
      * Constructor
      * 构造函数
+     * @param key Key for identifier
      * @param currency Currency ISO code
      * @param storage Data storage
      */
     constructor(
+        key: string,
         currencyOrState: [Currency, string] | ShoppingCartData<T>,
         private readonly storage: IStorage = new WindowStorage()
     ) {
+        this.key = key;
+
         if (Array.isArray(currencyOrState)) {
             this.changeCurrency(currencyOrState[0]);
             this.changeCulture(currencyOrState[1]);
+
+            this.setCartData(
+                this.storage.getPersistedObject(this.identifier) ??
+                    this.storage.getObject(this.identifier)
+            );
         } else {
             this.setCartData(currencyOrState);
             this.changeCurrency(currencyOrState.currency);
@@ -403,11 +405,18 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     }
 
     private setCartData(state: ShoppingCartData<T> | undefined) {
-        const { owner, items = [], promotions = [], formData } = state ?? {};
+        const {
+            owner,
+            items = [],
+            promotions = [],
+            formData,
+            cache
+        } = state ?? {};
         this.owner = owner;
         this.items = items;
         this.promotions = promotions;
         this.formData = formData;
+        this.cache = cache;
     }
 
     private doChange(reason: ShoppingCartChangeReason, changedItems: T[]) {
@@ -555,14 +564,16 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     save(persisted: boolean = true) {
         if (this.owner == null) return;
 
-        const { currency, culture, owner, items, promotions, formData } = this;
+        const { currency, culture, owner, items, promotions, formData, cache } =
+            this;
         const data: ShoppingCartData<T> = {
             currency,
             culture,
             owner,
             items,
             promotions,
-            formData
+            formData,
+            cache
         };
 
         try {
