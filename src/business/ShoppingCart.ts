@@ -504,6 +504,21 @@ export class ShoppingCart<T extends ShoppingCartItem> {
     }
 
     /**
+     * Push item
+     * 推送项目
+     * @param data Item data
+     * @returns Added or not
+     */
+    pushItem(data: T) {
+        if (this.items.some((item) => item.id === data.id)) {
+            return false;
+        } else {
+            this.addItem(data);
+            return true;
+        }
+    }
+
+    /**
      * Reset currency and culture
      * @param currency New currency
      * @param culture New culture
@@ -512,6 +527,15 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         this.clear(true);
         this.changeCurrency(currency);
         this.changeCulture(culture);
+    }
+
+    /**
+     * Remove item from the index
+     * @param index Item index
+     */
+    removeItem(index: number) {
+        const removedItems = this.items.splice(index, 1);
+        this.doChange('remove', removedItems);
     }
 
     /**
@@ -655,8 +679,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         if (qty == null) {
             // Remove the item
             if (index !== -1) {
-                const removedItems = this.items.splice(index, 1);
-                this.doChange('remove', removedItems);
+                this.removeItem(index);
             }
         } else if (index === -1) {
             // New
