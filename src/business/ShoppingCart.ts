@@ -185,25 +185,11 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         }
     }
 
-    _owner?: ShoppingCartOwner;
     /**
      * Owner data
      * 所有者信息
      */
-    get owner() {
-        return this._owner;
-    }
-    set owner(value) {
-        if (this._owner?.id === value?.id) return;
-        this._owner = value;
-        if (value) {
-            const data = ShoppingCart.getCartData<T>(
-                this.storage,
-                this.identifier
-            );
-            if (data) this.setCartData(data);
-        }
-    }
+    owner?: ShoppingCartOwner;
 
     _currency!: Currency;
 
@@ -390,18 +376,18 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         this.key = key;
 
         if (Array.isArray(currencyOrState)) {
-            this.changeCurrency(currencyOrState[0]);
-            this.changeCulture(currencyOrState[1]);
-
-            this.setCartData(
-                this.storage.getPersistedObject(this.identifier) ??
-                    this.storage.getObject(this.identifier)
-            );
+            this.reset(currencyOrState[0], currencyOrState[1]);
         } else {
             this.setCartData(currencyOrState);
             this.changeCurrency(currencyOrState.currency);
             this.changeCulture(currencyOrState.culture);
         }
+    }
+    private getCartData(): ShoppingCartData<T> | undefined {
+        return (
+            this.storage.getPersistedObject(this.identifier) ??
+            this.storage.getObject(this.identifier)
+        );
     }
 
     private setCartData(state: ShoppingCartData<T> | undefined) {
@@ -533,9 +519,9 @@ export class ShoppingCart<T extends ShoppingCartItem> {
      * @param culture New culture
      */
     reset(currency: Currency, culture: string) {
-        this.clear(true);
         this.changeCurrency(currency);
         this.changeCulture(culture);
+        this.setCartData(this.getCartData());
     }
 
     /**
