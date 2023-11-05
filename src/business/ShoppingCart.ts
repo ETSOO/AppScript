@@ -463,6 +463,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
         this.items.length = 0;
         this.promotions.length = 0;
         this.prices = <Record<T['id'], number>>{};
+        this.cache = undefined;
 
         if (keepOwner) {
             this.save();
