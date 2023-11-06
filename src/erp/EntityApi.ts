@@ -161,6 +161,23 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
     }
 
     /**
+     * Sort with category
+     * @param category Category for grouping
+     * @param items Items to sort
+     * @param payload Payload
+     * @returns Result
+     */
+    protected sortWith<RQ extends { id: DataTypes.IdType }>(
+        category: number,
+        items: RQ[],
+        payload?: IApiPayload<number>
+    ) {
+        const data: Record<DataTypes.IdType, number> = {};
+        items.forEach((item, index) => (data[item.id] = index));
+        return this.api.put(`${this.flag}/Sort`, { category, data }, payload);
+    }
+
+    /**
      * Update
      * @param data Modal data
      * @param payload Payload
