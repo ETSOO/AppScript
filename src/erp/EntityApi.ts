@@ -1,7 +1,6 @@
 import { IApi, IApiPayload } from '@etsoo/restclient';
-import { DataTypes } from '@etsoo/shared';
+import { IActionResult, IdType } from '@etsoo/shared';
 import { IApp } from '../app/IApp';
-import { IActionResult } from '../result/IActionResult';
 import { BaseApi } from './BaseApi';
 import { AuditLinePayload } from './dto/AuditLineDto';
 import { ResultPayload } from './dto/ResultPayload';
@@ -43,15 +42,15 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * @param payload Payload
      */
     protected deleteBase<R extends IActionResult>(
-        id: DataTypes.IdType,
+        id: IdType,
         payload?: IApiPayload<R>
     ): Promise<R | undefined>;
     protected deleteBase<R extends IActionResult>(
-        ids: DataTypes.IdType[],
+        ids: IdType[],
         payload?: IApiPayload<R>
     ): Promise<R | undefined>;
     protected deleteBase<R extends IActionResult>(
-        id: DataTypes.IdType | DataTypes.IdType[],
+        id: IdType | IdType[],
         payload?: IApiPayload<R>
     ) {
         const query = Array.isArray(id)
@@ -71,7 +70,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * @returns Result
      */
     protected listBase<
-        T extends DataTypes.IdType,
+        T extends IdType,
         RQ extends TiplistRQ<T>,
         R extends object
     >(rq: RQ, payload?: IApiPayload<R[]>) {
@@ -84,7 +83,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * @param payload Payload
      * @returns Result
      */
-    protected mergeBase<T extends DataTypes.IdType = number>(
+    protected mergeBase<T extends IdType = number>(
         rq: MergeRQ<T>,
         payload?: ResultPayload
     ) {
@@ -99,7 +98,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * @returns Result
      */
     protected queryBase<
-        T extends DataTypes.IdType,
+        T extends IdType,
         RQ extends QueryRQ<T>,
         R extends object
     >(rq: RQ, payload?: IApiPayload<R[]>, queryKey: string = '') {
@@ -112,7 +111,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * @param payload Payload
      * @returns Result
      */
-    protected queryAuditBase<T extends DataTypes.IdType, R extends QueryRQ<T>>(
+    protected queryAuditBase<T extends IdType, R extends QueryRQ<T>>(
         rq: R,
         payload?: AuditLinePayload
     ) {
@@ -138,10 +137,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * @param payload Payload
      * @returns Result
      */
-    protected readBase<R extends object>(
-        id: DataTypes.IdType,
-        payload?: IApiPayload<R>
-    ) {
+    protected readBase<R extends object>(id: IdType, payload?: IApiPayload<R>) {
         return this.api.get(`${this.flag}/Read/${id}`, undefined, payload);
     }
 
@@ -151,11 +147,11 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * @param payload Payload
      * @returns Result
      */
-    protected sortBase<RQ extends { id: DataTypes.IdType }>(
+    protected sortBase<RQ extends { id: IdType }>(
         items: RQ[],
         payload?: IApiPayload<number>
     ) {
-        const rq: Record<DataTypes.IdType, number> = {};
+        const rq: Record<IdType, number> = {};
         items.forEach((item, index) => (rq[item.id] = index));
         return this.api.put(`${this.flag}/Sort`, rq, payload);
     }
@@ -168,13 +164,13 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * @param payload Payload
      * @returns Result
      */
-    protected sortWith<RQ extends { id: DataTypes.IdType }>(
+    protected sortWith<RQ extends { id: IdType }>(
         category: number,
         items: RQ[],
         method: string = 'Sort',
         payload?: IApiPayload<number>
     ) {
-        const data: Record<DataTypes.IdType, number> = {};
+        const data: Record<IdType, number> = {};
         items.forEach((item, index) => (data[item.id] = index));
         return this.api.put(
             `${this.flag}/${method}`,
@@ -203,7 +199,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      * @returns Result
      */
     protected updateReadBase<R extends object>(
-        id: DataTypes.IdType,
+        id: IdType,
         payload?: IApiPayload<R>
     ) {
         return this.api.get(

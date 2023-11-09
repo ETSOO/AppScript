@@ -1,4 +1,4 @@
-import { DataTypes } from '@etsoo/shared';
+import { IdType } from '@etsoo/shared';
 import { EntityStatus } from '../../business/EntityStatus';
 
 /**
@@ -8,7 +8,7 @@ export type UpdateStatusRQ = {
     /**
      * Id
      */
-    id: DataTypes.IdType;
+    id: IdType;
 
     /**
      * New status

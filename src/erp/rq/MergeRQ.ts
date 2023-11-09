@@ -1,9 +1,9 @@
-import { DataTypes } from '@etsoo/shared';
+import { IdType } from '@etsoo/shared';
 
 /**
  * Merge request data
  */
-export type MergeRQ<T extends DataTypes.IdType = number> = {
+export type MergeRQ<T extends IdType = number> = {
     /**
      * Source id
      */

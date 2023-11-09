@@ -1,11 +1,11 @@
 import { IApiPayload } from '@etsoo/restclient';
-import { IActionResult } from '../result/IActionResult';
 import { IUser } from '../state/User';
 import { BaseApi } from './BaseApi';
 import { ResultPayload } from './dto/ResultPayload';
 import { LoginIdRQ } from './rq/LoginIdRQ';
 import { LoginRQ } from './rq/LoginRQ';
 import { ResetPasswordRQ } from './rq/ResetPasswordRQ';
+import { IActionResult } from '@etsoo/shared';
 
 /**
  * Authentication API

@@ -1,4 +1,4 @@
-import { DataTypes } from '@etsoo/shared';
+import { IdType } from '@etsoo/shared';
 import { LoginIdRQ } from './LoginIdRQ';
 
 /**
@@ -23,5 +23,5 @@ export type LoginRQ = LoginIdRQ & {
     /**
      * Service id or uid
      */
-    serviceId?: DataTypes.IdType;
+    serviceId?: IdType;
 };

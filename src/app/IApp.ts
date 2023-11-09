@@ -9,12 +9,12 @@ import { ApiDataError, IApi, IPData } from '@etsoo/restclient';
 import {
     DataTypes,
     DateUtils,
+    IActionResult,
     IStorage,
     ListType,
     ListType1
 } from '@etsoo/shared';
 import { AddressRegion } from '../address/AddressRegion';
-import { IActionResult } from '../result/IActionResult';
 import { IUser } from '../state/User';
 import { IAppSettings } from './AppSettings';
 import { UserRole } from './UserRole';

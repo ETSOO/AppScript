@@ -12,6 +12,7 @@ import {
     DataTypes,
     DateUtils,
     DomUtils,
+    IActionResult,
     IStorage,
     ListType,
     ListType1,
@@ -24,7 +25,6 @@ import { DataPrivacy } from '../business/DataPrivacy';
 import { EntityStatus } from '../business/EntityStatus';
 import { InitCallDto } from '../erp/dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
-import { IActionResult } from '../result/IActionResult';
 import { InitCallResult, InitCallResultData } from '../result/InitCallResult';
 import { IUser } from '../state/User';
 import { IAppSettings } from './AppSettings';

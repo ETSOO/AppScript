@@ -1,10 +1,10 @@
-import { DataTypes } from '@etsoo/shared';
+import { IdType } from '@etsoo/shared';
 
 /**
  * Query request data
  * com.etsoo.CoreFramework.Models.QueryRQ
  */
-export type QueryRQ<T extends DataTypes.IdType = number> = {
+export type QueryRQ<T extends IdType = number> = {
     /**
      * Number id
      */

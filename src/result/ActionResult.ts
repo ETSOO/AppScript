@@ -1,5 +1,5 @@
 import { ApiError } from '@etsoo/restclient';
-import { IActionResult } from './IActionResult';
+import { IActionResult } from '@etsoo/shared';
 
 /**
  * Action result

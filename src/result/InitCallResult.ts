@@ -1,4 +1,4 @@
-import { IActionResult } from './IActionResult';
+import { IActionResult } from '@etsoo/shared';
 
 /**
  * Init call result data

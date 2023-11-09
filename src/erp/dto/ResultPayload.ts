@@ -1,5 +1,5 @@
 import { IApiPayload } from '@etsoo/restclient';
-import { IActionResult, IdActionResult } from '../../result/IActionResult';
+import { IActionResult, IdActionResult } from '@etsoo/shared';
 
 /**
  * Action result payload

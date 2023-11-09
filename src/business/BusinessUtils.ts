@@ -1,4 +1,4 @@
-import { DataTypes, ListType, ListType1 } from '@etsoo/shared';
+import { IdType, ListType, ListType1 } from '@etsoo/shared';
 import { CultureGridItem } from './CultureItem';
 
 /**
@@ -102,7 +102,7 @@ export namespace BusinessUtils {
      */
     export function setIdValue<T extends { id?: number; sid?: string }>(
         item: T,
-        id?: DataTypes.IdType
+        id?: IdType
     ) {
         if (id == null) return;
         if (typeof id === 'number') item.id = id;

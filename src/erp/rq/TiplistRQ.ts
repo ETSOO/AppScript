@@ -1,10 +1,10 @@
-import { DataTypes } from '@etsoo/shared';
+import { IdType } from '@etsoo/shared';
 
 /**
  * Tiplist request data
  * com.etsoo.CoreFramework.Models.TiplistRQ
  */
-export type TiplistRQ<T extends DataTypes.IdType = number> = {
+export type TiplistRQ<T extends IdType = number> = {
     /**
      * number id
      */

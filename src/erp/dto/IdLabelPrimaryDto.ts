@@ -1,9 +1,9 @@
-import { DataTypes } from '@etsoo/shared';
+import { DataTypes, IdType } from '@etsoo/shared';
 
 /**
  * Dto with id, label and primary field
  */
-export type IdLabelPrimaryDto<T extends DataTypes.IdType = number> =
+export type IdLabelPrimaryDto<T extends IdType = number> =
     DataTypes.IdLabelItem<T> & {
         /**
          * Is primary

@@ -1,4 +1,10 @@
-import { DataTypes, IStorage, NumberUtils, WindowStorage } from '@etsoo/shared';
+import {
+    DataTypes,
+    IStorage,
+    IdType,
+    NumberUtils,
+    WindowStorage
+} from '@etsoo/shared';
 import { Currency } from './Currency';
 
 /**
@@ -57,7 +63,7 @@ export type ShoppingCartItemBase = {
      * Product id
      * 产品编号
      */
-    id: DataTypes.IdType;
+    id: IdType;
 
     /**
      * Product title, default is name
