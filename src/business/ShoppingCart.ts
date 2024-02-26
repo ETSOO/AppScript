@@ -166,7 +166,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
             storage.setData(identifier, null);
             storage.setPersistedData(identifier, null);
         } catch (error) {
-            console.log('ShoppingCart clear', error);
+            console.warn(`ShoppingCart clear ${identifier} error`, error);
         }
     }
 
@@ -187,7 +187,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
                 storage.getObject<ShoppingCartData<D>>(id)
             );
         } catch (error) {
-            console.log('ShoppingCart constructor', error);
+            console.warn(`ShoppingCart getCartData ${id} error`, error);
         }
     }
 
@@ -582,7 +582,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
                 this.storage.setData(this.identifier, data);
             }
         } catch (error) {
-            console.log('ShoppingCart save', error);
+            console.warn(`ShoppingCart save ${this.identifier} error`, error);
         }
 
         return data;

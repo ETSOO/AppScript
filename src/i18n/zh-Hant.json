@@ -110,6 +110,7 @@
     "moreTag": "({0}+)",
     "name": "姓名",
     "nameB": "名稱",
+    "networkError": "本地網路故障，無法連結到遠端伺服器",
     "newPassword": "新密碼",
     "newPasswordRequired": "請輸入新密碼",
     "newPasswordTip": "請設置一個和現在的密碼不一樣的新密碼",

@@ -12,6 +12,7 @@ import {
     DataTypes,
     DateUtils,
     DomUtils,
+    ErrorData,
     IActionResult,
     IStorage,
     ListType,
@@ -469,6 +470,7 @@ export abstract class CoreApp<
                 : undefined;
 
             if (status === 401) {
+                // Unauthorized
                 if (handlerFor401 === false) return;
                 if (typeof handlerFor401 === 'function') {
                     handlerFor401();
@@ -476,6 +478,17 @@ export abstract class CoreApp<
                     this.tryLogin();
                 }
                 return;
+            } else if (
+                error.response == null &&
+                (error.message === 'Network Error' ||
+                    error.message === 'Failed to fetch')
+            ) {
+                // Network error
+                this.notifier.alert(this.get('networkError')!);
+                return;
+            } else {
+                // Log
+                console.error('API error', error);
             }
 
             // Report the error
@@ -502,6 +515,25 @@ export abstract class CoreApp<
             }
             this.lastCalled = true;
         };
+    }
+
+    /**
+     * Setup frontend logging
+     * @param action Custom action
+     */
+    public setupLogging(action?: (data: ErrorData) => void | Promise<void>) {
+        action ??= (data) => {
+            this.api.post('Auth/LogFrontendError', data, {
+                onError: (error) => {
+                    // Use 'debug' to avoid infinite loop
+                    console.debug('Log front-end error', data, error);
+
+                    // Prevent global error handler
+                    return false;
+                }
+            });
+        };
+        DomUtils.setupLogging(action);
     }
 
     /**
@@ -905,7 +937,7 @@ export abstract class CoreApp<
                 mode: mode.CBC
             }).toString(enc.Utf8);
         } catch (e) {
-            console.log('decrypt', e);
+            console.error(`CoreApp.decrypt ${messageEncrypted} error`, e);
             return undefined;
         }
     }
@@ -952,7 +984,10 @@ export abstract class CoreApp<
 
             return this.decrypt(message, passphrase);
         } catch (e) {
-            console.log('decryptEnhanced', e);
+            console.error(
+                `CoreApp.decryptEnhanced ${messageEncrypted} error`,
+                e
+            );
             return undefined;
         }
     }
@@ -1686,7 +1721,7 @@ export abstract class CoreApp<
             { deviceId: this.deviceId },
             {
                 onError: (error) => {
-                    console.log(error);
+                    console.error('CoreApp.signout error', error);
                     // Prevent further processing
                     return false;
                 }

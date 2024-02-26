@@ -9,6 +9,7 @@ import { ApiDataError, IApi, IPData } from '@etsoo/restclient';
 import {
     DataTypes,
     DateUtils,
+    ErrorData,
     IActionResult,
     IStorage,
     ListType,
@@ -622,6 +623,12 @@ export interface IApp {
      * @param api Api
      */
     setApiLoading(api: IApi): void;
+
+    /**
+     * Setup frontend logging
+     * @param action Custom action
+     */
+    setupLogging(action?: (data: ErrorData) => void | Promise<void>): void;
 
     /**
      * Signout, with userLogout and toLoginPage
