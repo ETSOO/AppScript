@@ -1210,7 +1210,7 @@ export abstract class CoreApp<
      * @returns Error message
      */
     formatError(error: ApiDataError) {
-        return error.toString();
+        return `${error.message} (${error.name})`;
     }
 
     /**
