@@ -43,6 +43,9 @@ import type CryptoJS from 'crypto-js';
 import { Currency } from '../business/Currency';
 
 type CJType = typeof CryptoJS;
+let CJ: CJType;
+
+const loadCrypto = () => import('crypto-js');
 
 /**
  * Core application interface
@@ -214,8 +217,6 @@ export abstract class CoreApp<
 
     private _isTryingLogin = false;
 
-    private CJ: CJType | null = null;
-
     /**
      * Last called with token refresh
      */
@@ -295,13 +296,12 @@ export abstract class CoreApp<
         const { currentCulture, currentRegion } = settings;
 
         // Load resources
-        Promise.all([
-            import('crypto-js'),
-            this.changeCulture(currentCulture)
-        ]).then(([cj, _resources]) => {
-            (this.CJ = cj), this.changeRegion(currentRegion);
-            this.setup();
-        });
+        Promise.all([loadCrypto(), this.changeCulture(currentCulture)]).then(
+            ([cj, _resources]) => {
+                (CJ = cj), this.changeRegion(currentRegion);
+                this.setup();
+            }
+        );
     }
 
     private getDeviceId() {
@@ -919,7 +919,7 @@ export abstract class CoreApp<
         const iterations = parseInt(messageEncrypted.substring(0, 2), 10);
         if (isNaN(iterations)) return undefined;
 
-        const { PBKDF2, algo, enc, AES, pad, mode } = this.CJ!;
+        const { PBKDF2, algo, enc, AES, pad, mode } = CJ;
 
         try {
             const salt = enc.Hex.parse(messageEncrypted.substring(2, 34));
@@ -1087,7 +1087,7 @@ export abstract class CoreApp<
         // Default 1 * 1000
         iterations ??= 1;
 
-        const { lib, PBKDF2, algo, enc, AES, pad, mode } = this.CJ!;
+        const { lib, PBKDF2, algo, enc, AES, pad, mode } = CJ;
 
         const bits = 16; // 128 / 8
         const salt = lib.WordArray.random(bits);
@@ -1553,7 +1553,7 @@ export abstract class CoreApp<
      * @param passphrase Secret passphrase
      */
     hash(message: string, passphrase?: string) {
-        const { SHA3, enc, HmacSHA512 } = this.CJ!;
+        const { SHA3, enc, HmacSHA512 } = CJ;
         if (passphrase == null)
             return SHA3(message, { outputLength: 512 }).toString(enc.Base64);
         else return HmacSHA512(message, passphrase).toString(enc.Base64);
@@ -1566,7 +1566,7 @@ export abstract class CoreApp<
      * @param passphrase Secret passphrase
      */
     hashHex(message: string, passphrase?: string) {
-        const { SHA3, enc, HmacSHA512 } = this.CJ!;
+        const { SHA3, enc, HmacSHA512 } = CJ;
         if (passphrase == null)
             return SHA3(message, { outputLength: 512 }).toString(enc.Hex);
         else return HmacSHA512(message, passphrase).toString(enc.Hex);
