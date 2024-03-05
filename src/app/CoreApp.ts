@@ -13,6 +13,7 @@ import {
     DateUtils,
     DomUtils,
     ErrorData,
+    ErrorType,
     IActionResult,
     IStorage,
     ListType,
@@ -522,8 +523,12 @@ export abstract class CoreApp<
     /**
      * Setup frontend logging
      * @param action Custom action
+     * @param preventDefault Is prevent default action
      */
-    public setupLogging(action?: (data: ErrorData) => void | Promise<void>) {
+    public setupLogging(
+        action?: (data: ErrorData) => void | Promise<void>,
+        preventDefault?: ((type: ErrorType) => boolean) | boolean
+    ) {
         action ??= (data) => {
             this.api.post('Auth/LogFrontendError', data, {
                 onError: (error) => {
@@ -535,7 +540,7 @@ export abstract class CoreApp<
                 }
             });
         };
-        DomUtils.setupLogging(action);
+        DomUtils.setupLogging(action, preventDefault);
     }
 
     /**
