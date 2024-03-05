@@ -298,7 +298,9 @@ export abstract class CoreApp<
         // Load resources
         Promise.all([loadCrypto(), this.changeCulture(currentCulture)]).then(
             ([cj, _resources]) => {
-                (CJ = cj), this.changeRegion(currentRegion);
+                console.log('CoreApp Init', cj, _resources);
+                CJ = cj;
+                this.changeRegion(currentRegion);
                 this.setup();
             }
         );
