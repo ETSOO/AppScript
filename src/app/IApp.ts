@@ -10,6 +10,7 @@ import {
     DataTypes,
     DateUtils,
     ErrorData,
+    ErrorType,
     IActionResult,
     IStorage,
     ListType,
@@ -627,8 +628,12 @@ export interface IApp {
     /**
      * Setup frontend logging
      * @param action Custom action
+     * @param preventDefault Is prevent default action
      */
-    setupLogging(action?: (data: ErrorData) => void | Promise<void>): void;
+    setupLogging(
+        action?: (data: ErrorData) => void | Promise<void>,
+        preventDefault?: ((type: ErrorType) => boolean) | boolean
+    ): void;
 
     /**
      * Signout, with userLogout and toLoginPage
