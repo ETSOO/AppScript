@@ -1,4 +1,5 @@
 import { IdType } from '@etsoo/shared';
+import { QueryPagingData } from './QueryPagingData';
 
 /**
  * Query request data
@@ -16,22 +17,7 @@ export type QueryRQ<T extends IdType = number> = {
     sid?: string;
 
     /**
-     * Current page
+     * Query paging data
      */
-    currentPage?: number;
-
-    /**
-     * Batch size
-     */
-    batchSize: number;
-
-    /**
-     * Order by field name
-     */
-    orderBy?: string;
-
-    /**
-     * Order by ascending
-     */
-    orderByAsc?: boolean;
+    queryPaging?: QueryPagingData;
 };

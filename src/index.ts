@@ -63,6 +63,7 @@ export * from './erp/rq/OrgQueryRQ';
 export * from './erp/rq/ParsePinRQ';
 export * from './erp/rq/PlaceParseRQ';
 export * from './erp/rq/PlaceQueryRQ';
+export * from './erp/rq/QueryPagingData';
 export * from './erp/rq/QueryRQ';
 export * from './erp/rq/RefreshTokenRQ';
 export * from './erp/rq/RegionsRQ';
