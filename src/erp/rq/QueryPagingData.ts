@@ -6,7 +6,7 @@ export type QueryPagingData = {
     /**
      * Current page
      */
-    currentPage?: number;
+    currentPage: number;
 
     /**
      * Batch size
