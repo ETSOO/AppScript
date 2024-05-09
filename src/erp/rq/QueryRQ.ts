@@ -12,11 +12,6 @@ export type QueryRQ<T extends IdType = number> = {
     id?: T;
 
     /**
-     * String id
-     */
-    sid?: string;
-
-    /**
      * Query paging data
      */
     queryPaging?: QueryPagingData;

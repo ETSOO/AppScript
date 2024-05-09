@@ -1,4 +1,4 @@
-import { IdType, ListType, ListType1 } from '@etsoo/shared';
+import { ListType, ListType1 } from '@etsoo/shared';
 import { CultureGridItem } from './CultureItem';
 
 /**
@@ -93,19 +93,5 @@ export namespace BusinessUtils {
         }
 
         return months;
-    }
-
-    /**
-     * Set id value
-     * @param item QueryRQ or TiplistRQ or similiar item
-     * @param id Id value
-     */
-    export function setIdValue<T extends { id?: number; sid?: string }>(
-        item: T,
-        id?: IdType
-    ) {
-        if (id == null) return;
-        if (typeof id === 'number') item.id = id;
-        else item.sid = id;
     }
 }

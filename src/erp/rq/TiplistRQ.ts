@@ -11,11 +11,6 @@ export type TiplistRQ<T extends IdType = number> = {
     id?: T;
 
     /**
-     * String id
-     */
-    sid?: string;
-
-    /**
      * Excluded ids
      */
     excludedIds?: T[];
