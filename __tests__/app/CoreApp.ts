@@ -7,7 +7,13 @@ import {
     NotificationRenderProps
 } from '@etsoo/notificationbase';
 import { ApiAuthorizationScheme, createClient } from '@etsoo/restclient';
-import { DataTypes, DomUtils, Utils, WindowStorage } from '@etsoo/shared';
+import {
+    DataTypes,
+    DomUtils,
+    IActionResult,
+    Utils,
+    WindowStorage
+} from '@etsoo/shared';
 import {
     AddressApi,
     en,
@@ -211,13 +217,15 @@ test('Tests for formatFullName', () => {
 });
 
 test('Tests for getRoles', () => {
-    var roles = app.getRoles(UserRole.User | UserRole.Manager | UserRole.Admin);
+    const roles = app.getRoles(
+        UserRole.User | UserRole.Manager | UserRole.Admin
+    );
     expect(roles.length).toBe(3);
     expect(roles.map((r) => r.id)).toEqual([8, 128, 8192]);
 });
 
 test('Tests for getStatusList', () => {
-    var statuses = app.getStatusList([
+    const statuses = app.getStatusList([
         EntityStatus.Normal,
         EntityStatus.Approved,
         EntityStatus.Doing,
@@ -228,6 +236,27 @@ test('Tests for getStatusList', () => {
     expect(statuses.map((s) => s.id)).toStrictEqual([0, 100, 110, 250, 255]);
 
     expect(app.getStatusList().length).toBe(9);
+});
+
+test('Tests for formatResult', () => {
+    const result: IActionResult = {
+        ok: false,
+        type: 'https://tools.ietf.org/html/rfc9110#section-15.5.1',
+        title: 'One or more validation errors occurred.',
+        status: 400,
+        errors: {
+            $: [
+                'JSON deserialization for type \u0027com.etsoo.CMS.RQ.User.UserCreateRQ\u0027 was missing required properties, including the following: password'
+            ],
+            rq: ['The rq field is required.']
+        },
+        traceId: '00-ed96a4f0c83f066594ecc69b77da9803-df770e3cd714fedd-00'
+    };
+
+    const formatted = app.formatResult(result);
+    expect(formatted).toBe(
+        'One or more validation errors occurred. (400, https://tools.ietf.org/html/rfc9110#section-15.5.1)'
+    );
 });
 
 test('Tests for isValidPassword', () => {

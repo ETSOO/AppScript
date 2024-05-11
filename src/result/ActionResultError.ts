@@ -16,12 +16,8 @@ export class ActionResultError extends Error {
         if (result.field) addtions.push(result.field);
 
         const add = addtions.length > 0 ? ` (${addtions.join(', ')})` : '';
-        let title = result.title;
-        if (title && result.traceId) {
-            title += ` [${result.traceId}]`;
-        }
 
-        return `${title || 'Error'}${add}`;
+        return `${result.title || 'Error'}${add}`;
     }
 
     /**
