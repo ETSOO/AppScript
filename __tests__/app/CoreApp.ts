@@ -6,7 +6,12 @@ import {
     NotificationContainer,
     NotificationRenderProps
 } from '@etsoo/notificationbase';
-import { ApiAuthorizationScheme, createClient } from '@etsoo/restclient';
+import {
+    ApiAuthorizationScheme,
+    ApiDataError,
+    ApiMethod,
+    createClient
+} from '@etsoo/restclient';
 import {
     DataTypes,
     DomUtils,
@@ -257,6 +262,34 @@ test('Tests for formatResult', () => {
     expect(formatted).toBe(
         'One or more validation errors occurred. (400, https://tools.ietf.org/html/rfc9110#section-15.5.1)'
     );
+});
+
+test('Tests for formatError', () => {
+    const error: ApiDataError = {
+        name: 'ApiDataError',
+        message: 'Api data error',
+        response: {
+            type: 'https://tools.ietf.org/html/rfc9110#section-15.5.1',
+            title: 'One or more validation errors occurred.',
+            status: 400,
+            errors: {
+                $: [
+                    'JSON deserialization for type \u0027com.etsoo.CMS.RQ.User.UserCreateRQ\u0027 was missing required properties, including the following: password'
+                ],
+                rq: ['The rq field is required.']
+            },
+            traceId: '00-ed96a4f0c83f066594ecc69b77da9803-df770e3cd714fedd-00'
+        },
+        data: {
+            data: undefined,
+            headers: [],
+            method: ApiMethod.POST,
+            params: {},
+            url: ''
+        }
+    };
+
+    expect(app.formatError(error)).toBe('Api data error (ApiDataError)');
 });
 
 test('Tests for isValidPassword', () => {
