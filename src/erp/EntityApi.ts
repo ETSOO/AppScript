@@ -74,7 +74,15 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
         RQ extends TiplistRQ<T>,
         R extends object
     >(rq: RQ, payload?: IApiPayload<R[]>) {
-        return this.api.post(`${this.flag}/List`, rq, payload);
+        let { queryPaging, ...rest } = rq;
+        if (typeof queryPaging === 'number') {
+            queryPaging = { currentPage: 0, batchSize: queryPaging };
+        }
+        return this.api.post(
+            `${this.flag}/List`,
+            { queryPaging, ...rest },
+            payload
+        );
     }
 
     /**

@@ -1,4 +1,5 @@
 import { IdType } from '@etsoo/shared';
+import { QueryPagingData } from './QueryPagingData';
 
 /**
  * Tiplist request data
@@ -21,7 +22,7 @@ export type TiplistRQ<T extends IdType = number> = {
     keyword?: string;
 
     /**
-     * Max items to return
+     * Query paging data or items to read
      */
-    items?: number;
+    queryPaging?: QueryPagingData | number;
 };
