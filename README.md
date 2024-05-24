@@ -86,6 +86,12 @@ $ yarn add @etsoo/appscript
 #### RepeatOption.ts ####
 -   RepeatOption - Repeat options
 
+### custom - Custom dynamic component rendering
+
+#### CustomFieldData.ts ####
+-   CustomFieldSpace - Custom field space (12 columns)
+-   CustomFieldData - Custom field data
+
 ### def - Type definition
 
 #### ListItem.ts ####

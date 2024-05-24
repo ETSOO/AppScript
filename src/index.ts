@@ -33,6 +33,10 @@ export * from './business/ProductUnit';
 export * from './business/RepeatOption';
 export * from './business/ShoppingCart';
 
+// custom
+export * from './custom/CustomField';
+export * from './custom/CustomFieldData';
+
 // def
 export * from './def/ListItem';
 
