@@ -12,9 +12,11 @@ export type CustomFieldRef<V> = {
 
     /**
      * Set value
+     * Its type is 'unknown' because the 'type' configuration of the CustomField may be changed
+     * First time editing with the new 'type' may break the component
      * @param value Value
      */
-    setValue(value: V | undefined): void;
+    setValue(value: unknown): void;
 };
 
 /**
