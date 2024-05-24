@@ -8,13 +8,13 @@ export type CustomFieldRef<V> = {
     /**
      * Get value
      */
-    getValue(): V;
+    getValue(): V | undefined;
 
     /**
      * Set value
      * @param value Value
      */
-    setValue(value: V): void;
+    setValue(value: V | undefined): void;
 };
 
 /**
@@ -23,7 +23,7 @@ export type CustomFieldRef<V> = {
  */
 export type CustomFieldProps<D extends CustomFieldData, V> = {
     field: D;
-    onChange: (name: string, value: V) => void;
+    onChange: (name: string, value: V | undefined) => void;
     defaultValue?: V;
 };
 
