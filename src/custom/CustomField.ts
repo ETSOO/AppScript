@@ -14,7 +14,7 @@ export type CustomFieldRef<V> = {
      * Set value
      * Its type is 'unknown' because the 'type' configuration of the CustomField may be changed
      * First time editing with the new 'type' may break the component
-     * @param value Value
+     * @param value Value, similar with the 'defaultValue' of the component
      */
     setValue(value: unknown): void;
 };
@@ -26,7 +26,7 @@ export type CustomFieldRef<V> = {
 export type CustomFieldProps<D extends CustomFieldData, V> = {
     field: D;
     onChange: (name: string, value: V | undefined) => void;
-    defaultValue?: V;
+    defaultValue?: unknown;
 };
 
 /**
