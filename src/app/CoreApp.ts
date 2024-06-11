@@ -1646,6 +1646,16 @@ export abstract class CoreApp<
     }
 
     /**
+     * Notify user with success message
+     * @param callback Popup close callback
+     * @param message Success message
+     */
+    ok(callback?: NotificationReturn<void>, message?: NotificationContent<N>) {
+        message ??= this.get('operationSucceeded')!;
+        this.notifier.succeed(message, undefined, callback);
+    }
+
+    /**
      * Callback where exit a page
      */
     pageExit() {

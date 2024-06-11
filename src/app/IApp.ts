@@ -597,6 +597,16 @@ export interface IApp {
     ): void;
 
     /**
+     * Notify user with success message
+     * @param message Success message
+     * @param callback Popup close callback
+     */
+    ok(
+        callback?: NotificationReturn<void>,
+        message?: NotificationContent<unknown>
+    ): void;
+
+    /**
      * Callback where exit a page
      */
     pageExit(): void;
