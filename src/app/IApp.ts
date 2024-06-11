@@ -50,6 +50,22 @@ export type RefreshTokenResult =
     | IActionResult;
 
 /**
+ * Format result custom type
+ */
+export type FormatResultCustom = {
+    title?: string;
+    type?: string;
+    field?: string;
+};
+
+/**
+ * Format result custom callback type
+ */
+export type FormatResultCustomCallback =
+    | ((data: FormatResultCustom) => string | null | undefined)
+    | boolean;
+
+/**
  * Refresh token props
  */
 export interface RefreshTokenProps<D extends object> {
@@ -202,13 +218,22 @@ export interface IApp {
     addRootUrl(url: string): string;
 
     /**
-     * Alert action result
-     * @param result Action result or message
+     * Alert result
+     * @param result Result message
      * @param callback Callback
      */
+    alertResult(result: string, callback?: NotificationReturn<void>): void;
+
+    /**
+     * Alert action result
+     * @param result Action result
+     * @param callback Callback
+     * @param forceToLocal Force to local labels
+     */
     alertResult(
-        result: IActionResult | string,
-        callback?: NotificationReturn<void>
+        result: IActionResult,
+        callback?: NotificationReturn<void>,
+        forceToLocal?: FormatResultCustomCallback
     ): void;
 
     /**
@@ -410,7 +435,10 @@ export interface IApp {
      * @param forceToLocal Force to local labels
      * @returns Message
      */
-    formatResult(result: IActionResult, forceToLocal?: boolean): string;
+    formatResult(
+        result: IActionResult,
+        forceToLocal?: FormatResultCustomCallback
+    ): string;
 
     /**
      * Fresh countdown UI

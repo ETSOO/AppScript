@@ -32,6 +32,7 @@ import { IUser } from '../state/User';
 import { IAppSettings } from './AppSettings';
 import {
     appFields,
+    FormatResultCustomCallback,
     IApp,
     IAppFields,
     IDetectIPCallback,
@@ -753,16 +754,33 @@ export abstract class CoreApp<
     }
 
     /**
-     * Alert action result
-     * @param result Action result or message
+     * Alert result
+     * @param result Result message
      * @param callback Callback
      */
+    alertResult(result: string, callback?: NotificationReturn<void>): void;
+
+    /**
+     * Alert action result
+     * @param result Action result
+     * @param callback Callback
+     * @param forceToLocal Force to local labels
+     */
+    alertResult(
+        result: IActionResult,
+        callback?: NotificationReturn<void>,
+        forceToLocal?: FormatResultCustomCallback
+    ): void;
+
     alertResult(
         result: IActionResult | string,
-        callback?: NotificationReturn<void>
+        callback?: NotificationReturn<void>,
+        forceToLocal?: FormatResultCustomCallback
     ) {
         const message =
-            typeof result === 'string' ? result : this.formatResult(result);
+            typeof result === 'string'
+                ? result
+                : this.formatResult(result, forceToLocal);
         this.notifier.alert(message, callback);
     }
 
@@ -1307,32 +1325,53 @@ export abstract class CoreApp<
             : result;
     }
 
+    private getFieldLabel(field: string) {
+        return this.get(field.formatInitial(false)) ?? field;
+    }
+
     /**
      * Format result text
      * @param result Action result
      * @param forceToLocal Force to local labels
      */
-    formatResult(result: IActionResult, forceToLocal?: boolean) {
-        const title = result.title;
-        if (title && /^\w+$/.test(title)) {
-            const key = title.formatInitial(false);
-            const localTitle = this.get(key);
-            if (localTitle) {
-                result.title = localTitle;
+    formatResult(
+        result: IActionResult,
+        forceToLocal?: FormatResultCustomCallback
+    ) {
+        // Destruct the result
+        const { title, type, field } = result;
+        const data = { title, type, field };
 
-                // Hold the original title in type when type is null
-                if (result.type == null) result.type = title;
-            }
-        } else if ((title == null || forceToLocal) && result.type != null) {
-            // Get label from type
-            const key = result.type.formatInitial(false);
-            result.title = this.get(key);
-        }
+        if (type === 'ItemExists' && field) {
+            // Special case
+            const fieldLabel =
+                (typeof forceToLocal === 'function'
+                    ? forceToLocal(data)
+                    : undefined) ?? this.getFieldLabel(field);
+            result.title = this.get('itemExists')?.format(fieldLabel);
+        } else if (title?.includes('{0}')) {
+            // When title contains {0}, replace with the field label
+            const fieldLabel =
+                (typeof forceToLocal === 'function'
+                    ? forceToLocal(data)
+                    : undefined) ?? (field ? this.getFieldLabel(field) : '');
 
-        // When title contains {0}, replace with the field label
-        if (result.field && result.title?.includes('{0}')) {
-            const fieldLabel = this.get(result.field.formatInitial(false));
-            if (fieldLabel) result.title = result.title.format(fieldLabel);
+            result.title = title.format(fieldLabel);
+        } else if (title && /^\w+$/.test(title)) {
+            // When title is a single word
+            // Hold the original title in type when type is null
+            if (type == null) result.type = title;
+            const localTitle =
+                (typeof forceToLocal === 'function'
+                    ? forceToLocal(data)
+                    : undefined) ?? this.getFieldLabel(title);
+            result.title = localTitle;
+        } else if ((title == null || forceToLocal) && type != null) {
+            const localTitle =
+                (typeof forceToLocal === 'function'
+                    ? forceToLocal(data)
+                    : undefined) ?? this.getFieldLabel(type);
+            result.title = localTitle;
         }
 
         return ActionResultError.format(result);

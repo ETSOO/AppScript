@@ -264,6 +264,30 @@ test('Tests for formatResult', () => {
     );
 });
 
+test('Tests for formatResult with custom label', () => {
+    const result: IActionResult = {
+        ok: false,
+        type: 'ItemRequired',
+        title: '{0} is required.',
+        field: 'url'
+    };
+
+    const formatted = app.formatResult(result, () => 'Url');
+    expect(formatted).toBe('Url is required. (ItemRequired, url)');
+});
+
+test('Tests for formatResult with custom label', () => {
+    const result: IActionResult = {
+        ok: false,
+        type: 'ItemExists',
+        field: 'url'
+    };
+
+    const fieldLabel = '文章地址';
+    const formatted = app.formatResult(result, () => fieldLabel);
+    expect(formatted).toBe(`'${fieldLabel}'已经存在 (ItemExists, url)`);
+});
+
 test('Tests for formatError', () => {
     const error: ApiDataError = {
         name: 'ApiDataError',
