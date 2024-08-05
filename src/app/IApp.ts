@@ -186,6 +186,11 @@ export interface IApp {
     readonly pendings: (() => any)[];
 
     /**
+     * Is debug mode
+     */
+    debug: boolean;
+
+    /**
      * IP data
      */
     ipData?: IPData;

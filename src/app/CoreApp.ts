@@ -174,6 +174,11 @@ export abstract class CoreApp<
         this._ipData = value;
     }
 
+    /**
+     * Is debug mode
+     */
+    debug: boolean = false;
+
     private _userData?: U;
     /**
      * User data
@@ -293,6 +298,9 @@ export abstract class CoreApp<
         // Device id
         this._deviceId = storage.getData(this.fields.deviceId, '');
 
+        // Debug
+        this.debugIt('constructor', this.fields, this._deviceId);
+
         this.setApi(api);
 
         const { currentCulture, currentRegion } = settings;
@@ -305,6 +313,12 @@ export abstract class CoreApp<
                 this.setup();
             }
         );
+    }
+
+    private debugIt(...args: any[]) {
+        if (this.debug) {
+            console.debug('CoreApp', ...args);
+        }
     }
 
     private getDeviceId() {
@@ -468,6 +482,9 @@ export abstract class CoreApp<
         handlerFor401?: boolean | (() => Promise<void>)
     ) {
         api.onError = (error: ApiDataError) => {
+            // Debug
+            this.debugIt('setApiErrorHandler', api, error, handlerFor401);
+
             // Error code
             const status = error.response
                 ? api.transformResponse(error.response).status
@@ -507,6 +524,9 @@ export abstract class CoreApp<
     public setApiLoading(api: IApi) {
         // onRequest, show loading or not, rewrite the property to override default action
         api.onRequest = (data) => {
+            // Debug
+            this.debugIt('setApiLoading', 'onRequest', data);
+
             if (data.showLoading == null || data.showLoading) {
                 this.notifier.showLoading();
             }
@@ -514,6 +534,9 @@ export abstract class CoreApp<
 
         // onComplete, hide loading, rewrite the property to override default action
         api.onComplete = (data) => {
+            // Debug
+            this.debugIt('setApiLoading', 'onComplete', data);
+
             if (data.showLoading == null || data.showLoading) {
                 this.notifier.hideLoading();
             }
@@ -1699,6 +1722,7 @@ export abstract class CoreApp<
      */
     pageExit() {
         this.lastWarning?.dismiss();
+        this.notifier.hideLoading(true);
     }
 
     /**
