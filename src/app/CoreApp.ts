@@ -174,10 +174,17 @@ export abstract class CoreApp<
         this._ipData = value;
     }
 
+    private _debug: boolean = false;
     /**
      * Is debug mode
      */
-    debug: boolean = false;
+    get debug() {
+        return this._debug;
+    }
+    set debug(value: boolean) {
+        this._debug = value;
+        this.notifier.debug = value;
+    }
 
     private _userData?: U;
     /**
