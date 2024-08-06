@@ -188,7 +188,7 @@ export interface IApp {
     /**
      * Is debug mode
      */
-    debug: boolean;
+    readonly debug: boolean;
 
     /**
      * IP data

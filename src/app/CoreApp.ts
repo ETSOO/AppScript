@@ -124,6 +124,11 @@ export abstract class CoreApp<
      */
     readonly pendings: (() => any)[] = [];
 
+    /**
+     * Debug mode
+     */
+    readonly debug: boolean;
+
     private _culture!: string;
     /**
      * Culture, like zh-CN
@@ -172,18 +177,6 @@ export abstract class CoreApp<
     }
     protected set ipData(value: IPData | undefined) {
         this._ipData = value;
-    }
-
-    private _debug: boolean = false;
-    /**
-     * Is debug mode
-     */
-    get debug() {
-        return this._debug;
-    }
-    set debug(value: boolean) {
-        this._debug = value;
-        this.notifier.debug = value;
     }
 
     private _userData?: U;
@@ -272,13 +265,15 @@ export abstract class CoreApp<
      * @param notifier Notifier
      * @param storage Storage
      * @param name Application name
+     * @param debug Debug mode
      */
     protected constructor(
         settings: S,
         api: IApi,
         notifier: INotifier<N, C>,
         storage: IStorage,
-        name: string
+        name: string,
+        debug: boolean = false
     ) {
         if (settings?.regions?.length === 0) {
             throw new Error('No regions defined');
@@ -295,6 +290,7 @@ export abstract class CoreApp<
         this.notifier = notifier;
         this.storage = storage;
         this.name = name;
+        this.debug = debug;
 
         // Fields, attach with the name identifier
         this.fields = appFields.reduce(
@@ -313,6 +309,19 @@ export abstract class CoreApp<
         Promise.all([loadCrypto(), this.changeCulture(currentCulture)]).then(
             ([cj, _resources]) => {
                 CJ = cj.default;
+
+                // Debug
+                if (this.debug) {
+                    console.debug(
+                        'CoreApp.constructor.ready',
+                        this._deviceId,
+                        this.fields,
+                        cj,
+                        currentCulture,
+                        currentRegion
+                    );
+                }
+
                 this.changeRegion(currentRegion);
                 this.setup();
             }
