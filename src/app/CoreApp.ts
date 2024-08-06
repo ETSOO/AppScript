@@ -305,9 +305,6 @@ export abstract class CoreApp<
         // Device id
         this._deviceId = storage.getData(this.fields.deviceId, '');
 
-        // Debug
-        this.debugIt('constructor', this.fields, this._deviceId);
-
         this.setApi(api);
 
         const { currentCulture, currentRegion } = settings;
