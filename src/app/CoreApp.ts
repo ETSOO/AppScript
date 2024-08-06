@@ -319,12 +319,6 @@ export abstract class CoreApp<
         );
     }
 
-    private debugIt(...args: any[]) {
-        if (this.debug) {
-            console.debug('CoreApp', ...args);
-        }
-    }
-
     private getDeviceId() {
         return this.deviceId.substring(0, 15);
     }
@@ -487,7 +481,14 @@ export abstract class CoreApp<
     ) {
         api.onError = (error: ApiDataError) => {
             // Debug
-            this.debugIt('setApiErrorHandler', api, error, handlerFor401);
+            if (this.debug) {
+                console.debug(
+                    'CoreApp.setApiErrorHandler',
+                    api,
+                    error,
+                    handlerFor401
+                );
+            }
 
             // Error code
             const status = error.response
@@ -529,7 +530,14 @@ export abstract class CoreApp<
         // onRequest, show loading or not, rewrite the property to override default action
         api.onRequest = (data) => {
             // Debug
-            this.debugIt('setApiLoading', 'onRequest', data);
+            if (this.debug) {
+                console.debug(
+                    'CoreApp.setApiLoading.onRequest',
+                    api,
+                    data,
+                    this.notifier.loadingCount
+                );
+            }
 
             if (data.showLoading == null || data.showLoading) {
                 this.notifier.showLoading();
@@ -539,10 +547,27 @@ export abstract class CoreApp<
         // onComplete, hide loading, rewrite the property to override default action
         api.onComplete = (data) => {
             // Debug
-            this.debugIt('setApiLoading', 'onComplete', data);
+            if (this.debug) {
+                console.debug(
+                    'CoreApp.setApiLoading.onComplete',
+                    api,
+                    data,
+                    this.notifier.loadingCount,
+                    this.lastCalled
+                );
+            }
 
             if (data.showLoading == null || data.showLoading) {
                 this.notifier.hideLoading();
+
+                // Debug
+                if (this.debug) {
+                    console.debug(
+                        'CoreApp.setApiLoading.onComplete.showLoading',
+                        api,
+                        this.notifier.loadingCount
+                    );
+                }
             }
             this.lastCalled = true;
         };
