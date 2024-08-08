@@ -43,7 +43,7 @@ export class AuthApi extends BaseApi {
             deviceId,
             region
         };
-        return this.api.get('Auth/LoginId', rq, payload);
+        return this.api.post('Auth/LoginId', rq, payload);
     }
 
     /**
