@@ -551,9 +551,10 @@ export interface IApp {
     /**
      * Get refresh token from response headers
      * @param rawResponse Raw response from API call
+     * @param tokenKey Refresh token key
      * @returns response refresh token
      */
-    getResponseToken(rawResponse: any): string | null;
+    getResponseToken(rawResponse: any, tokenKey?: string): string | null;
 
     /**
      * Get time zone

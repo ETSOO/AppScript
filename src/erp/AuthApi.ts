@@ -15,16 +15,18 @@ export class AuthApi extends BaseApi {
      * Login
      * @param rq Request data
      * @param payload Payload
+     * @param tokenKey Refresh token key
      * @returns Result
      */
     protected async loginBase<T extends IUser>(
         rq: LoginRQ,
-        payload?: IApiPayload<IActionResult<T>>
+        payload?: IApiPayload<IActionResult<T>>,
+        tokenKey?: string
     ): Promise<[IActionResult<T> | undefined, string | null]> {
         payload ??= {};
         const result = await this.api.post('Auth/Login', rq, payload);
         const refreshToken = result?.ok
-            ? this.app.getResponseToken(payload.response)
+            ? this.app.getResponseToken(payload.response, tokenKey)
             : null;
         return [result, refreshToken];
     }

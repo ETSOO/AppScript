@@ -49,6 +49,7 @@
     "dataComparison": "數據對比",
     "dataPrivacy": "數據隱私",
     "dataPrivacyAdmin": "管理員可見",
+    "dataPrivacyChannel": "渠道可見",
     "dataPrivacyCustomer": "客戶可見",
     "dataPrivacyDept": "部門可見",
     "dataPrivacyInternal": "所有用户",

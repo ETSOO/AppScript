@@ -1633,13 +1633,14 @@ export abstract class CoreApp<
     /**
      * Get refresh token from response headers
      * @param rawResponse Raw response from API call
+     * @param tokenKey Refresh token key
      * @returns response refresh token
      */
-    getResponseToken(rawResponse: any): string | null {
+    getResponseToken(rawResponse: any, tokenKey?: string): string | null {
         const response = this.api.transformResponse(rawResponse);
         return this.api.getHeaderValue(
             response.headers,
-            'SmartERPRefreshToken'
+            tokenKey ?? 'Smarterp-Refresh-Token'
         );
     }
 
