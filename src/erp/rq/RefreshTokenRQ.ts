@@ -8,6 +8,11 @@ export type RefreshTokenRQ = {
     deviceId: string;
 
     /**
+     * Country or region
+     */
+    region: string;
+
+    /**
      * Login password
      */
     pwd?: string;
