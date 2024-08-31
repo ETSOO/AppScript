@@ -28,6 +28,18 @@ export interface IUserData {
     readonly organization?: number;
 
     /**
+     * Is from the channel organization
+     * 是否来自渠道机构
+     */
+    readonly isChannel?: boolean;
+
+    /**
+     * Is from the parent organization
+     * 是否来自父级机构
+     */
+    readonly isParent?: boolean;
+
+    /**
      * User role value
      * 用户角色值
      */
