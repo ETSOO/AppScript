@@ -56,6 +56,12 @@ export interface IUserData {
      * 访问令牌
      */
     readonly token: string;
+
+    /**
+     * Access token scheme
+     * 访问令牌方案
+     */
+    readonly tokenScheme?: string;
 }
 
 /**

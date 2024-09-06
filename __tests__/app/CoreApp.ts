@@ -98,9 +98,6 @@ class CoreAppTest extends CoreApp<
                  */
                 webUrl: 'http://localhost',
 
-                // Authorization scheme
-                authScheme: ApiAuthorizationScheme.Bearer,
-
                 // Detected culture
                 detectedCulture,
 

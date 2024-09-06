@@ -847,15 +847,17 @@ export abstract class CoreApp<
 
     /**
      * Authorize
-     * @param token New token
+     * @param token New access token
+     * @param schema Access token schema
      * @param refreshToken Refresh token
      */
-    authorize(token?: string, refreshToken?: string) {
+    authorize(token?: string, schema?: string, refreshToken?: string) {
         // State, when token is null, means logout
         this.authorized = token != null;
 
         // Token
-        this.api.authorize(this.settings.authScheme, token);
+        schema ??= 'Bearer';
+        this.api.authorize(schema, token);
 
         // Overwrite the current value
         if (refreshToken !== '') {
@@ -1892,10 +1894,10 @@ export abstract class CoreApp<
         this.storage.setData(this.fields.serversideDeviceId, user.deviceId);
 
         if (keep) {
-            this.authorize(user.token, refreshToken);
+            this.authorize(user.token, user.tokenScheme, refreshToken);
         } else {
             this.cachedRefreshToken = this.encrypt(refreshToken);
-            this.authorize(user.token, undefined);
+            this.authorize(user.token, user.tokenScheme, undefined);
         }
     }
 
@@ -1905,7 +1907,7 @@ export abstract class CoreApp<
      * @param noTrigger No trigger for state change
      */
     userLogout(clearToken: boolean = true, noTrigger: boolean = false) {
-        this.authorize(undefined, clearToken ? undefined : '');
+        this.authorize(undefined, undefined, clearToken ? undefined : '');
     }
 
     /**

@@ -243,10 +243,11 @@ export interface IApp {
 
     /**
      * Authorize
-     * @param token New token
+     * @param token New access token
+     * @param schema Access token schema
      * @param refreshToken Refresh token
      */
-    authorize(token?: string, refreshToken?: string): void;
+    authorize(token?: string, schema?: string, refreshToken?: string): void;
 
     /**
      * Change country or region
