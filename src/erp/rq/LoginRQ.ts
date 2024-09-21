@@ -1,5 +1,5 @@
-import { IdType } from '@etsoo/shared';
 import { LoginIdRQ } from './LoginIdRQ';
+import { AuthRequest } from './AuthRequest';
 
 /**
  * Login request data
@@ -21,7 +21,7 @@ export type LoginRQ = LoginIdRQ & {
     timezone?: string;
 
     /**
-     * Service id or uid
+     * Authorization request data
      */
-    serviceId?: IdType;
+    auth?: AuthRequest;
 };
