@@ -8,7 +8,6 @@ import { CurrencyDto } from './dto/CurrencyDto';
 import { ExchangeRateDto } from './dto/ExchangeRateDto';
 import { ExchangeRateHistoryDto } from './dto/ExchangeRateHistoryDto';
 import { PinDto } from './dto/PinDto';
-import { PublicOrgProductDto, PublicProductDto } from './dto/PublicProductDto';
 import { ParsePinRQ } from './rq/ParsePinRQ';
 
 const cachedCurrencyRates: {
@@ -222,28 +221,6 @@ export class PublicApi extends BaseApi {
         const rq = typeof input === 'string' ? { pin: input } : input;
         rq.language ??= this.app.culture;
         return this.api.post('Public/ParsePin', rq, payload);
-    }
-
-    /**
-     * Get public and valid product data
-     * @param id Product/Service Id or Uid
-     * @param culture Language
-     * @param payload Payload
-     * @returns Result
-     */
-    product<T extends number | string>(
-        id: T,
-        culture?: string,
-        payload?: IApiPayload<
-            T extends number ? PublicProductDto : PublicOrgProductDto
-        >
-    ) {
-        culture = this.app.checkLanguage(culture);
-        return this.api.get(
-            `Public/Product/${id}/${culture}`,
-            undefined,
-            payload
-        );
     }
 
     /**
