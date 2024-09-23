@@ -4,6 +4,7 @@
     "add": "Add",
     "assignedId": "Assigned ID",
     "audits": "Audits",
+    "authFailed": "Authentication failed",
     "author": "Author",
     "authorizer": "Authorizer",
     "applicant": "Applicant",
