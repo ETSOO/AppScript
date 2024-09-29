@@ -155,7 +155,7 @@ export abstract class CoreApp<
 
     private _deviceId: string;
     /**
-     * Country or region, like CN
+     * Device id, randome string from ServiceBase.InitCallAsync
      */
     get deviceId() {
         return this._deviceId;
@@ -1891,7 +1891,9 @@ export abstract class CoreApp<
         this.userData = user;
 
         // Cache the encrypted serverside device id
-        this.storage.setData(this.fields.serversideDeviceId, user.deviceId);
+        if (user.deviceId) {
+            this.storage.setData(this.fields.serversideDeviceId, user.deviceId);
+        }
 
         if (keep) {
             this.authorize(user.token, user.tokenScheme, refreshToken);

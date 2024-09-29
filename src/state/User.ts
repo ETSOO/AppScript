@@ -5,9 +5,9 @@ import { IState } from './State';
  */
 export interface IUserData {
     /**
-     * Serverside device id encrypted
+     * Serverside device id encrypted, not the same device id of the app
      */
-    readonly deviceId: string;
+    readonly deviceId?: string;
 
     /**
      * User name
