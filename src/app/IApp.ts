@@ -68,21 +68,11 @@ export type FormatResultCustomCallback =
 /**
  * Refresh token props
  */
-export interface RefreshTokenProps<D extends object> {
+export interface RefreshTokenProps {
     /**
      * Callback
      */
     callback?: (result: RefreshTokenResult, successData?: string) => void;
-
-    /**
-     * Data to pass
-     */
-    data?: D;
-
-    /**
-     * Support relogin or not
-     */
-    relogin?: boolean;
 
     /**
      * Show loading bar or not
@@ -650,9 +640,7 @@ export interface IApp {
      * Refresh token
      * @param props Props
      */
-    refreshToken<D extends object = {}>(
-        props?: RefreshTokenProps<D>
-    ): Promise<boolean>;
+    refreshToken(props?: RefreshTokenProps): Promise<boolean>;
 
     /**
      * Setup Api error handler

@@ -1813,7 +1813,7 @@ export abstract class CoreApp<
      * Refresh token
      * @param props Props
      */
-    async refreshToken<D extends object = {}>(props?: RefreshTokenProps<D>) {
+    async refreshToken(props?: RefreshTokenProps) {
         if (props && props.callback) props.callback(true, undefined);
         return true;
     }
