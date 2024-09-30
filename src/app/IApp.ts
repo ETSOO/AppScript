@@ -688,9 +688,9 @@ export interface IApp {
     /**
      * Try login, returning false means is loading
      * UI get involved while refreshToken not intended
-     * @param data Additional request data
+     * @param showLoading Show loading bar or not
      */
-    tryLogin<D extends object = {}>(data?: D): Promise<boolean>;
+    tryLogin(showLoading?: boolean): Promise<boolean>;
 
     /**
      * User login
