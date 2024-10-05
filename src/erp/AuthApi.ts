@@ -65,7 +65,7 @@ export class AuthApi extends BaseApi {
     async redirectToLogInUrl() {
         const url = await this.getLogInUrl();
         if (url == null) return;
-        window.location.replace(url);
+        globalThis.location.replace(url);
     }
 
     /**

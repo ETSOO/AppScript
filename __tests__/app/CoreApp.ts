@@ -88,6 +88,13 @@ class CoreAppTest extends CoreApp<
                  */
                 endpoint: 'http://{hostname}/com.etsoo.SmartERPApi/api/',
 
+                endpoints: {
+                    core: {
+                        endpoint: 'http://{hostname}:9001/api/',
+                        webUrl: ''
+                    }
+                },
+
                 /**
                  * App root url
                  */
@@ -154,6 +161,16 @@ function EnhanceApp<TBase extends DataTypes.MConstructor<CoreAppTest>>(
 const appClass = EnhanceApp(CoreAppTest);
 const app = new appClass();
 app.changeCulture(app.settings.cultures[0]);
+
+test('Test for domain replacement', () => {
+    expect(app.settings.endpoint).toBe(
+        'http://localhost/com.etsoo.SmartERPApi/api/'
+    );
+
+    expect(app.settings.endpoints?.core.endpoint).toBe(
+        'http://localhost:9001/api/'
+    );
+});
 
 test('Test for properties', () => {
     expect(app.settings.currentRegion.label).toBe('中国大陆');

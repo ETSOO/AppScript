@@ -7,13 +7,14 @@ import {
     NotificationMessageType,
     NotificationReturn
 } from '@etsoo/notificationbase';
-import { ApiDataError, IApi, IPData } from '@etsoo/restclient';
+import { ApiDataError, createClient, IApi, IPData } from '@etsoo/restclient';
 import {
     DataTypes,
     DateUtils,
     DomUtils,
     ErrorData,
     ErrorType,
+    ExtendUtils,
     IActionResult,
     IStorage,
     ListType,
@@ -43,11 +44,22 @@ import {
 import { UserRole } from './UserRole';
 import type CryptoJS from 'crypto-js';
 import { Currency } from '../business/Currency';
+import { ExternalEndpoint } from './ExternalSettings';
+import { ApiRefreshTokenDto } from '../erp/dto/ApiRefreshTokenDto';
 
 type CJType = typeof CryptoJS;
 let CJ: CJType;
 
 const loadCrypto = () => import('crypto-js');
+
+// API refresh token function interface
+type ApiRefreshTokenFunction = (
+    api: IApi,
+    token: string
+) => Promise<[string, number] | undefined>;
+
+// API task data
+type ApiTaskData = [IApi, number, number, ApiRefreshTokenFunction, string?];
 
 /**
  * Core application interface
@@ -230,11 +242,6 @@ export abstract class CoreApp<
     protected lastCalled = false;
 
     /**
-     * Token refresh count down seed
-     */
-    protected refreshCountdownSeed = 0;
-
-    /**
      * Init call Api URL
      */
     protected initCallApi: string = 'Auth/WebInitCall';
@@ -245,6 +252,10 @@ export abstract class CoreApp<
     protected passphrase: string = '';
 
     private cachedRefreshToken?: string;
+
+    private apis: Record<string, ApiTaskData> = {};
+
+    private tasks: [() => PromiseLike<void | false>, number, number][] = [];
 
     /**
      * Get persisted fields
@@ -269,7 +280,7 @@ export abstract class CoreApp<
      */
     protected constructor(
         settings: S,
-        api: IApi,
+        api: IApi | undefined | null,
         notifier: INotifier<N, C>,
         storage: IStorage,
         name: string,
@@ -286,7 +297,34 @@ export abstract class CoreApp<
         }
         this.defaultRegion = region;
 
-        this.api = api;
+        const refresh: ApiRefreshTokenFunction = async (api, token) => {
+            if (this.lastCalled) {
+                // Call refreshToken to update access token
+                await this.refreshToken();
+            } else {
+                // Popup countdown for user action
+                this.freshCountdownUI();
+            }
+            return undefined;
+        };
+
+        if (api) {
+            // Base URL of the API
+            api.baseUrl = this.settings.endpoint;
+            api.name = 'system';
+            this.setApi(api, refresh);
+            this.api = api;
+        } else {
+            this.api = this.createApi(
+                'system',
+                {
+                    endpoint: settings.endpoint,
+                    webUrl: settings.webUrl
+                },
+                refresh
+            );
+        }
+
         this.notifier = notifier;
         this.storage = storage;
         this.name = name;
@@ -300,8 +338,6 @@ export abstract class CoreApp<
 
         // Device id
         this._deviceId = storage.getData(this.fields.deviceId, '');
-
-        this.setApi(api);
 
         const { currentCulture, currentRegion } = settings;
 
@@ -465,18 +501,85 @@ export abstract class CoreApp<
     }
 
     /**
+     * Add scheduled task
+     * @param task Task, return false to stop
+     * @param seconds Interval in seconds
+     */
+    addTask(task: () => PromiseLike<void | false>, seconds: number) {
+        this.tasks.push([task, seconds, seconds]);
+    }
+
+    /**
+     * Create API client, override to implement custom client creation by name
+     * @param name Client name
+     * @param item External endpoint item
+     * @returns Result
+     */
+    createApi(
+        name: string,
+        item: ExternalEndpoint,
+        refresh?: (
+            api: IApi,
+            token: string
+        ) => Promise<[string, number] | undefined>
+    ) {
+        if (this.apis[name] != null) {
+            throw new Error(`API ${name} already exists`);
+        }
+
+        const api = createClient();
+        api.name = name;
+        api.baseUrl = item.endpoint;
+        this.setApi(api, refresh);
+        return api;
+    }
+
+    /**
+     * Update API token and expires
+     * @param name Api name
+     * @param token Refresh token
+     * @param seconds Access token expires in seconds
+     */
+    updateApi(name: string, token: string | undefined, seconds: number): void;
+    updateApi(
+        data: ApiTaskData,
+        token: string | undefined,
+        seconds: number
+    ): void;
+    updateApi(
+        nameOrData: string | ApiTaskData,
+        token: string | undefined,
+        seconds: number
+    ) {
+        const api =
+            typeof nameOrData === 'string' ? this.apis[nameOrData] : nameOrData;
+        if (api == null) return;
+
+        // Consider the API call delay
+        if (seconds > 0) {
+            seconds -= 30;
+            if (seconds < 10) seconds = 10;
+        }
+
+        api[1] = seconds;
+        api[2] = seconds;
+        api[4] = token;
+    }
+
+    /**
      * Setup Api
      * @param api Api
      */
-    protected setApi(api: IApi) {
-        // Base URL of the API
-        api.baseUrl = this.settings.endpoint;
-
+    protected setApi(api: IApi, refresh?: ApiRefreshTokenFunction) {
         // onRequest, show loading or not, rewrite the property to override default action
         this.setApiLoading(api);
 
         // Global API error handler
         this.setApiErrorHandler(api);
+
+        // Setup API countdown
+        refresh ??= this.apiRefreshToken.bind(this);
+        this.apis[api.name] = [api, -1, -1, refresh];
     }
 
     /**
@@ -484,7 +587,7 @@ export abstract class CoreApp<
      * @param api Api
      * @param handlerFor401 Handler for 401 error
      */
-    public setApiErrorHandler(
+    setApiErrorHandler(
         api: IApi,
         handlerFor401?: boolean | (() => Promise<void>)
     ) {
@@ -492,7 +595,7 @@ export abstract class CoreApp<
             // Debug
             if (this.debug) {
                 console.debug(
-                    'CoreApp.setApiErrorHandler',
+                    `CoreApp.${this.name}.setApiErrorHandler`,
                     api,
                     error,
                     handlerFor401
@@ -519,11 +622,13 @@ export abstract class CoreApp<
                     error.message === 'Failed to fetch')
             ) {
                 // Network error
-                this.notifier.alert(this.get('networkError')!);
+                this.notifier.alert(
+                    this.get('networkError') + ` [${this.name}]`
+                );
                 return;
             } else {
                 // Log
-                console.error('API error', error);
+                console.error(`${this.name} API error`, error);
             }
 
             // Report the error
@@ -535,13 +640,13 @@ export abstract class CoreApp<
      * Setup Api loading
      * @param api Api
      */
-    public setApiLoading(api: IApi) {
+    setApiLoading(api: IApi) {
         // onRequest, show loading or not, rewrite the property to override default action
         api.onRequest = (data) => {
             // Debug
             if (this.debug) {
                 console.debug(
-                    'CoreApp.setApiLoading.onRequest',
+                    `CoreApp.${this.name}.setApiLoading.onRequest`,
                     api,
                     data,
                     this.notifier.loadingCount
@@ -558,7 +663,7 @@ export abstract class CoreApp<
             // Debug
             if (this.debug) {
                 console.debug(
-                    'CoreApp.setApiLoading.onComplete',
+                    `CoreApp.${this.name}.setApiLoading.onComplete`,
                     api,
                     data,
                     this.notifier.loadingCount,
@@ -572,7 +677,7 @@ export abstract class CoreApp<
                 // Debug
                 if (this.debug) {
                     console.debug(
-                        'CoreApp.setApiLoading.onComplete.showLoading',
+                        `CoreApp.${this.name}.setApiLoading.onComplete.showLoading`,
                         api,
                         this.notifier.loadingCount
                     );
@@ -587,7 +692,7 @@ export abstract class CoreApp<
      * @param action Custom action
      * @param preventDefault Is prevent default action
      */
-    public setupLogging(
+    setupLogging(
         action?: (data: ErrorData) => void | Promise<void>,
         preventDefault?: ((type: ErrorType) => boolean) | boolean
     ) {
@@ -869,10 +974,18 @@ export abstract class CoreApp<
         this._isTryingLogin = false;
 
         // Token countdown
-        if (this.authorized) this.refreshCountdown(this.userData!.seconds);
-        else {
+        if (this.authorized) {
+            this.lastCalled = false;
+            if (refreshToken) {
+                this.updateApi(
+                    this.api.name,
+                    refreshToken,
+                    this.userData!.seconds
+                );
+            }
+        } else {
             this.cachedRefreshToken = undefined;
-            this.refreshCountdownClear();
+            this.updateApi(this.api.name, undefined, -1);
         }
 
         // Host notice
@@ -1767,43 +1880,6 @@ export abstract class CoreApp<
     }
 
     /**
-     * Refresh countdown
-     * @param seconds Seconds
-     */
-    protected refreshCountdown(seconds: number) {
-        // Make sure is big than 60 seconds
-        // Take action 60 seconds before expiry
-        seconds -= 60;
-        if (seconds <= 0) return;
-
-        // Clear the current timeout seed
-        this.refreshCountdownClear();
-
-        // Reset last call flag
-        // Any success call will update it to true
-        // So first time after login will be always silent
-        this.lastCalled = false;
-
-        this.refreshCountdownSeed = window.setTimeout(() => {
-            if (this.lastCalled) {
-                // Call refreshToken to update access token
-                this.refreshToken();
-            } else {
-                // Popup countdown for user action
-                this.freshCountdownUI();
-            }
-        }, 1000 * seconds);
-    }
-
-    protected refreshCountdownClear() {
-        // Clear the current timeout seed
-        if (this.refreshCountdownSeed > 0) {
-            window.clearTimeout(this.refreshCountdownSeed);
-            this.refreshCountdownSeed = 0;
-        }
-    }
-
-    /**
      * Fresh countdown UI
      * @param callback Callback
      */
@@ -1822,6 +1898,9 @@ export abstract class CoreApp<
      * Setup callback
      */
     setup() {
+        // Done already
+        if (this.isReady) return;
+
         // Ready
         this.isReady = true;
 
@@ -1830,6 +1909,167 @@ export abstract class CoreApp<
 
         // Pending actions
         this.pendings.forEach((p) => p());
+
+        // Setup scheduled tasks
+        this.setupTasks();
+    }
+
+    /**
+     * Exchange token data
+     * @param api API
+     * @param token Core system's refresh token to exchange
+     * @returns Result
+     */
+    async exchangeToken(api: IApi, token: string) {
+        // Call the API quietly, no loading bar and no error popup
+        const data = await api.put<ApiRefreshTokenDto>(
+            'Auth/ExchangeToken',
+            {
+                token
+            },
+            {
+                showLoading: false,
+                onError: (error) => {
+                    console.error(
+                        `CoreApp.${api.name}.ExchangeToken error`,
+                        error
+                    );
+
+                    // Prevent further processing
+                    return false;
+                }
+            }
+        );
+
+        if (data) {
+            // Update the access token
+            api.authorize(data.tokenType, data.accessToken);
+
+            // Update the API
+            this.updateApi(api.name, data.refreshToken, data.expiresIn);
+
+            // Update notice
+            this.exchangeTokenUpdate(api, data);
+        }
+    }
+
+    /**
+     * Exchange token update, override to get the new token
+     * @param api API
+     * @param data API refresh token data
+     */
+    protected exchangeTokenUpdate(api: IApi, data: ApiRefreshTokenDto) {}
+
+    /**
+     * Exchange intergration tokens for all APIs
+     * @param token Core system's refresh token to exchange
+     */
+    exchangeTokenAll(token: string) {
+        for (const name in this.apis) {
+            const api = this.apis[name];
+            this.exchangeToken(api[0], token);
+        }
+    }
+
+    /**
+     * API refresh token
+     * @param api Current API
+     * @param token Refresh token
+     * @returns Result
+     */
+    protected async apiRefreshToken(
+        api: IApi,
+        token: string
+    ): Promise<[string, number] | undefined> {
+        // Call the API quietly, no loading bar and no error popup
+        const data = await api.put<ApiRefreshTokenDto>(
+            'Auth/ApiRefreshToken',
+            {
+                token
+            },
+            {
+                showLoading: false,
+                onError: (error) => {
+                    console.error(
+                        `CoreApp.${api.name}.apiRefreshToken error`,
+                        error
+                    );
+
+                    // Prevent further processing
+                    return false;
+                }
+            }
+        );
+
+        if (data == null) return undefined;
+
+        // Update the access token
+        api.authorize(data.tokenType, data.accessToken);
+
+        // Return the new refresh token and access token expiration seconds
+        return [data.refreshToken, data.expiresIn];
+    }
+
+    /**
+     * Setup tasks
+     */
+    protected setupTasks() {
+        ExtendUtils.intervalFor(() => {
+            // Exit when not authorized
+            if (!this.authorized) return;
+
+            // APIs
+            for (const name in this.apis) {
+                // Get the API
+                const api = this.apis[name];
+
+                // Skip the negative value or when refresh token is not set
+                if (!api[4] || api[2] < 0) continue;
+
+                // Minus one second
+                api[2] -= 1;
+
+                // Ready to trigger
+                if (api[2] === 0) {
+                    // Refresh token
+                    api[3](api[0], api[4]).then((data) => {
+                        if (data == null) {
+                            // Failed, try it again in 2 seconds
+                            api[2] = 2;
+                        } else {
+                            // Reset the API
+                            const [token, seconds] = data;
+                            this.updateApi(api, token, seconds);
+                        }
+                    });
+                }
+            }
+
+            for (let t = this.tasks.length - 1; t >= 0; t--) {
+                // Get the task
+                const task = this.tasks[t];
+
+                // Minus one second
+                task[2] -= 1;
+
+                // Remove the tasks with negative value with splice
+                if (task[2] < 0) {
+                    this.tasks.splice(t, 1);
+                } else if (task[2] === 0) {
+                    // Ready to trigger
+                    // Reset the task
+                    task[2] = task[1];
+
+                    // Trigger the task
+                    task[0]().then((result) => {
+                        if (result === false) {
+                            // Asynchronous task, unsafe to splice the index, flag as pending
+                            task[2] = -1;
+                        }
+                    });
+                }
+            }
+        }, 1000);
     }
 
     /**

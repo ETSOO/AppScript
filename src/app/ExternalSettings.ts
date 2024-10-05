@@ -1,36 +1,39 @@
 /**
- * External settings items
+ * External endpoint
  */
-export interface IExternalSettings {
+export type ExternalEndpoint = {
     /**
-     * Core system API endpoint
+     * API endpoint
      */
     readonly endpoint: string;
 
+    /**
+     * Web url
+     */
+    readonly webUrl: string;
+};
+
+/**
+ * External settings items
+ */
+export interface IExternalSettings extends ExternalEndpoint {
     /**
      * Message hub endpoint
      */
     readonly messageHub?: string;
 
     /**
-     * Core system app root url
+     * App root url
      */
     readonly homepage: string;
 
     /**
-     * Core system web url
+     * Endpoints to other services
      */
-    readonly webUrl: string;
-
-    /**
-     * Service API endpoint
-     */
-    readonly serviceEndpoint?: string;
-
-    /**
-     * Service web Url
-     */
-    readonly serviceUrl?: string;
+    readonly endpoints?: Record<
+        'core' | 'accounting' | 'crm' | 'calandar' | 'task' | string,
+        ExternalEndpoint
+    >;
 }
 
 /**
@@ -69,6 +72,8 @@ export namespace ExternalSettings {
             const value = settings[key];
             if (typeof value === 'string') {
                 settings[key] = value.replace('{hostname}', hostname);
+            } else if (typeof value === 'object') {
+                format(value, hostname);
             }
         }
 

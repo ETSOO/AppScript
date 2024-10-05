@@ -22,6 +22,7 @@ import { IAppSettings } from './AppSettings';
 import { UserRole } from './UserRole';
 import { EntityStatus } from '../business/EntityStatus';
 import { Currency } from '../business/Currency';
+import { ExternalEndpoint } from './ExternalSettings';
 
 /**
  * Detect IP callback interface
@@ -213,6 +214,13 @@ export interface IApp {
     addRootUrl(url: string): string;
 
     /**
+     * Add scheduled task
+     * @param task Task, return false to stop
+     * @param interval Interval in milliseconds
+     */
+    addTask(task: () => PromiseLike<void | false>, interval: number): void;
+
+    /**
      * Alert result
      * @param result Result message
      * @param callback Callback
@@ -283,6 +291,21 @@ export interface IApp {
     clearDeviceId(): void;
 
     /**
+     * Create API client, override to implement custom client creation by name
+     * @param name Client name
+     * @param item External endpoint item
+     * @returns Result
+     */
+    createApi(
+        name: string,
+        item: ExternalEndpoint,
+        refresh?: (
+            api: IApi,
+            token: string
+        ) => Promise<[string, number] | undefined>
+    ): IApi;
+
+    /**
      * Decrypt message
      * @param messageEncrypted Encrypted message
      * @param passphrase Secret passphrase
@@ -342,6 +365,20 @@ export interface IApp {
         passphrase?: string,
         iterations?: number
     ): string;
+
+    /**
+     * Exchange token data
+     * @param api API
+     * @param token Core system's refresh token to exchange
+     * @returns Result
+     */
+    exchangeToken(api: IApi, token: string): Promise<void>;
+
+    /**
+     * Exchange intergration tokens for all APIs
+     * @param token Core system's refresh token to exchange
+     */
+    exchangeTokenAll(token: string): void;
 
     /**
      * Format date to string
@@ -691,6 +728,14 @@ export interface IApp {
      * @param showLoading Show loading bar or not
      */
     tryLogin(showLoading?: boolean): Promise<boolean>;
+
+    /**
+     * Update API token and expires
+     * @param name Api name
+     * @param token Refresh token
+     * @param seconds Access token expires in seconds
+     */
+    updateApi(name: string, token: string | undefined, seconds: number): void;
 
     /**
      * User login
