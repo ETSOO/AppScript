@@ -234,6 +234,16 @@ export abstract class CoreApp<
         this._isReady = value;
     }
 
+    /**
+     * Current cached URL
+     */
+    get cachedUrl() {
+        return this.storage.getData(this.fields.cachedUrl);
+    }
+    set cachedUrl(value: string | undefined | null) {
+        this.storage.setData(this.fields.cachedUrl, value);
+    }
+
     private _isTryingLogin = false;
 
     /**
@@ -2102,9 +2112,10 @@ export abstract class CoreApp<
      * @param removeUrl Remove current URL for reuse
      */
     toLoginPage(tryLogin?: boolean, removeUrl?: boolean) {
-        const url =
-            `/?tryLogin=${tryLogin ?? false}` +
-            (removeUrl ? '' : '&url=' + encodeURIComponent(location.href));
+        // Save the current URL
+        this.cachedUrl = removeUrl ? undefined : globalThis.location.href;
+
+        const url = `/?tryLogin=${tryLogin ?? false}`;
 
         this.navigate(url);
     }

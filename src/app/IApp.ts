@@ -89,7 +89,8 @@ export const appFields = [
     'serversideDeviceId',
     'deviceId',
     'devices',
-    'devicePassphrase'
+    'devicePassphrase',
+    'cachedUrl'
 ] as const;
 
 /**
@@ -180,6 +181,11 @@ export interface IApp {
      * Is debug mode
      */
     readonly debug: boolean;
+
+    /**
+     * Cached URL
+     */
+    cachedUrl: string | undefined | null;
 
     /**
      * IP data
