@@ -170,7 +170,13 @@ export abstract class CoreApp<
      * Device id, randome string from ServiceBase.InitCallAsync
      */
     get deviceId() {
+        if (this._deviceId === '') {
+            throw new Error('Device id is empty');
+        }
         return this._deviceId;
+    }
+    protected set deviceId(value: string) {
+        this._deviceId = value;
     }
 
     /**
@@ -837,49 +843,21 @@ export abstract class CoreApp<
     }
 
     /**
-     * Init call update
-     * @param data Result data
-     * @param timestamp Timestamp
+     * Update passphrase
+     * @param passphrase Secret passphrase
      */
-    protected async initCallUpdate(
-        data: InitCallResultData,
-        timestamp: number
-    ): Promise<boolean> {
-        // Data check
-        if (data.deviceId == null || data.passphrase == null) return false;
+    protected updatePassphrase(passphrase: string) {
+        // Previous passphrase
+        const prev = this.passphrase;
 
-        // Decrypt
-        // Should be done within 120 seconds after returning from the backend
-        const passphrase = this.decrypt(data.passphrase, timestamp.toString());
-        if (passphrase == null) return false;
-
-        // Update device id and cache it
-        this._deviceId = data.deviceId;
-        this.storage.setData(this.fields.deviceId, this._deviceId);
-
-        // Devices
-        const devices = this.storage.getPersistedData<string[]>(
-            this.fields.devices,
-            []
-        );
-        devices.push(this.getDeviceId());
-        this.storage.setPersistedData(this.fields.devices, devices);
-
-        // Current passphrase
+        // Update
         this.passphrase = passphrase;
         this.storage.setData(
             this.fields.devicePassphrase,
             this.encrypt(passphrase, this.name)
         );
 
-        // Previous passphrase
-        if (data.previousPassphrase) {
-            const prev = this.decrypt(
-                data.previousPassphrase,
-                timestamp.toString()
-            );
-
-            // Update
+        if (prev) {
             const fields = this.initCallEncryptedUpdateFields();
             for (const field of fields) {
                 const currentValue = this.storage.getData<string>(field);
@@ -917,6 +895,48 @@ export abstract class CoreApp<
                 this.storage.setData(field, newValue);
             }
         }
+    }
+
+    /**
+     * Init call update
+     * @param data Result data
+     * @param timestamp Timestamp
+     */
+    protected async initCallUpdate(
+        data: InitCallResultData,
+        timestamp: number
+    ): Promise<boolean> {
+        // Data check
+        if (data.deviceId == null || data.passphrase == null) return false;
+
+        // Decrypt
+        // Should be done within 120 seconds after returning from the backend
+        const passphrase = this.decrypt(data.passphrase, timestamp.toString());
+        if (passphrase == null) return false;
+
+        // Update device id and cache it
+        this._deviceId = data.deviceId;
+        this.storage.setData(this.fields.deviceId, this._deviceId);
+
+        // Devices
+        const devices = this.storage.getPersistedData<string[]>(
+            this.fields.devices,
+            []
+        );
+        devices.push(this.getDeviceId());
+        this.storage.setPersistedData(this.fields.devices, devices);
+
+        // Previous passphrase
+        if (data.previousPassphrase) {
+            const prev = this.decrypt(
+                data.previousPassphrase,
+                timestamp.toString()
+            );
+            this.passphrase = prev ?? '';
+        }
+
+        // Update passphrase
+        this.updatePassphrase(passphrase);
 
         return true;
     }

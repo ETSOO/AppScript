@@ -135,6 +135,8 @@ class CoreAppTest extends CoreApp<
             new WindowStorage(),
             'SmartERP'
         );
+
+        this.deviceId = 'abcd1234';
     }
 
     freshCountdownUI(callback?: () => PromiseLike<unknown>): void {
