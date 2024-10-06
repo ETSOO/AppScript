@@ -170,13 +170,7 @@ export abstract class CoreApp<
      * Device id, randome string from ServiceBase.InitCallAsync
      */
     get deviceId() {
-        if (this._deviceId === '') {
-            throw new Error('Device id is empty');
-        }
         return this._deviceId;
-    }
-    protected set deviceId(value: string) {
-        this._deviceId = value;
     }
 
     /**
@@ -433,7 +427,7 @@ export abstract class CoreApp<
             []
         );
 
-        if (this.deviceId === '') {
+        if (this._deviceId === '') {
             // First vist, restore and keep the source
             this.storage.copyFrom(this.persistedFields, false);
 
