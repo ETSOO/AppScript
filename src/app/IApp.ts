@@ -23,6 +23,7 @@ import { UserRole } from './UserRole';
 import { EntityStatus } from '../business/EntityStatus';
 import { Currency } from '../business/Currency';
 import { ExternalEndpoint } from './ExternalSettings';
+import { ApiRefreshTokenDto } from '../erp/dto/ApiRefreshTokenDto';
 
 /**
  * Detect IP callback interface
@@ -382,9 +383,10 @@ export interface IApp {
 
     /**
      * Exchange intergration tokens for all APIs
-     * @param token Core system's refresh token to exchange
+     * @param coreData Core system's token data to exchange
+     * @param coreName Core system's name, default is 'core'
      */
-    exchangeTokenAll(token: string): void;
+    exchangeTokenAll(coreData: ApiRefreshTokenDto, coreName?: string): void;
 
     /**
      * Format date to string

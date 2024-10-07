@@ -1986,12 +1986,22 @@ export abstract class CoreApp<
 
     /**
      * Exchange intergration tokens for all APIs
-     * @param token Core system's refresh token to exchange
+     * @param coreData Core system's token data to exchange
+     * @param coreName Core system's name, default is 'core'
      */
-    exchangeTokenAll(token: string) {
+    exchangeTokenAll(coreData: ApiRefreshTokenDto, coreName?: string) {
+        coreName ??= 'core';
+
         for (const name in this.apis) {
             const api = this.apis[name];
-            this.exchangeToken(api[0], token);
+
+            // The core API
+            if (api[0].name === coreName) {
+                api[0].authorize(coreData.tokenType, coreData.accessToken);
+                this.updateApi(api, coreData.refreshToken, coreData.expiresIn);
+            } else {
+                this.exchangeToken(api[0], coreData.refreshToken);
+            }
         }
     }
 
