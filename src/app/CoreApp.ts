@@ -172,6 +172,9 @@ export abstract class CoreApp<
     get deviceId() {
         return this._deviceId;
     }
+    protected set deviceId(value: string) {
+        this._deviceId = value;
+    }
 
     /**
      * Label delegate
