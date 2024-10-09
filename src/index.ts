@@ -41,6 +41,7 @@ export * from './custom/CustomFieldData';
 export * from './def/ListItem';
 
 // erp dto
+export * from './erp/dto/ApiRefreshTokenDto';
 export * from './erp/dto/AuditLineDto';
 export * from './erp/dto/CurrencyDto';
 export * from './erp/dto/ExchangeRateDto';
