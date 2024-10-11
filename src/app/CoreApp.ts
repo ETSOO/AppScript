@@ -985,7 +985,7 @@ export abstract class CoreApp<
      */
     authorize(token?: string, schema?: string, refreshToken?: string) {
         // State, when token is null, means logout
-        this.authorized = token != null;
+        const authorized = token != null;
 
         // Token
         schema ??= 'Bearer';
@@ -1001,7 +1001,7 @@ export abstract class CoreApp<
         this._isTryingLogin = false;
 
         // Token countdown
-        if (this.authorized) {
+        if (authorized) {
             this.lastCalled = false;
             if (refreshToken) {
                 this.updateApi(
@@ -1016,8 +1016,20 @@ export abstract class CoreApp<
         }
 
         // Host notice
-        BridgeUtils.host?.userAuthorization(this.authorized);
+        BridgeUtils.host?.userAuthorization(authorized);
+
+        // Callback
+        this.onAuthorized(authorized);
+
+        // Everything is ready, update the state
+        this.authorized = authorized;
     }
+
+    /**
+     * On authorized or not callback
+     * @param success Success or not
+     */
+    protected onAuthorized(success: boolean) {}
 
     /**
      * Change country or region
