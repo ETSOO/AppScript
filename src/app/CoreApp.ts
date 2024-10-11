@@ -2126,17 +2126,23 @@ export abstract class CoreApp<
      * @param apiUrl Signout API URL
      */
     async signout() {
-        await this.api.put<boolean>(
-            'User/Signout',
-            { deviceId: this.deviceId },
-            {
-                onError: (error) => {
-                    console.error('CoreApp.signout error', error);
-                    // Prevent further processing
-                    return false;
+        const token = this.getCacheToken();
+        if (token) {
+            await this.api.put<boolean>(
+                'Auth/Signout',
+                {
+                    deviceId: this.deviceId,
+                    token: this.encrypt(token)
+                },
+                {
+                    onError: (error) => {
+                        console.error('CoreApp.signout error', error);
+                        // Prevent further processing
+                        return false;
+                    }
                 }
-            }
-        );
+            );
+        }
 
         // Clear, noTrigger = true, avoid state update
         this.userLogout(true, true);
