@@ -32,17 +32,6 @@ export class AuthApi extends BaseApi {
     }
 
     /**
-     * Get log in url
-     * @returns Url
-     */
-    getLogInUrl() {
-        return this.api.get<string>('Auth/GetLogInUrl', {
-            region: this.app.region,
-            device: this.app.deviceId
-        });
-    }
-
-    /**
      * Login id check
      * @param id Check id
      * @param payload Payload
@@ -57,15 +46,6 @@ export class AuthApi extends BaseApi {
             region
         };
         return this.api.post('Auth/LoginId', rq, payload);
-    }
-
-    /**
-     * Redirect to log in url
-     */
-    async redirectToLogInUrl() {
-        const url = await this.getLogInUrl();
-        if (url == null) return;
-        globalThis.location.replace(url);
     }
 
     /**
