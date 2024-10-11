@@ -2125,7 +2125,7 @@ export abstract class CoreApp<
             const result = await new AuthApi(this).signout(
                 {
                     deviceId: this.deviceId,
-                    token: this.encrypt(token)
+                    token
                 },
                 {
                     onError: (error) => {
