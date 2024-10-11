@@ -59,7 +59,7 @@ export * from './erp/dto/ResultPayload';
 
 // erp rq
 export * from './erp/rq/AuthRequest';
-export * from './erp/rq/GetSigninUrlRQ';
+export * from './erp/rq/GetLogInUrlRQ';
 export * from './erp/rq/LoginIdRQ';
 export * from './erp/rq/LoginRQ';
 export * from './erp/rq/MemberListRQ';

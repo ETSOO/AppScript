@@ -7,7 +7,7 @@ import { LoginRQ } from './rq/LoginRQ';
 import { ResetPasswordRQ } from './rq/ResetPasswordRQ';
 import { IActionResult } from '@etsoo/shared';
 import { SignoutRQ } from './rq/SignoutRQ';
-import { GetSigninUrlRQ } from './rq/GetSigninUrlRQ';
+import { GetLogInUrlRQ } from './rq/GetLogInUrlRQ';
 import { TokenRQ } from './rq/TokenRQ';
 import { ApiRefreshTokenDto } from './dto/ApiRefreshTokenDto';
 
@@ -22,7 +22,7 @@ export class AuthApi extends BaseApi {
      * @returns Result
      */
     apiRefreshToken(rq: TokenRQ, payload?: IApiPayload<ApiRefreshTokenDto>) {
-        return this.api.post('Auth/ApiRefreshToken', rq, payload);
+        return this.api.put('Auth/ApiRefreshToken', rq, payload);
     }
 
     /**
@@ -32,17 +32,17 @@ export class AuthApi extends BaseApi {
      * @returns Result
      */
     exchangeToken(rq: TokenRQ, payload?: IApiPayload<ApiRefreshTokenDto>) {
-        return this.api.post('Auth/ExchangeToken', rq, payload);
+        return this.api.put('Auth/ExchangeToken', rq, payload);
     }
 
     /**
-     * Get signin url
+     * Get log in url
      * @param rq Request data
      * @param payload Payload
      * @returns Result
      */
-    getSigninUrl(rq: GetSigninUrlRQ, payload?: IApiPayload<string>) {
-        return this.api.post('Auth/GetSigninUrl', rq, payload);
+    getLogInUrl(rq: GetLogInUrlRQ, payload?: IApiPayload<string>) {
+        return this.api.get('Auth/GetLogInUrl', rq, payload);
     }
 
     /**

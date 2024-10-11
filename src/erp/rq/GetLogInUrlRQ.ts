@@ -1,7 +1,7 @@
 /**
- * Get signin url request data
+ * Get log in url request data
  */
-export type GetSigninUrlRQ = {
+export type GetLogInUrlRQ = {
     /**
      * Region
      */
