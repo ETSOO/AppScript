@@ -6,11 +6,45 @@ import { LoginIdRQ } from './rq/LoginIdRQ';
 import { LoginRQ } from './rq/LoginRQ';
 import { ResetPasswordRQ } from './rq/ResetPasswordRQ';
 import { IActionResult } from '@etsoo/shared';
+import { SignoutRQ } from './rq/SignoutRQ';
+import { GetSigninUrlRQ } from './rq/GetSigninUrlRQ';
+import { TokenRQ } from './rq/TokenRQ';
+import { ApiRefreshTokenDto } from './dto/ApiRefreshTokenDto';
 
 /**
  * Authentication API
  */
 export class AuthApi extends BaseApi {
+    /**
+     * API refresh token
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    apiRefreshToken(rq: TokenRQ, payload?: IApiPayload<ApiRefreshTokenDto>) {
+        return this.api.post('Auth/ApiRefreshToken', rq, payload);
+    }
+
+    /**
+     * Exchange token
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    exchangeToken(rq: TokenRQ, payload?: IApiPayload<ApiRefreshTokenDto>) {
+        return this.api.post('Auth/ExchangeToken', rq, payload);
+    }
+
+    /**
+     * Get signin url
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    getSigninUrl(rq: GetSigninUrlRQ, payload?: IApiPayload<string>) {
+        return this.api.post('Auth/GetSigninUrl', rq, payload);
+    }
+
     /**
      * Login
      * @param rq Request data
@@ -56,5 +90,15 @@ export class AuthApi extends BaseApi {
      */
     resetPassword(rq: ResetPasswordRQ, payload?: ResultPayload) {
         return this.api.put('Auth/ResetPassword', rq, payload);
+    }
+
+    /**
+     * Signout
+     * @param rq Request data
+     * @param payload Payload
+     * @returns Result
+     */
+    signout(rq: SignoutRQ, payload?: ResultPayload) {
+        return this.api.put('Auth/Signout', rq, payload);
     }
 }

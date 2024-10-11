@@ -46,6 +46,7 @@ import type CryptoJS from 'crypto-js';
 import { Currency } from '../business/Currency';
 import { ExternalEndpoint } from './ExternalSettings';
 import { ApiRefreshTokenDto } from '../erp/dto/ApiRefreshTokenDto';
+import { AuthApi } from '../erp/AuthApi';
 
 type CJType = typeof CryptoJS;
 let CJ: CJType;
@@ -1961,11 +1962,8 @@ export abstract class CoreApp<
      */
     async exchangeToken(api: IApi, token: string) {
         // Call the API quietly, no loading bar and no error popup
-        const data = await api.put<ApiRefreshTokenDto>(
-            'Auth/ExchangeToken',
-            {
-                token
-            },
+        const data = await new AuthApi(this).exchangeToken(
+            { token },
             {
                 showLoading: false,
                 onError: (error) => {
@@ -2031,11 +2029,8 @@ export abstract class CoreApp<
         token: string
     ): Promise<[string, number] | undefined> {
         // Call the API quietly, no loading bar and no error popup
-        const data = await api.put<ApiRefreshTokenDto>(
-            'Auth/ApiRefreshToken',
-            {
-                token
-            },
+        const data = await new AuthApi(this).apiRefreshToken(
+            { token },
             {
                 showLoading: false,
                 onError: (error) => {
@@ -2049,7 +2044,6 @@ export abstract class CoreApp<
                 }
             }
         );
-
         if (data == null) return undefined;
 
         // Update the access token
@@ -2128,20 +2122,26 @@ export abstract class CoreApp<
     async signout() {
         const token = this.getCacheToken();
         if (token) {
-            await this.api.put<boolean>(
-                'Auth/Signout',
+            const result = await new AuthApi(this).signout(
                 {
                     deviceId: this.deviceId,
                     token: this.encrypt(token)
                 },
                 {
                     onError: (error) => {
-                        console.error('CoreApp.signout error', error);
+                        console.error(
+                            `CoreApp.${this.name}.signout error`,
+                            error
+                        );
                         // Prevent further processing
                         return false;
                     }
                 }
             );
+
+            if (result && !result.ok) {
+                console.error(`CoreApp.${this.name}.signout failed`, result);
+            }
         }
 
         // Clear, noTrigger = true, avoid state update

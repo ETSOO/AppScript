@@ -59,6 +59,7 @@ export * from './erp/dto/ResultPayload';
 
 // erp rq
 export * from './erp/rq/AuthRequest';
+export * from './erp/rq/GetSigninUrlRQ';
 export * from './erp/rq/LoginIdRQ';
 export * from './erp/rq/LoginRQ';
 export * from './erp/rq/MemberListRQ';
@@ -74,7 +75,9 @@ export * from './erp/rq/RefreshTokenRQ';
 export * from './erp/rq/RegionsRQ';
 export * from './erp/rq/ResetPasswordRQ';
 export * from './erp/rq/SendActionMessageRQ';
+export * from './erp/rq/SignoutRQ';
 export * from './erp/rq/TiplistRQ';
+export * from './erp/rq/TokenRQ';
 export * from './erp/rq/UpdateStatusRQ';
 
 // erp api
