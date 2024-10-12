@@ -90,6 +90,7 @@ export * from './erp/OrgApi';
 export * from './erp/PublicApi';
 
 // i18n
+export * from './i18n/CultureUtils';
 export * from './i18n/en';
 export * from './i18n/zhHans';
 export * from './i18n/zhHant';
