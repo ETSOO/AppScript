@@ -91,7 +91,8 @@ export const appFields = [
     'deviceId',
     'devices',
     'devicePassphrase',
-    'cachedUrl'
+    'cachedUrl',
+    'embedded'
 ] as const;
 
 /**
@@ -182,6 +183,11 @@ export interface IApp {
      * Is debug mode
      */
     readonly debug: boolean;
+
+    /**
+     * Is embedded mode
+     */
+    readonly embedded: boolean;
 
     /**
      * Cached URL
@@ -744,6 +750,12 @@ export interface IApp {
      * @param seconds Access token expires in seconds
      */
     updateApi(name: string, token: string | undefined, seconds: number): void;
+
+    /**
+     * Update embedded status
+     * @param embedded New embedded status
+     */
+    updateEmbedded(embedded?: boolean): void;
 
     /**
      * User login

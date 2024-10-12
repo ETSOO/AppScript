@@ -248,6 +248,14 @@ export abstract class CoreApp<
         this.storage.setData(this.fields.cachedUrl, value);
     }
 
+    private _embedded: boolean = false;
+    /**
+     * Is embedded
+     */
+    get embedded() {
+        return this._embedded;
+    }
+
     private _isTryingLogin = false;
 
     /**
@@ -2174,6 +2182,27 @@ export abstract class CoreApp<
         if (this._isTryingLogin) return false;
         this._isTryingLogin = true;
         return true;
+    }
+
+    /**
+     * Update embedded status
+     * @param embedded New embedded status
+     */
+    updateEmbedded(embedded?: boolean) {
+        // Check current session when it's undefined
+        if (embedded == null) {
+            embedded = this.storage.getData<boolean>(this.fields.embedded);
+            if (embedded == null) return;
+        }
+
+        // Ignore the same value
+        if (embedded === this._embedded) return;
+
+        // Save the embedded status
+        this.storage.setData(this.fields.embedded, embedded);
+
+        // Update the embedded status
+        this._embedded = embedded;
     }
 
     /**
