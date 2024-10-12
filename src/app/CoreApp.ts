@@ -2187,12 +2187,19 @@ export abstract class CoreApp<
     /**
      * Update embedded status
      * @param embedded New embedded status
+     * @param isWeb Is web or not
      */
-    updateEmbedded(embedded?: boolean) {
+    updateEmbedded(embedded: boolean | undefined | null, isWeb?: boolean) {
         // Check current session when it's undefined
         if (embedded == null) {
             embedded = this.storage.getData<boolean>(this.fields.embedded);
             if (embedded == null) return;
+        }
+
+        // Is web way?
+        // Pass the true embedded status from parent to child (Both conditions are true)
+        if (isWeb && embedded && globalThis.self !== globalThis.parent) {
+            embedded = false;
         }
 
         // Ignore the same value
