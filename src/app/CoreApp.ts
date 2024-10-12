@@ -2198,7 +2198,7 @@ export abstract class CoreApp<
 
         // Is web way?
         // Pass the true embedded status from parent to child (Both conditions are true)
-        if (isWeb && embedded && globalThis.self !== globalThis.parent) {
+        if (isWeb && embedded && globalThis.self === globalThis.parent) {
             embedded = false;
         }
 
