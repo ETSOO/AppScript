@@ -11,8 +11,8 @@ export namespace CultureUtils {
      */
     export function make(...resources: (object | (() => Promise<object>))[]) {
         return DomUtils.zhHans(async () => {
-            const rs = await Promise.all([
-                ...resources.map(
+            const rs = await Promise.all(
+                resources.map(
                     (resource) =>
                         new Promise<object>((resolve) => {
                             if (typeof resource === 'object') {
@@ -22,7 +22,7 @@ export namespace CultureUtils {
                             }
                         })
                 )
-            ]);
+            );
             return rs.reduce((prev, curr) => ({
                 ...prev,
                 ...curr
