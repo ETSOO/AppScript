@@ -33,6 +33,7 @@ import { IUser } from '../state/User';
 import { IAppSettings } from './AppSettings';
 import {
     appFields,
+    AppLoginParams,
     FormatResultCustomCallback,
     IApp,
     IAppFields,
@@ -257,6 +258,15 @@ export abstract class CoreApp<
     }
 
     private _isTryingLogin = false;
+    /**
+     * Is trying login
+     */
+    get isTryingLogin() {
+        return this._isTryingLogin;
+    }
+    protected set isTryingLogin(value: boolean) {
+        this._isTryingLogin = value;
+    }
 
     /**
      * Last called with token refresh
@@ -2166,19 +2176,22 @@ export abstract class CoreApp<
         this.userLogout(true, true);
 
         // Go to login page
-        this.toLoginPage(false, true);
+        this.toLoginPage({ tryLogin: false, removeUrl: true });
     }
 
     /**
      * Go to the login page
-     * @param tryLogin Try to login again
-     * @param removeUrl Remove current URL for reuse
+     * params Login parameters
      */
-    toLoginPage(tryLogin?: boolean, removeUrl?: boolean) {
+    toLoginPage(params?: AppLoginParams) {
+        // Destruct
+        const { removeUrl, showLoading, ...rest } = params ?? {};
+
         // Save the current URL
         this.cachedUrl = removeUrl ? undefined : globalThis.location.href;
 
-        const url = `/?tryLogin=${tryLogin ?? false}`;
+        // URL with parameters
+        const url = '/'.addUrlParams(rest);
 
         this.navigate(url);
     }
@@ -2186,11 +2199,15 @@ export abstract class CoreApp<
     /**
      * Try login, returning false means is loading
      * UI get involved while refreshToken not intended
-     * @param showLoading Show loading bar or not during call
+     * @param params Login parameters
      */
-    async tryLogin(_showLoading?: boolean) {
+    async tryLogin(params?: AppLoginParams) {
+        // Check status
         if (this._isTryingLogin) return false;
         this._isTryingLogin = true;
+
+        this.toLoginPage(params);
+
         return true;
     }
 

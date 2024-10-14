@@ -64,6 +64,26 @@ export type FormatResultCustomCallback =
     | boolean;
 
 /**
+ * Login parameters
+ */
+export type AppLoginParams = DataTypes.SimpleObject & {
+    /**
+     * Try login with cached refresh token
+     */
+    tryLogin?: boolean;
+
+    /**
+     * Don't cache current URL instead of the default page
+     */
+    removeUrl?: boolean;
+
+    /**
+     * Show loading bar or not
+     */
+    showLoading?: boolean;
+};
+
+/**
  * Refresh token props
  */
 export interface RefreshTokenProps {
@@ -169,6 +189,11 @@ export interface IApp {
      * Is the app ready
      */
     readonly isReady: boolean;
+
+    /**
+     * Is trying to login
+     */
+    readonly isTryingLogin: boolean;
 
     /**
      * Application name
@@ -734,17 +759,16 @@ export interface IApp {
 
     /**
      * Go to the login page
-     * @param tryLogin Try to login again
-     * @param removeUrl Remove current URL for reuse
+     * @param params Login parameters
      */
-    toLoginPage(tryLogin?: boolean, removeUrl?: boolean): void;
+    toLoginPage(params?: AppLoginParams): void;
 
     /**
      * Try login, returning false means is loading
      * UI get involved while refreshToken not intended
-     * @param showLoading Show loading bar or not
+     * @param params Login parameters
      */
-    tryLogin(showLoading?: boolean): Promise<boolean>;
+    tryLogin(params?: AppLoginParams): Promise<boolean>;
 
     /**
      * Update API token and expires
