@@ -1481,16 +1481,14 @@ export abstract class CoreApp<
      * @param silent Silent without any popups
      */
     doRefreshTokenResult(
-        result: RefreshTokenResult,
+        result: RefreshTokenResult<IActionResult<U>>,
         initCallCallback?: (result: boolean) => void,
         silent: boolean = false
     ) {
-        if (result === true) return;
-
         if (
-            typeof result === 'object' &&
+            Array.isArray(result) &&
             !(result instanceof ApiDataError) &&
-            this.checkDeviceResult(result)
+            this.checkDeviceResult(result[1])
         ) {
             initCallCallback ??= (result) => {
                 if (!result) return;
@@ -1542,15 +1540,23 @@ export abstract class CoreApp<
      * @param result Refresh token result
      * @returns Message
      */
-    formatRefreshTokenResult(result: RefreshTokenResult) {
-        // Undefined for boolean
-        if (typeof result === 'boolean') return undefined;
+    formatRefreshTokenResult(result: RefreshTokenResult<IActionResult<U>>) {
+        // Error message
+        if (typeof result === 'string') return result;
 
-        return result instanceof ApiDataError
-            ? this.formatError(result)
-            : typeof result !== 'string'
-            ? ActionResultError.format(result)
-            : result;
+        // API error
+        if (result instanceof ApiDataError) return this.formatError(result);
+
+        // Action result
+        const [token, r] = result;
+
+        // Success
+        if (r.ok) return undefined;
+
+        // No token data
+        if (token == null) return `${this.get('noData')} (token)`;
+
+        return ActionResultError.format(r);
     }
 
     private getFieldLabel(field: string) {
@@ -1805,6 +1811,7 @@ export abstract class CoreApp<
      */
     getResponseToken(rawResponse: any, tokenKey?: string): string | null {
         const response = this.api.transformResponse(rawResponse);
+        if (!response.ok) return null;
         return this.api.getHeaderValue(
             response.headers,
             tokenKey ?? 'Smarterp-Refresh-Token'
@@ -1942,7 +1949,6 @@ export abstract class CoreApp<
      * @param props Props
      */
     async refreshToken(props?: RefreshTokenProps) {
-        if (props && props.callback) props.callback(true, undefined);
         return true;
     }
 

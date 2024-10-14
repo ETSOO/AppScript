@@ -42,14 +42,10 @@ export interface NavigateOptions {
 
 /**
  * Refresh token result type
- * true means success, false means failed but no any message
+ * array means success, false means failed but no any message
  * other cases means failed with differnet message
  */
-export type RefreshTokenResult =
-    | boolean
-    | string
-    | ApiDataError
-    | IActionResult;
+export type RefreshTokenResult<R> = string | ApiDataError | [string | null, R];
 
 /**
  * Format result custom type
@@ -72,14 +68,19 @@ export type FormatResultCustomCallback =
  */
 export interface RefreshTokenProps {
     /**
-     * Callback
+     * API name
      */
-    callback?: (result: RefreshTokenResult, successData?: string) => void;
+    api?: string;
 
     /**
      * Show loading bar or not
      */
     showLoading?: boolean;
+
+    /**
+     * Header token field name
+     */
+    tokenField?: string;
 }
 
 /**
@@ -454,7 +455,7 @@ export interface IApp {
      * @param silent Silent without any popups
      */
     doRefreshTokenResult(
-        result: RefreshTokenResult,
+        result: RefreshTokenResult<IActionResult<IUser>>,
         initCallCallback?: (result: boolean) => void,
         silent?: boolean
     ): void;
@@ -474,7 +475,9 @@ export interface IApp {
      * @param result Refresh token result
      * @returns Message
      */
-    formatRefreshTokenResult(result: RefreshTokenResult): string | undefined;
+    formatRefreshTokenResult(
+        result: RefreshTokenResult<IActionResult<IUser>>
+    ): string | undefined;
 
     /**
      * Format result text

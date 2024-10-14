@@ -10,6 +10,8 @@ import { SignoutRQ } from './rq/SignoutRQ';
 import { GetLogInUrlRQ } from './rq/GetLogInUrlRQ';
 import { TokenRQ } from './rq/TokenRQ';
 import { ApiRefreshTokenDto } from './dto/ApiRefreshTokenDto';
+import { RefreshTokenProps, RefreshTokenResult } from '../app/IApp';
+import { RefreshTokenRQ } from './rq/RefreshTokenRQ';
 
 /**
  * Authentication API
@@ -80,6 +82,55 @@ export class AuthApi extends BaseApi {
             region
         };
         return this.api.post('Auth/LoginId', rq, payload);
+    }
+
+    /**
+     * Refresh token
+     * @param token Refresh token
+     * @param props Props
+     * @returns Result
+     */
+    async refreshToken<R>(
+        token: string,
+        props?: RefreshTokenProps
+    ): Promise<RefreshTokenResult<R>> {
+        // Destruct
+        const {
+            api = 'Auth/RefreshToken',
+            showLoading = false,
+            tokenField = 'Etsoo-Refresh-Token'
+        } = props ?? {};
+
+        // Reqest data
+        const rq: RefreshTokenRQ = {
+            deviceId: this.app.deviceId
+        };
+
+        // Payload
+        const payload: IApiPayload<R, any> = {
+            // No loading bar needed to avoid screen flicks
+            showLoading,
+            config: { headers: { [tokenField]: token } },
+            onError: () => {
+                // Prevent further processing
+                return false;
+            }
+        };
+
+        // Call API
+        const result = await this.api.put(api, rq, payload);
+        if (result == null) {
+            return this.api.lastError ?? this.app.get('unknownError')!;
+        }
+
+        // Token
+        const refreshToken = this.app.getResponseToken(
+            payload.response,
+            tokenField
+        );
+
+        // Success
+        return [refreshToken, result];
     }
 
     /**
