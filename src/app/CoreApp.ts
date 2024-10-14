@@ -248,7 +248,7 @@ export abstract class CoreApp<
         this.storage.setData(this.fields.cachedUrl, value);
     }
 
-    private _embedded: boolean = false;
+    private _embedded: boolean;
     /**
      * Is embedded
      */
@@ -360,6 +360,10 @@ export abstract class CoreApp<
 
         // Device id
         this._deviceId = storage.getData(this.fields.deviceId, '');
+
+        // Embedded
+        this._embedded =
+            this.storage.getData<boolean>(this.fields.embedded) ?? false;
 
         const { currentCulture, currentRegion } = settings;
 
