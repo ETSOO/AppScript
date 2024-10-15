@@ -39,8 +39,7 @@ import {
     IAppFields,
     IDetectIPCallback,
     NavigateOptions,
-    RefreshTokenProps,
-    RefreshTokenResult
+    RefreshTokenProps
 } from './IApp';
 import { UserRole } from './UserRole';
 import type CryptoJS from 'crypto-js';
@@ -1498,32 +1497,6 @@ export abstract class CoreApp<
         return wf;
     }
 
-    /**
-     * Format refresh token result
-     * @param result Refresh token result
-     * @returns Message
-     */
-    protected formatRefreshTokenResult(
-        result: RefreshTokenResult<IActionResult<U>>
-    ): string | undefined {
-        // Error message
-        if (typeof result === 'string') return result;
-
-        // API error
-        if (result instanceof ApiDataError) return this.formatError(result);
-
-        // Action result
-        const [token, r] = result;
-
-        // Success
-        if (r.ok) return undefined;
-
-        // No token data
-        if (token == null) return `${this.get('noData')} (token)`;
-
-        return ActionResultError.format(r);
-    }
-
     private getFieldLabel(field: string) {
         return this.get(field.formatInitial(false)) ?? field;
     }
@@ -1916,7 +1889,7 @@ export abstract class CoreApp<
      */
     async refreshToken(
         props?: RefreshTokenProps,
-        callback?: (result?: boolean | string) => boolean | void
+        callback?: (result?: boolean | IActionResult) => boolean | void
     ) {}
 
     /**

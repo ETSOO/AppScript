@@ -5,7 +5,7 @@ import { ResultPayload } from './dto/ResultPayload';
 import { LoginIdRQ } from './rq/LoginIdRQ';
 import { LoginRQ } from './rq/LoginRQ';
 import { ResetPasswordRQ } from './rq/ResetPasswordRQ';
-import { IActionResult } from '@etsoo/shared';
+import { ActionResult, IActionResult } from '@etsoo/shared';
 import { SignoutRQ } from './rq/SignoutRQ';
 import { GetLogInUrlRQ } from './rq/GetLogInUrlRQ';
 import { TokenRQ } from './rq/TokenRQ';
@@ -125,7 +125,14 @@ export class AuthApi extends BaseApi {
         // Call API
         const result = await this.api.put(api, rq, payload);
         if (result == null) {
-            return this.api.lastError ?? this.app.get('unknownError')!;
+            return this.api.lastError
+                ? ActionResult.create(this.api.lastError)
+                : {
+                      ok: false,
+                      type: 'unknownError',
+                      field: 'result',
+                      title: this.app.get('unknownError')
+                  };
         }
 
         // Token
@@ -133,6 +140,16 @@ export class AuthApi extends BaseApi {
             payload.response,
             tokenField
         );
+
+        if (!refreshToken) {
+            // No refresh token
+            return {
+                ok: false,
+                type: 'noData',
+                field: 'token',
+                title: this.app.get('noData')
+            };
+        }
 
         // Success
         return [refreshToken, result];

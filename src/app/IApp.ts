@@ -45,7 +45,7 @@ export interface NavigateOptions {
  * array means success, false means failed but no any message
  * other cases means failed with differnet message
  */
-export type RefreshTokenResult<R> = string | ApiDataError | [string | null, R];
+export type RefreshTokenResult<R> = IActionResult | [string, R];
 
 /**
  * Format result custom type
@@ -701,7 +701,7 @@ export interface IApp {
      */
     refreshToken(
         props?: RefreshTokenProps,
-        callback?: (result?: boolean | string) => boolean | void
+        callback?: (result?: boolean | IActionResult) => boolean | void
     ): Promise<void>;
 
     /**

@@ -98,6 +98,7 @@ export * from './i18n/zhHant';
 // @etsoo/restclient
 export {
     ApiAuthorizationScheme,
+    ApiDataError,
     ApiMethod,
     ApiResponseType,
     createClient,
