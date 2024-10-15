@@ -93,12 +93,6 @@ export interface RefreshTokenProps {
     api?: string;
 
     /**
-     * Callback
-     * @param result Result
-     */
-    callback?: (result: boolean) => void;
-
-    /**
      * Show loading bar or not
      */
     showLoading?: boolean;
@@ -703,8 +697,12 @@ export interface IApp {
     /**
      * Refresh token
      * @param props Props
+     * @param callback Callback
      */
-    refreshToken(props?: RefreshTokenProps): Promise<void>;
+    refreshToken(
+        props?: RefreshTokenProps,
+        callback?: (result?: boolean | string) => boolean | void
+    ): Promise<void>;
 
     /**
      * Setup Api error handler

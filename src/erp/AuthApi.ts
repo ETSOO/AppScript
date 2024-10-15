@@ -18,6 +18,11 @@ import { RefreshTokenRQ } from './rq/RefreshTokenRQ';
  */
 export class AuthApi extends BaseApi {
     /**
+     * Header token field name
+     */
+    static HeaderTokenField = 'Etsoo-Refresh-Token';
+
+    /**
      * API refresh token
      * @param rq Request data
      * @param payload Payload
@@ -98,7 +103,7 @@ export class AuthApi extends BaseApi {
         const {
             api = 'Auth/RefreshToken',
             showLoading = false,
-            tokenField = 'Etsoo-Refresh-Token'
+            tokenField = AuthApi.HeaderTokenField
         } = props ?? {};
 
         // Reqest data

@@ -332,7 +332,11 @@ export abstract class CoreApp<
         const refresh: ApiRefreshTokenFunction = async (api, token) => {
             if (this.lastCalled) {
                 // Call refreshToken to update access token
-                await this.refreshToken();
+                // No popups show
+                await this.refreshToken({ showLoading: false }, (result) => {
+                    console.log(`CoreApp.${this.name}.ApiRefreshToken`, result);
+                    return false;
+                });
             } else {
                 // Popup countdown for user action
                 this.freshCountdownUI();
@@ -1908,8 +1912,12 @@ export abstract class CoreApp<
     /**
      * Refresh token
      * @param props Props
+     * @param callback Callback
      */
-    async refreshToken(props?: RefreshTokenProps) {}
+    async refreshToken(
+        props?: RefreshTokenProps,
+        callback?: (result?: boolean | string) => boolean | void
+    ) {}
 
     /**
      * Setup callback
