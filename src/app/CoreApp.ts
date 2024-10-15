@@ -282,8 +282,6 @@ export abstract class CoreApp<
      */
     protected passphrase: string = '';
 
-    private cachedRefreshToken?: string;
-
     private apis: Record<string, ApiTaskData> = {};
 
     private tasks: [() => PromiseLike<void | false>, number, number][] = [];
@@ -328,14 +326,20 @@ export abstract class CoreApp<
         }
         this.defaultRegion = region;
 
+        // Current system refresh token
         const refresh: ApiRefreshTokenFunction = async (api, token) => {
             if (this.lastCalled) {
                 // Call refreshToken to update access token
-                // No popups show
-                await this.refreshToken({ showLoading: false }, (result) => {
-                    console.log(`CoreApp.${this.name}.ApiRefreshToken`, result);
-                    return false;
-                });
+                await this.refreshToken(
+                    { token, showLoading: false },
+                    (result) => {
+                        if (result === true) return;
+                        console.log(
+                            `CoreApp.${this.name}.RefreshToken`,
+                            result
+                        );
+                    }
+                );
             } else {
                 // Popup countdown for user action
                 this.freshCountdownUI();
@@ -1037,7 +1041,6 @@ export abstract class CoreApp<
                 );
             }
         } else {
-            this.cachedRefreshToken = undefined;
             this.updateApi(this.api.name, undefined, -1);
         }
 
@@ -1169,7 +1172,6 @@ export abstract class CoreApp<
      * Clear cached token
      */
     clearCacheToken() {
-        this.cachedRefreshToken = undefined;
         this.storage.setPersistedData(this.fields.headerToken, undefined);
     }
 
@@ -1596,8 +1598,6 @@ export abstract class CoreApp<
      * @returns Cached token
      */
     getCacheToken(): string | undefined {
-        // Temp refresh token
-        if (this.cachedRefreshToken) return this.cachedRefreshToken;
         return this.storage.getData<string>(this.fields.headerToken);
     }
 
@@ -1883,14 +1883,78 @@ export abstract class CoreApp<
     abstract freshCountdownUI(callback?: () => PromiseLike<unknown>): void;
 
     /**
-     * Refresh token
+     * Refresh token with result
      * @param props Props
      * @param callback Callback
      */
     async refreshToken(
-        props?: RefreshTokenProps,
+        props: RefreshTokenProps,
         callback?: (result?: boolean | IActionResult) => boolean | void
-    ) {}
+    ) {
+        // Call refresh token API
+        let data = await new AuthApi(this).refreshToken<IActionResult<U>>(
+            props
+        );
+
+        let r: IActionResult;
+        if (Array.isArray(data)) {
+            const [token, result] = data;
+            if (result.ok) {
+                if (!token) {
+                    data = {
+                        ok: false,
+                        type: 'noData',
+                        field: 'token',
+                        title: this.get('noData')
+                    };
+                } else if (result.data == null) {
+                    data = {
+                        ok: false,
+                        type: 'noData',
+                        field: 'user',
+                        title: this.get('noData')
+                    };
+                } else {
+                    // User login
+                    this.userLogin(result.data, token);
+
+                    if (callback) callback(true);
+
+                    // Exit
+                    return;
+                }
+            } else if (this.checkDeviceResult(result)) {
+                if (callback == null || callback(result) !== true) {
+                    this.initCall((ir) => {
+                        if (!ir) return;
+                        this.notifier.alert(
+                            this.get('environmentChanged') ??
+                                'Environment changed',
+                            () => {
+                                // Callback, return true to prevent the default reload action
+                                if (callback == null || callback() !== true) {
+                                    // Reload the page
+                                    history.go(0);
+                                }
+                            }
+                        );
+                    }, true);
+                    return;
+                }
+            }
+
+            r = result;
+        } else {
+            r = data;
+        }
+
+        if (callback == null || callback(r) !== true) {
+            const message = `${r.title} (${r.field})`;
+            this.notifier.alert(message, () => {
+                if (callback) callback(false);
+            });
+        }
+    }
 
     /**
      * Setup callback
@@ -2171,9 +2235,9 @@ export abstract class CoreApp<
      * User login
      * @param user User data
      * @param refreshToken Refresh token
-     * @param keep Keep login or not
      */
-    userLogin(user: U, refreshToken: string, keep?: boolean) {
+    userLogin(user: U, refreshToken: string) {
+        // Hold the user data
         this.userData = user;
 
         // Cache the encrypted serverside device id
@@ -2181,12 +2245,8 @@ export abstract class CoreApp<
             this.storage.setData(this.fields.serversideDeviceId, user.deviceId);
         }
 
-        if (keep) {
-            this.authorize(user.token, user.tokenScheme, refreshToken);
-        } else {
-            this.cachedRefreshToken = this.encrypt(refreshToken);
-            this.authorize(user.token, user.tokenScheme, undefined);
-        }
+        // Authorize
+        this.authorize(user.token, user.tokenScheme, refreshToken);
     }
 
     /**

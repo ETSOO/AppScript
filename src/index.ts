@@ -76,6 +76,7 @@ export * from './erp/rq/RegionsRQ';
 export * from './erp/rq/ResetPasswordRQ';
 export * from './erp/rq/SendActionMessageRQ';
 export * from './erp/rq/SignoutRQ';
+export * from './erp/rq/SwitchOrgRQ';
 export * from './erp/rq/TiplistRQ';
 export * from './erp/rq/TokenRQ';
 export * from './erp/rq/UpdateStatusRQ';

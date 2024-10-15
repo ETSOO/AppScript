@@ -12,6 +12,7 @@ import { TokenRQ } from './rq/TokenRQ';
 import { ApiRefreshTokenDto } from './dto/ApiRefreshTokenDto';
 import { RefreshTokenProps, RefreshTokenResult } from '../app/IApp';
 import { RefreshTokenRQ } from './rq/RefreshTokenRQ';
+import { SwitchOrgRQ } from './rq/SwitchOrgRQ';
 
 /**
  * Authentication API
@@ -91,18 +92,17 @@ export class AuthApi extends BaseApi {
 
     /**
      * Refresh token
-     * @param token Refresh token
      * @param props Props
      * @returns Result
      */
     async refreshToken<R>(
-        token: string,
-        props?: RefreshTokenProps
+        props: RefreshTokenProps
     ): Promise<RefreshTokenResult<R>> {
         // Destruct
         const {
             api = 'Auth/RefreshToken',
             showLoading = false,
+            token,
             tokenField = AuthApi.HeaderTokenField
         } = props ?? {};
 
@@ -141,16 +141,6 @@ export class AuthApi extends BaseApi {
             tokenField
         );
 
-        if (!refreshToken) {
-            // No refresh token
-            return {
-                ok: false,
-                type: 'noData',
-                field: 'token',
-                title: this.app.get('noData')
-            };
-        }
-
         // Success
         return [refreshToken, result];
     }
@@ -173,5 +163,14 @@ export class AuthApi extends BaseApi {
      */
     signout(rq: SignoutRQ, payload?: ResultPayload) {
         return this.api.put('Auth/Signout', rq, payload);
+    }
+
+    /**
+     * Switch organization
+     * @param rq Request data
+     * @param payload Payload
+     */
+    switchOrg(rq: SwitchOrgRQ, payload?: ResultPayload) {
+        return this.app.api.put('Auth/SwitchOrg', rq, payload);
     }
 }

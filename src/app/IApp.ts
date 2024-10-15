@@ -45,7 +45,7 @@ export interface NavigateOptions {
  * array means success, false means failed but no any message
  * other cases means failed with differnet message
  */
-export type RefreshTokenResult<R> = IActionResult | [string, R];
+export type RefreshTokenResult<R> = IActionResult | [string | null, R];
 
 /**
  * Format result custom type
@@ -87,6 +87,11 @@ export type AppLoginParams = DataTypes.SimpleObject & {
  * Refresh token props
  */
 export interface RefreshTokenProps {
+    /**
+     * Refresh token
+     */
+    token: string;
+
     /**
      * API name
      */
@@ -695,12 +700,13 @@ export interface IApp {
     pageExit(): void;
 
     /**
-     * Refresh token
+     * Refresh token with result
      * @param props Props
      * @param callback Callback
+     * @param api API
      */
     refreshToken(
-        props?: RefreshTokenProps,
+        props: RefreshTokenProps,
         callback?: (result?: boolean | IActionResult) => boolean | void
     ): Promise<void>;
 
@@ -771,9 +777,8 @@ export interface IApp {
      * User login
      * @param user User data
      * @param refreshToken Refresh token
-     * @param keep Keep login or not
      */
-    userLogin(user: IUser, refreshToken: string, keep?: boolean): void;
+    userLogin(user: IUser, refreshToken: string): void;
 
     /**
      * User logout

@@ -112,30 +112,6 @@ export class OrgApi extends EntityApi {
     }
 
     /**
-     * Switch organization
-     * @param id Organization id
-     * @param serviceId Service id
-     * @param payload Payload
-     */
-    async switch(
-        id: number,
-        serviceId?: number,
-        payload?: IApiPayload<boolean>
-    ) {
-        const result = await this.app.api.put(
-            'Organization/Switch',
-            {
-                id,
-                serviceId,
-                deviceId: this.app.deviceId
-            },
-            payload
-        );
-        if (result) return await this.app.refreshToken();
-        return result;
-    }
-
-    /**
      * Update
      * @param data Modal data
      * @param payload Payload
