@@ -1888,9 +1888,13 @@ export abstract class CoreApp<
      * @param callback Callback
      */
     async refreshToken(
-        props: RefreshTokenProps,
+        props?: RefreshTokenProps,
         callback?: (result?: boolean | IActionResult) => boolean | void
     ) {
+        // Check props
+        props ??= {};
+        props.token ??= this.getCacheToken();
+
         // Call refresh token API
         let data = await new AuthApi(this).refreshToken<IActionResult<U>>(
             props
@@ -2175,7 +2179,7 @@ export abstract class CoreApp<
 
     /**
      * Go to the login page
-     * params Login parameters
+     * @params Login parameters
      */
     toLoginPage(params?: AppLoginParams) {
         // Destruct

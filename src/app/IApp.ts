@@ -90,10 +90,10 @@ export interface RefreshTokenProps {
     /**
      * Refresh token
      */
-    token: string;
+    token?: string;
 
     /**
-     * API name
+     * API URL
      */
     api?: string;
 
@@ -706,7 +706,7 @@ export interface IApp {
      * @param api API
      */
     refreshToken(
-        props: RefreshTokenProps,
+        props?: RefreshTokenProps,
         callback?: (result?: boolean | IActionResult) => boolean | void
     ): Promise<void>;
 

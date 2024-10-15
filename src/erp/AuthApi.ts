@@ -106,6 +106,16 @@ export class AuthApi extends BaseApi {
             tokenField = AuthApi.HeaderTokenField
         } = props ?? {};
 
+        // Check the token
+        if (!token) {
+            return {
+                ok: false,
+                type: 'noData',
+                field: 'token',
+                title: this.app.get('noData')
+            };
+        }
+
         // Reqest data
         const rq: RefreshTokenRQ = {
             deviceId: this.app.deviceId
