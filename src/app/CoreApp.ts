@@ -1477,57 +1477,6 @@ export abstract class CoreApp<
     }
 
     /**
-     * Refresh token failed
-     */
-    protected refreshTokenFailed() {
-        this.userUnauthorized();
-        this.toLoginPage();
-    }
-
-    /**
-     * Do refresh token result
-     * @param result Result
-     * @param initCallCallback InitCall callback
-     * @param silent Silent without any popups
-     */
-    doRefreshTokenResult(
-        result: RefreshTokenResult<IActionResult<U>>,
-        initCallCallback?: (result: boolean) => void,
-        silent: boolean = false
-    ) {
-        if (
-            Array.isArray(result) &&
-            !(result instanceof ApiDataError) &&
-            this.checkDeviceResult(result[1])
-        ) {
-            initCallCallback ??= (result) => {
-                if (!result) return;
-                this.notifier.alert(
-                    this.get<string>('environmentChanged') ??
-                        'Environment changed',
-                    () => {
-                        // Reload the page
-                        history.go(0);
-                    }
-                );
-            };
-
-            this.initCall(initCallCallback, true);
-            return;
-        }
-
-        const message = this.formatRefreshTokenResult(result);
-        if (message == null || silent) {
-            this.refreshTokenFailed();
-            return;
-        }
-
-        this.notifier.alert(message, () => {
-            this.refreshTokenFailed();
-        });
-    }
-
-    /**
      * Format as full name
      * @param familyName Family name
      * @param givenName Given name
@@ -1550,7 +1499,9 @@ export abstract class CoreApp<
      * @param result Refresh token result
      * @returns Message
      */
-    formatRefreshTokenResult(result: RefreshTokenResult<IActionResult<U>>) {
+    protected formatRefreshTokenResult(
+        result: RefreshTokenResult<IActionResult<U>>
+    ): string | undefined {
         // Error message
         if (typeof result === 'string') return result;
 
@@ -1958,9 +1909,7 @@ export abstract class CoreApp<
      * Refresh token
      * @param props Props
      */
-    async refreshToken(props?: RefreshTokenProps) {
-        return true;
-    }
+    async refreshToken(props?: RefreshTokenProps) {}
 
     /**
      * Setup callback
@@ -2203,12 +2152,10 @@ export abstract class CoreApp<
      */
     async tryLogin(params?: AppLoginParams) {
         // Check status
-        if (this._isTryingLogin) return false;
+        if (this._isTryingLogin) return;
         this._isTryingLogin = true;
 
         this.toLoginPage(params);
-
-        return true;
     }
 
     /**

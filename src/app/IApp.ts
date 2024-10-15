@@ -93,6 +93,12 @@ export interface RefreshTokenProps {
     api?: string;
 
     /**
+     * Callback
+     * @param result Result
+     */
+    callback?: (result: boolean) => void;
+
+    /**
      * Show loading bar or not
      */
     showLoading?: boolean;
@@ -474,18 +480,6 @@ export interface IApp {
     ): string;
 
     /**
-     * Do refresh token result
-     * @param result Result
-     * @param initCallCallback InitCall callback
-     * @param silent Silent without any popups
-     */
-    doRefreshTokenResult(
-        result: RefreshTokenResult<IActionResult<IUser>>,
-        initCallCallback?: (result: boolean) => void,
-        silent?: boolean
-    ): void;
-
-    /**
      * Format as full name
      * @param familyName Family name
      * @param givenName Given name
@@ -494,15 +488,6 @@ export interface IApp {
         familyName: string | undefined | null,
         givenName: string | undefined | null
     ): string;
-
-    /**
-     * Format refresh token result
-     * @param result Refresh token result
-     * @returns Message
-     */
-    formatRefreshTokenResult(
-        result: RefreshTokenResult<IActionResult<IUser>>
-    ): string | undefined;
 
     /**
      * Format result text
@@ -719,7 +704,7 @@ export interface IApp {
      * Refresh token
      * @param props Props
      */
-    refreshToken(props?: RefreshTokenProps): Promise<boolean>;
+    refreshToken(props?: RefreshTokenProps): Promise<void>;
 
     /**
      * Setup Api error handler
@@ -768,7 +753,7 @@ export interface IApp {
      * UI get involved while refreshToken not intended
      * @param params Login parameters
      */
-    tryLogin(params?: AppLoginParams): Promise<boolean>;
+    tryLogin(params?: AppLoginParams): Promise<void>;
 
     /**
      * Update API token and expires
