@@ -84,6 +84,21 @@ export type AppLoginParams = DataTypes.SimpleObject & {
 };
 
 /**
+ * App try login parameters
+ */
+export type AppTryLoginParams = AppLoginParams & {
+    /**
+     * Callback on failure
+     */
+    onFailure?: () => void;
+
+    /**
+     * Callback on success
+     */
+    onSuccess?: () => void;
+};
+
+/**
  * Refresh token props
  */
 export interface RefreshTokenProps {
@@ -757,7 +772,7 @@ export interface IApp {
      * UI get involved while refreshToken not intended
      * @param params Login parameters
      */
-    tryLogin(params?: AppLoginParams): Promise<void>;
+    tryLogin(params?: AppLoginParams): Promise<boolean>;
 
     /**
      * Update API token and expires

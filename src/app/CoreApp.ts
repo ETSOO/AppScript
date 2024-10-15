@@ -34,6 +34,7 @@ import { IAppSettings } from './AppSettings';
 import {
     appFields,
     AppLoginParams,
+    AppTryLoginParams,
     FormatResultCustomCallback,
     IApp,
     IAppFields,
@@ -2199,12 +2200,12 @@ export abstract class CoreApp<
      * UI get involved while refreshToken not intended
      * @param params Login parameters
      */
-    async tryLogin(params?: AppLoginParams) {
+    async tryLogin(params?: AppTryLoginParams) {
         // Check status
-        if (this._isTryingLogin) return;
+        if (this._isTryingLogin) return false;
         this._isTryingLogin = true;
 
-        this.toLoginPage(params);
+        return true;
     }
 
     /**
