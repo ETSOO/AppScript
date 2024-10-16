@@ -65,11 +65,19 @@ export class AuthApi extends BaseApi {
         payload?: IApiPayload<IActionResult<T>>,
         tokenKey?: string
     ): Promise<[IActionResult<T> | undefined, string | null]> {
+        // Default values
         payload ??= {};
+        tokenKey ??= AuthApi.HeaderTokenField;
+
+        // Call the API
         const result = await this.api.post('Auth/Login', rq, payload);
+
+        // Get the refresh token
         const refreshToken = result?.ok
             ? this.app.getResponseToken(payload.response, tokenKey)
             : null;
+
+        // Return the result
         return [result, refreshToken];
     }
 

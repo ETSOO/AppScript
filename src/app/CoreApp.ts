@@ -525,8 +525,14 @@ export abstract class CoreApp<
 
     /**
      * Persist settings to source when application exit
+     * @param keepLogin Keep login or not
      */
-    persist() {
+    persist(keepLogin?: boolean) {
+        if (!keepLogin) {
+            // Unconditional clear the cache for security
+            this.clearCacheToken();
+        }
+
         // Devices
         const devices = this.storage.getPersistedData<string[]>(
             this.fields.devices
@@ -541,7 +547,12 @@ export abstract class CoreApp<
         }
 
         if (!this.authorized) return;
-        this.storage.copyTo(this.persistedFields);
+
+        const fields = keepLogin
+            ? this.persistedFields
+            : this.persistedFields.filter((f) => f !== this.fields.headerToken);
+
+        this.storage.copyTo(fields);
     }
 
     /**
@@ -1748,13 +1759,10 @@ export abstract class CoreApp<
      * @param tokenKey Refresh token key
      * @returns response refresh token
      */
-    getResponseToken(rawResponse: any, tokenKey?: string): string | null {
+    getResponseToken(rawResponse: any, tokenKey: string): string | null {
         const response = this.api.transformResponse(rawResponse);
         if (!response.ok) return null;
-        return this.api.getHeaderValue(
-            response.headers,
-            tokenKey ?? 'Smarterp-Refresh-Token'
-        );
+        return this.api.getHeaderValue(response.headers, tokenKey);
     }
 
     /**

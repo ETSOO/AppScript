@@ -623,7 +623,7 @@ export interface IApp {
      * @param tokenKey Refresh token key
      * @returns response refresh token
      */
-    getResponseToken(rawResponse: any, tokenKey?: string): string | null;
+    getResponseToken(rawResponse: any, tokenKey: string): string | null;
 
     /**
      * Get time zone
@@ -758,8 +758,9 @@ export interface IApp {
 
     /**
      * Persist settings to source when application exit
+     * @param keepLogin Keep login or not
      */
-    persist(): void;
+    persist(keepLogin?: boolean): void;
 
     /**
      * Go to the login page
