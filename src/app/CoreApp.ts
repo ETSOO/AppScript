@@ -2046,17 +2046,17 @@ export abstract class CoreApp<
     }
 
     /**
-     * API refresh token
+     * API refresh token data
      * @param api Current API
      * @param token Refresh token
      * @returns Result
      */
-    protected async apiRefreshToken(
+    protected async apiRefreshTokenData(
         api: IApi,
         token: string
-    ): Promise<[string, number] | undefined> {
+    ): Promise<ApiRefreshTokenDto | undefined> {
         // Call the API quietly, no loading bar and no error popup
-        const data = await new AuthApi(this).apiRefreshToken(
+        return new AuthApi(this).apiRefreshToken(
             { token },
             {
                 showLoading: false,
@@ -2071,6 +2071,20 @@ export abstract class CoreApp<
                 }
             }
         );
+    }
+
+    /**
+     * API refresh token
+     * @param api Current API
+     * @param token Refresh token
+     * @returns Result
+     */
+    protected async apiRefreshToken(
+        api: IApi,
+        token: string
+    ): Promise<[string, number] | undefined> {
+        // Call the API quietly, no loading bar and no error popup
+        const data = await this.apiRefreshTokenData(api, token);
         if (data == null) return undefined;
 
         // Update the access token
