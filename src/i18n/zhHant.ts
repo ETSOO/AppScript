@@ -1,3 +1,4 @@
+import { DomUtils } from '@etsoo/shared';
 import { CultureUtils } from './CultureUtils';
 
 /**
@@ -6,4 +7,4 @@ import { CultureUtils } from './CultureUtils';
  * @returns Full culture
  */
 export const zhHant = (...resources: (object | (() => Promise<object>))[]) =>
-    CultureUtils.make(import('./zh-Hant.json'), ...resources);
+    CultureUtils.make(DomUtils.zhHant, import('./zh-Hant.json'), ...resources);

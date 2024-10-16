@@ -1,3 +1,4 @@
+import { DomUtils } from '@etsoo/shared';
 import { CultureUtils } from './CultureUtils';
 
 /**
@@ -6,4 +7,4 @@ import { CultureUtils } from './CultureUtils';
  * @returns Full culture
  */
 export const en = (...resources: (object | (() => Promise<object>))[]) =>
-    CultureUtils.make(import('./en.json'), ...resources);
+    CultureUtils.make(DomUtils.en, import('./en.json'), ...resources);
