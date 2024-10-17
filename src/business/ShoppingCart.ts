@@ -475,13 +475,7 @@ export class ShoppingCart<T extends ShoppingCartItem> {
             this.save();
         } else {
             ShoppingCart.clear(this.identifier, this.storage);
-
-            const keys = this.keys;
-            const index = keys.indexOf(this.identifier);
-            if (index !== -1) {
-                keys.splice(index, 1);
-                this.keys = keys;
-            }
+            this.keys.remove(this.identifier);
         }
 
         this.doChange('clear', []);

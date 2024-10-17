@@ -256,9 +256,15 @@ export abstract class CoreApp<
         return this.storage.getData<boolean>(this.fields.keepLogin) ?? false;
     }
     set keepLogin(value: boolean) {
+        const field = this.fields.headerToken;
         if (!value) {
             // Clear the token
             this.clearCacheToken();
+
+            // Remove the token field
+            this.persistedFields.remove(field);
+        } else if (!this.persistedFields.includes(field)) {
+            this.persistedFields.push(field);
         }
         this.storage.setData(this.fields.keepLogin, value);
     }
@@ -311,7 +317,6 @@ export abstract class CoreApp<
             this.fields.deviceId,
             this.fields.devicePassphrase,
             this.fields.serversideDeviceId,
-            this.fields.headerToken,
             this.fields.keepLogin
         ];
     }
@@ -566,21 +571,14 @@ export abstract class CoreApp<
             this.fields.devices
         );
         if (devices != null) {
-            const index = devices.indexOf(this.getDeviceId());
-            if (index !== -1) {
-                // Remove current device from the list
-                devices.splice(index, 1);
+            if (devices.remove(this.getDeviceId()).length > 0) {
                 this.storage.setPersistedData(this.fields.devices, devices);
             }
         }
 
         if (!this.authorized) return;
 
-        const fields = this.keepLogin
-            ? this.persistedFields
-            : this.persistedFields.filter((f) => f !== this.fields.headerToken);
-
-        this.storage.copyTo(fields);
+        this.storage.copyTo(this.persistedFields);
     }
 
     /**
