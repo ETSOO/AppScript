@@ -133,7 +133,8 @@ export const appFields = [
     'devices',
     'devicePassphrase',
     'cachedUrl',
-    'embedded'
+    'embedded',
+    'keepLogin'
 ] as const;
 
 /**
@@ -239,6 +240,11 @@ export interface IApp {
      * Cached URL
      */
     cachedUrl: string | undefined | null;
+
+    /**
+     * Keep login or not
+     */
+    keepLogin: boolean;
 
     /**
      * IP data
@@ -390,6 +396,11 @@ export interface IApp {
      * @param callback Callback will be called when the IP is ready
      */
     detectIP(callback?: IDetectIPCallback): void;
+
+    /**
+     * Dispose the application
+     */
+    dispose(): void;
 
     /**
      * Download file
@@ -758,9 +769,8 @@ export interface IApp {
 
     /**
      * Persist settings to source when application exit
-     * @param keepLogin Keep login or not
      */
-    persist(keepLogin?: boolean): void;
+    persist(): void;
 
     /**
      * Go to the login page

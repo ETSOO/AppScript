@@ -249,6 +249,20 @@ export abstract class CoreApp<
         this.storage.setData(this.fields.cachedUrl, value);
     }
 
+    /**
+     * Keep login or not
+     */
+    get keepLogin() {
+        return this.storage.getData<boolean>(this.fields.keepLogin) ?? false;
+    }
+    set keepLogin(value: boolean) {
+        if (!value) {
+            // Clear the token
+            this.clearCacheToken();
+        }
+        this.storage.setData(this.fields.keepLogin, value);
+    }
+
     private _embedded: boolean;
     /**
      * Is embedded
@@ -287,6 +301,8 @@ export abstract class CoreApp<
 
     private tasks: [() => PromiseLike<void | false>, number, number][] = [];
 
+    private clearInterval?: () => void;
+
     /**
      * Get persisted fields
      */
@@ -295,7 +311,8 @@ export abstract class CoreApp<
             this.fields.deviceId,
             this.fields.devicePassphrase,
             this.fields.serversideDeviceId,
-            this.fields.headerToken
+            this.fields.headerToken,
+            this.fields.keepLogin
         ];
     }
 
@@ -508,6 +525,23 @@ export abstract class CoreApp<
     }
 
     /**
+     * Dispose the application
+     */
+    dispose() {
+        // Avoid duplicated call
+        if (!this._isReady) return;
+
+        // Persist storage defined fields
+        this.persist();
+
+        // Clear the interval
+        this.clearInterval?.();
+
+        // Reset the status to false
+        this.isReady = false;
+    }
+
+    /**
      * Is valid password, override to implement custom check
      * @param password Input password
      */
@@ -525,14 +559,8 @@ export abstract class CoreApp<
 
     /**
      * Persist settings to source when application exit
-     * @param keepLogin Keep login or not
      */
-    persist(keepLogin?: boolean) {
-        if (!keepLogin) {
-            // Unconditional clear the cache for security
-            this.clearCacheToken();
-        }
-
+    persist() {
         // Devices
         const devices = this.storage.getPersistedData<string[]>(
             this.fields.devices
@@ -548,7 +576,7 @@ export abstract class CoreApp<
 
         if (!this.authorized) return;
 
-        const fields = keepLogin
+        const fields = this.keepLogin
             ? this.persistedFields
             : this.persistedFields.filter((f) => f !== this.fields.headerToken);
 
@@ -1064,6 +1092,9 @@ export abstract class CoreApp<
 
         // Everything is ready, update the state
         this.authorized = authorized;
+
+        // Persist
+        this.persist();
     }
 
     /**
@@ -2106,7 +2137,7 @@ export abstract class CoreApp<
      * Setup tasks
      */
     protected setupTasks() {
-        ExtendUtils.intervalFor(() => {
+        this.clearInterval = ExtendUtils.intervalFor(() => {
             // Exit when not authorized
             if (!this.authorized) return;
 
@@ -2169,6 +2200,9 @@ export abstract class CoreApp<
      * @param apiUrl Signout API URL
      */
     async signout() {
+        // Clear the keep login status
+        this.keepLogin = false;
+
         const token = this.getCacheToken();
         if (token) {
             const result = await new AuthApi(this).signout(
