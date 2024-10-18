@@ -176,6 +176,7 @@ export abstract class CoreApp<
     }
     protected set deviceId(value: string) {
         this._deviceId = value;
+        this.storage.setData(this.fields.deviceId, this._deviceId);
     }
 
     /**
@@ -980,8 +981,7 @@ export abstract class CoreApp<
         if (passphrase == null) return false;
 
         // Update device id and cache it
-        this._deviceId = data.deviceId;
-        this.storage.setData(this.fields.deviceId, this._deviceId);
+        this.deviceId = data.deviceId;
 
         // Devices
         const devices = this.storage.getPersistedData<string[]>(
