@@ -70,7 +70,7 @@ export type AppLoginParams = {
     /**
      * Login parameters to pass
      */
-    params: DataTypes.SimpleObject & {
+    params?: DataTypes.SimpleObject & {
         /**
          * Try login with cached refresh token
          */
