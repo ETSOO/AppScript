@@ -2093,7 +2093,7 @@ export abstract class CoreApp<
         token: string
     ): Promise<ApiRefreshTokenDto | undefined> {
         // Call the API quietly, no loading bar and no error popup
-        return new AuthApi(this).apiRefreshToken(
+        return new AuthApi(this, api).apiRefreshToken(
             { token },
             {
                 showLoading: false,
