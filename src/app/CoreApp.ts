@@ -2229,22 +2229,22 @@ export abstract class CoreApp<
         this.userLogout(true, true);
 
         // Go to login page
-        this.toLoginPage({ tryLogin: false, removeUrl: true });
+        this.toLoginPage({ params: { tryLogin: false }, removeUrl: true });
     }
 
     /**
      * Go to the login page
-     * @params Login parameters
+     * @param data Login parameters
      */
-    toLoginPage(params?: AppLoginParams) {
+    toLoginPage(data?: AppLoginParams) {
         // Destruct
-        const { removeUrl, showLoading, ...rest } = params ?? {};
+        const { params = {}, removeUrl } = data ?? {};
 
         // Save the current URL
         this.cachedUrl = removeUrl ? undefined : globalThis.location.href;
 
         // URL with parameters
-        const url = '/'.addUrlParams(rest);
+        const url = '/'.addUrlParams(params);
 
         this.navigate(url);
     }
@@ -2252,9 +2252,9 @@ export abstract class CoreApp<
     /**
      * Try login, returning false means is loading
      * UI get involved while refreshToken not intended
-     * @param params Login parameters
+     * @param data Login parameters
      */
-    async tryLogin(params?: AppTryLoginParams) {
+    async tryLogin(data?: AppTryLoginParams) {
         // Check status
         if (this._isTryingLogin) return false;
         this._isTryingLogin = true;

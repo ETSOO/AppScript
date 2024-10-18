@@ -66,11 +66,16 @@ export type FormatResultCustomCallback =
 /**
  * Login parameters
  */
-export type AppLoginParams = DataTypes.SimpleObject & {
+export type AppLoginParams = {
     /**
-     * Try login with cached refresh token
+     * Login parameters to pass
      */
-    tryLogin?: boolean;
+    params: DataTypes.SimpleObject & {
+        /**
+         * Try login with cached refresh token
+         */
+        tryLogin?: boolean;
+    };
 
     /**
      * Don't cache current URL instead of the default page
@@ -774,16 +779,16 @@ export interface IApp {
 
     /**
      * Go to the login page
-     * @param params Login parameters
+     * @param data Login parameters
      */
-    toLoginPage(params?: AppLoginParams): void;
+    toLoginPage(data?: AppLoginParams): void;
 
     /**
      * Try login, returning false means is loading
      * UI get involved while refreshToken not intended
-     * @param params Login parameters
+     * @param data Login parameters
      */
-    tryLogin(params?: AppLoginParams): Promise<boolean>;
+    tryLogin(data?: AppLoginParams): Promise<boolean>;
 
     /**
      * Update API token and expires
