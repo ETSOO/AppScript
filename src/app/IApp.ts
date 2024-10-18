@@ -24,6 +24,7 @@ import { EntityStatus } from '../business/EntityStatus';
 import { Currency } from '../business/Currency';
 import { ExternalEndpoint } from './ExternalSettings';
 import { ApiRefreshTokenDto } from '../erp/dto/ApiRefreshTokenDto';
+import { ApiRefreshTokenRQ } from '../erp/rq/ApiRefreshTokenRQ';
 
 /**
  * Detect IP callback interface
@@ -371,7 +372,7 @@ export interface IApp {
         item: ExternalEndpoint,
         refresh?: (
             api: IApi,
-            token: string
+            rq: ApiRefreshTokenRQ
         ) => Promise<[string, number] | undefined>
     ): IApi;
 

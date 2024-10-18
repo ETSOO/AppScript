@@ -28,6 +28,12 @@ export interface IExternalSettings extends ExternalEndpoint {
     readonly homepage: string;
 
     /**
+     * Application id
+     * 程序编号
+     */
+    readonly appId: number;
+
+    /**
      * Endpoints to other services
      */
     readonly endpoints?: Record<

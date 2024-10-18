@@ -48,6 +48,7 @@ import { Currency } from '../business/Currency';
 import { ExternalEndpoint } from './ExternalSettings';
 import { ApiRefreshTokenDto } from '../erp/dto/ApiRefreshTokenDto';
 import { AuthApi } from '../erp/AuthApi';
+import { ApiRefreshTokenRQ } from '../erp/rq/ApiRefreshTokenRQ';
 
 type CJType = typeof CryptoJS;
 let CJ: CJType;
@@ -57,7 +58,7 @@ const loadCrypto = () => import('crypto-js');
 // API refresh token function interface
 type ApiRefreshTokenFunction = (
     api: IApi,
-    token: string
+    rq: ApiRefreshTokenRQ
 ) => Promise<[string, number] | undefined>;
 
 // API task data
@@ -351,11 +352,11 @@ export abstract class CoreApp<
         this.defaultRegion = region;
 
         // Current system refresh token
-        const refresh: ApiRefreshTokenFunction = async (api, token) => {
+        const refresh: ApiRefreshTokenFunction = async (api, rq) => {
             if (this.lastCalled) {
                 // Call refreshToken to update access token
                 await this.refreshToken(
-                    { token, showLoading: false },
+                    { token: rq.token, showLoading: false },
                     (result) => {
                         if (result === true) return;
                         console.log(
@@ -602,7 +603,7 @@ export abstract class CoreApp<
         item: ExternalEndpoint,
         refresh?: (
             api: IApi,
-            token: string
+            rq: ApiRefreshTokenRQ
         ) => Promise<[string, number] | undefined>
     ) {
         if (this.apis[name] != null) {
@@ -2085,43 +2086,43 @@ export abstract class CoreApp<
     /**
      * API refresh token data
      * @param api Current API
-     * @param token Refresh token
+     * @param rq Request data
      * @returns Result
      */
     protected async apiRefreshTokenData(
         api: IApi,
-        token: string
+        rq: ApiRefreshTokenRQ
     ): Promise<ApiRefreshTokenDto | undefined> {
-        // Call the API quietly, no loading bar and no error popup
-        return new AuthApi(this, api).apiRefreshToken(
-            { token },
-            {
-                showLoading: false,
-                onError: (error) => {
-                    console.error(
-                        `CoreApp.${api.name}.apiRefreshToken error`,
-                        error
-                    );
+        // Default appId
+        rq.appId ??= this.settings.appId;
 
-                    // Prevent further processing
-                    return false;
-                }
+        // Call the API quietly, no loading bar and no error popup
+        return new AuthApi(this, api).apiRefreshToken(rq, {
+            showLoading: false,
+            onError: (error) => {
+                console.error(
+                    `CoreApp.${api.name}.apiRefreshToken error`,
+                    error
+                );
+
+                // Prevent further processing
+                return false;
             }
-        );
+        });
     }
 
     /**
      * API refresh token
      * @param api Current API
-     * @param token Refresh token
+     * @param rq Request data
      * @returns Result
      */
     protected async apiRefreshToken(
         api: IApi,
-        token: string
+        rq: ApiRefreshTokenRQ
     ): Promise<[string, number] | undefined> {
         // Call the API quietly, no loading bar and no error popup
-        const data = await this.apiRefreshTokenData(api, token);
+        const data = await this.apiRefreshTokenData(api, rq);
         if (data == null) return undefined;
 
         // Update the access token
@@ -2153,7 +2154,7 @@ export abstract class CoreApp<
                 // Ready to trigger
                 if (api[2] === 0) {
                     // Refresh token
-                    api[3](api[0], api[4]).then((data) => {
+                    api[3](api[0], { token: api[4] }).then((data) => {
                         if (data == null) {
                             // Failed, try it again in 2 seconds
                             api[2] = 2;
