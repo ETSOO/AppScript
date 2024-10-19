@@ -64,6 +64,9 @@ type ApiRefreshTokenFunction = (
 // API task data
 type ApiTaskData = [IApi, number, number, ApiRefreshTokenFunction, string?];
 
+// System API name
+const systemApi = 'system';
+
 /**
  * Core application interface
  */
@@ -375,12 +378,12 @@ export abstract class CoreApp<
         if (api) {
             // Base URL of the API
             api.baseUrl = this.settings.endpoint;
-            api.name = 'system';
+            api.name = systemApi;
             this.setApi(api, refresh);
             this.api = api;
         } else {
             this.api = this.createApi(
-                'system',
+                systemApi,
                 {
                     endpoint: settings.endpoint,
                     webUrl: settings.webUrl
@@ -2026,6 +2029,11 @@ export abstract class CoreApp<
      * @returns Result
      */
     async exchangeToken(api: IApi, token: string) {
+        // Avoid to call the system API
+        if (api.name === systemApi) {
+            throw new Error('System API is not allowed to exchange token');
+        }
+
         // Call the API quietly, no loading bar and no error popup
         const data = await new AuthApi(this).exchangeToken(
             { token },
@@ -2071,14 +2079,18 @@ export abstract class CoreApp<
         coreName ??= 'core';
 
         for (const name in this.apis) {
-            const api = this.apis[name];
+            // Ignore the system API as it has its own logic with refreshToken
+            if (name === systemApi) continue;
+
+            const data = this.apis[name];
+            const api = data[0];
 
             // The core API
-            if (api[0].name === coreName) {
-                api[0].authorize(coreData.tokenType, coreData.accessToken);
-                this.updateApi(api, coreData.refreshToken, coreData.expiresIn);
+            if (name === coreName) {
+                api.authorize(coreData.tokenType, coreData.accessToken);
+                this.updateApi(data, coreData.refreshToken, coreData.expiresIn);
             } else {
-                this.exchangeToken(api[0], coreData.refreshToken);
+                this.exchangeToken(api, coreData.refreshToken);
             }
         }
     }
