@@ -2218,8 +2218,9 @@ export abstract class CoreApp<
 
     /**
      * Signout, with userLogout and toLoginPage
+     * @param action Callback
      */
-    async signout() {
+    async signout(action?: () => void | boolean) {
         // Clear the keep login status
         this.keepLogin = false;
 
@@ -2253,8 +2254,10 @@ export abstract class CoreApp<
         // Clear, noTrigger = true, avoid state update
         this.userLogout(true, true);
 
-        // Go to login page
-        this.toLoginPage({ params: { tryLogin: false }, removeUrl: true });
+        if (action == null || action() !== false) {
+            // Go to login page
+            this.toLoginPage({ params: { tryLogin: false }, removeUrl: true });
+        }
     }
 
     /**

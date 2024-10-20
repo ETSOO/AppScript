@@ -770,8 +770,9 @@ export interface IApp {
 
     /**
      * Signout, with userLogout and toLoginPage
+     * @param action Callback
      */
-    signout(): Promise<void>;
+    signout(action?: () => void | boolean): Promise<void>;
 
     /**
      * Persist settings to source when application exit
