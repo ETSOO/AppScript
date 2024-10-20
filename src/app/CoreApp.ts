@@ -621,6 +621,16 @@ export abstract class CoreApp<
     }
 
     /**
+     * Reset all APIs
+     */
+    protected resetApis() {
+        for (const name in this.apis) {
+            const data = this.apis[name];
+            this.updateApi(data, undefined, -1);
+        }
+    }
+
+    /**
      * Update API token and expires
      * @param name Api name
      * @param token Refresh token
@@ -2208,11 +2218,13 @@ export abstract class CoreApp<
 
     /**
      * Signout, with userLogout and toLoginPage
-     * @param apiUrl Signout API URL
      */
     async signout() {
         // Clear the keep login status
         this.keepLogin = false;
+
+        // Reset all APIs
+        this.resetApis();
 
         const token = this.getCacheToken();
         if (token) {
