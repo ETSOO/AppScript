@@ -16,6 +16,30 @@ export interface IUserData {
     readonly name: string;
 
     /**
+     * Given name
+     * 名
+     */
+    readonly givenName?: string;
+
+    /**
+     * Family name
+     * 姓
+     */
+    readonly familyName?: string;
+
+    /**
+     * Latin given name
+     * 拉丁名（拼音）
+     */
+    readonly latinGivenName?: string;
+
+    /**
+     * Latin family name
+     * 拉丁姓（拼音）
+     */
+    readonly latinFamilyName?: string;
+
+    /**
      * User avatar
      * 用户头像
      */
