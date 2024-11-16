@@ -12,7 +12,22 @@ export type QueryRQ<T extends IdType = number> = {
     id?: T;
 
     /**
-     * Query paging data
+     * Included ids
      */
-    queryPaging?: QueryPagingData;
+    ids?: T[];
+
+    /**
+     * Excluded ids
+     */
+    excludedIds?: T[];
+
+    /**
+     * Filter keyword
+     */
+    keyword?: string;
+
+    /**
+     * Query paging data or items to read
+     */
+    queryPaging?: QueryPagingData | number;
 };

@@ -23,8 +23,8 @@ import { UserRole } from './UserRole';
 import { EntityStatus } from '../business/EntityStatus';
 import { Currency } from '../business/Currency';
 import { ExternalEndpoint } from './ExternalSettings';
-import { ApiRefreshTokenDto } from '../erp/dto/ApiRefreshTokenDto';
-import { ApiRefreshTokenRQ } from '../erp/rq/ApiRefreshTokenRQ';
+import { ApiRefreshTokenDto } from '../api/dto/ApiRefreshTokenDto';
+import { ApiRefreshTokenRQ } from '../api/rq/ApiRefreshTokenRQ';
 
 /**
  * Detect IP callback interface

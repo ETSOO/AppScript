@@ -1,174 +1,25 @@
-import {
-    INotificaseBase,
-    INotification,
-    Notification,
-    NotificationCallProps,
-    NotificationContainer,
-    NotificationRenderProps
-} from '@etsoo/notificationbase';
-import {
-    ApiAuthorizationScheme,
-    ApiDataError,
-    ApiMethod,
-    createClient
-} from '@etsoo/restclient';
-import {
-    DataTypes,
-    DomUtils,
-    IActionResult,
-    Utils,
-    WindowStorage
-} from '@etsoo/shared';
-import {
-    AddressApi,
-    en,
-    EntityStatus,
-    ExternalSettings,
-    IUser,
-    OrgApi,
-    PublicApi,
-    UserRole,
-    zhHans
-} from '../../src';
-import { AddressUtils } from '../../src/address/AddressUtils';
-import { IAppSettings } from '../../src/app/AppSettings';
-import { CoreApp } from '../../src/app/CoreApp';
-import { InitCallResultData } from '../../src/result/InitCallResult';
-
-// Detected country or region
-const { detectedCountry } = DomUtils;
-
-// Detected culture
-const { detectedCulture } = DomUtils;
-
-// Supported cultures
-const supportedCultures: DataTypes.CultureDefinition[] = [zhHans({}), en({})];
-
-// Supported regions
-const supportedRegions = ['CN'];
-
-// Class implementation for tests
-class NotificationTest extends Notification<any, NotificationCallProps> {
-    render(props: NotificationRenderProps, className?: string, options?: any) {
-        throw new Error('Method not implemented.');
-    }
-}
-
-class NotificationContainerTest extends NotificationContainer<
-    any,
-    NotificationCallProps
-> {
-    protected addRaw(
-        data: INotificaseBase<any, NotificationCallProps>
-    ): INotification<any, NotificationCallProps> {
-        return new NotificationTest(data.type, data.content);
-    }
-}
-
-// Container
-var container = new NotificationContainerTest((update) => {});
+import { ApiDataError, ApiMethod } from '@etsoo/restclient';
+import { DataTypes, IActionResult } from '@etsoo/shared';
+import { EntityStatus, UserRole } from '../../src';
+import { TestApp } from './TestApp';
 
 // Arrange
-class CoreAppTest extends CoreApp<
-    IUser,
-    IAppSettings,
-    {},
-    NotificationCallProps
-> {
-    /**
-     * Constructor
-     * @param settings Settings
-     * @param name Application name
-     */
-    constructor() {
-        super(
-            ExternalSettings.format({
-                /**
-                 * Endpoint of the API service
-                 */
-                endpoint: 'http://{hostname}/com.etsoo.SmartERPApi/api/',
-
-                endpoints: {
-                    core: {
-                        endpoint: 'http://{hostname}:9001/api/',
-                        webUrl: ''
-                    }
-                },
-
-                /**
-                 * App root url
-                 */
-                homepage: '/cms',
-
-                /**
-                 * Web url of the cloud
-                 */
-                webUrl: 'http://localhost',
-
-                // Detected culture
-                detectedCulture,
-
-                // Supported cultures
-                cultures: supportedCultures,
-
-                // Supported regions
-                regions: supportedRegions,
-
-                // Browser's time zone
-                timeZone: Utils.getTimeZone(),
-
-                // Current country or region
-                currentRegion: AddressUtils.getRegion(
-                    supportedRegions,
-                    detectedCountry,
-                    detectedCulture
-                ),
-
-                // Current culture
-                currentCulture: DomUtils.getCulture(
-                    supportedCultures,
-                    detectedCulture
-                )![0]
-            }),
-            createClient(),
-            container,
-            new WindowStorage(),
-            'SmartERP'
-        );
-    }
-
-    freshCountdownUI(callback?: () => PromiseLike<unknown>): void {
-        throw new Error('Method not implemented.');
-    }
-
-    initCallUpdateLocal(data: InitCallResultData, timestamp: number) {
-        this.initCallUpdate(data, timestamp);
-        return this.passphrase;
-    }
-}
-
 // Mixins example
-function EnhanceApp<TBase extends DataTypes.MConstructor<CoreAppTest>>(
+function EnhanceApp<TBase extends DataTypes.MConstructor<TestApp>>(
     Base: TBase
 ) {
-    return class extends Base {
-        readonly addressApi = new AddressApi(this);
-        readonly publicApi = new PublicApi(this);
-        readonly orgApi = new OrgApi(this);
-    };
+    return class extends Base {};
 }
 
-const appClass = EnhanceApp(CoreAppTest);
+const appClass = EnhanceApp(TestApp);
 const app = new appClass();
 app.changeCulture(app.settings.cultures[0]);
 
 test('Test for domain replacement', () => {
-    expect(app.settings.endpoint).toBe(
-        'http://localhost/com.etsoo.SmartERPApi/api/'
-    );
+    expect(app.settings.endpoint).toBe('http://localhost:9000/api/');
 
     expect(app.settings.endpoints?.core.endpoint).toBe(
-        'http://localhost:9001/api/'
+        'https://localhost:9001/api/'
     );
 });
 
@@ -334,122 +185,4 @@ test('Tests for isValidPassword', () => {
     expect(app.isValidPassword('12345678')).toBeFalsy();
     expect(app.isValidPassword('abcd3')).toBeFalsy();
     expect(app.isValidPassword('1234abcd')).toBeTruthy();
-});
-
-test('Tests for addressApi', async () => {
-    const regions = app.addressApi.regions();
-    const cn = regions.find((r) => r.id === 'CN');
-    expect(cn?.label).toBe('中国大陆');
-
-    const favoredRegions = app.addressApi.regions(['US', 'CA']);
-    expect(favoredRegions.length).toBe(2);
-    expect(favoredRegions.find((region) => region.id === 'US')?.label).toBe(
-        '美国'
-    );
-
-    const region = app.addressApi.region('US');
-    expect(region?.label).toBe('美国');
-    const regionFailed = app.addressApi.region('ABC');
-    expect(regionFailed).toBeUndefined();
-
-    /*
-    const results1 = await app.addressApi.autocomplete({
-        query: '青岛市玫瑰庭院',
-        region: 'CN',
-        language: 'zh-CN'
-    });
-
-    const results2 = await app.addressApi.autocomplete({
-        query: '青岛市玫瑰庭院',
-        language: 'zh-CN'
-    });
-
-    const results1 = await app.addressApi.searchPlace({
-        query: '青岛市玫瑰庭院',
-        region: 'CN',
-        language: 'zh-CN'
-    });
-
-    const result = await app.addressApi.parsePlace({
-        city: '青岛',
-        district: '市南'
-    });
-
-    const result = await app.addressApi.GetPlaceDetails(
-        'ChIJczySyo1qljUR1Jnq4Uqak2I',
-        'zh-CN'
-    );
-
-    const results2 = await app.addressApi.searchPlace({
-        query: '青岛市玫瑰庭院',
-        language: 'zh-CN'
-    });
-
-    const cities = await app.addressApi.cities('CNHN');
-    console.log(cities);
-
-    const districts = await app.addressApi.districts(1181);
-    console.log(districts);
-    */
-});
-
-/*
-test('Tests for addressApi Async', async () => {
-    const regions = await app.addressApi.getRegions({
-        items: 3,
-        favoredIds: ['US', 'AU', 'CA', 'NZ']
-    });
-    expect(regions?.length).toBe(3);
-    expect(regions![2].id).toBe('CA');
-});
-*/
-
-test('Tests for addressApi.continents', () => {
-    const continents1 = app.addressApi.continents();
-    const continents2 = app.addressApi.continents(true, true);
-    expect(continents1.length).toBe(6);
-    expect(continents1.some((item) => item.id === 'AN')).toBeFalsy();
-    expect(continents2.length).toBe(7);
-    expect(continents2[0].id).toBe(1);
-});
-
-test('Tests for publicApi', async () => {
-    expect(app.publicApi.getUnitLabel(12, true)).toBe('每年');
-
-    const options = app.publicApi.repeatOptions(['MONTH', 'QUATER', 'YEAR']);
-    expect(options[2]).toStrictEqual({ id: 12, label: '每年' });
-
-    const currencies = app.publicApi.currencies(['NZD', 'AUD', 'USD']);
-    expect(currencies.length).toBe(3);
-    expect(currencies[1].id).toBe('AUD');
-
-    const currencies1 = app.publicApi.currencies(true);
-    expect(currencies1.length >= 10).toBeTruthy();
-
-    expect(app.publicApi.getCurrencyLabel('USD')).toBe('美元');
-
-    const defaultExchangeRate = await app.publicApi.exchangeRate('CNY', {
-        showLoading: false
-    });
-    expect(defaultExchangeRate?.exchangeRate).toBe(100);
-
-    const url = app.publicApi.getOrgAvatar(1);
-    expect(url).toBe(
-        'http://localhost/com.etsoo.SmartERPApi/api/Storage/OrgAvatar/1'
-    );
-
-    /*
-    const amount1 = await app.publicApi.exchangeAmount(1000, 'NZD', 'CNY');
-    const amount2 = await app.publicApi.exchangeAmount(100, 'NZD', 'USD');
-    console.log(amount1, amount2);
-
-    const orgs = await app.orgApi.list();
-    console.log(orgs);
-
-    const orgsQuery = await app.orgApi.query({ currentPage: 1, batchSize: 2 });
-    console.log(orgsQuery);
-
-    const cultures = await app.publicApi.supportedCultures();
-    expect(cultures?.some((culture) => culture.id === 'zh-Hans')).toBeTruthy();
-    */
 });

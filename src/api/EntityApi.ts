@@ -2,13 +2,10 @@ import { IApi, IApiPayload } from '@etsoo/restclient';
 import { IActionResult, IdType } from '@etsoo/shared';
 import { IApp } from '../app/IApp';
 import { BaseApi } from './BaseApi';
-import { AuditLinePayload } from './dto/AuditLineDto';
 import { ResultPayload } from './dto/ResultPayload';
 import { MergeRQ } from './rq/MergeRQ';
 import { QueryRQ } from './rq/QueryRQ';
-import { TiplistRQ } from './rq/TiplistRQ';
 import { UpdateStatusRQ } from './rq/UpdateStatusRQ';
-
 /**
  * Entity API
  * Follow com.etsoo.CoreFramework.Services.EntityServiceBase
@@ -71,7 +68,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
      */
     protected listBase<
         T extends IdType,
-        RQ extends TiplistRQ<T>,
+        RQ extends QueryRQ<T>,
         R extends object
     >(rq: RQ, payload?: IApiPayload<R[]>) {
         let { queryPaging, ...rest } = rq;
@@ -111,19 +108,6 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
         R extends object
     >(rq: RQ, payload?: IApiPayload<R[]>, queryKey: string = '') {
         return this.api.post(`${this.flag}/Query${queryKey}`, rq, payload);
-    }
-
-    /**
-     * Query audit history
-     * @param rq Request data
-     * @param payload Payload
-     * @returns Result
-     */
-    protected queryAuditBase<T extends IdType, R extends QueryRQ<T>>(
-        rq: R,
-        payload?: AuditLinePayload
-    ) {
-        return this.api.post(`${this.flag}/QueryAudit`, rq, payload);
     }
 
     /**

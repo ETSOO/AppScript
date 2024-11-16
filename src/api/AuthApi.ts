@@ -2,17 +2,18 @@ import { IApiPayload } from '@etsoo/restclient';
 import { IUser } from '../state/User';
 import { BaseApi } from './BaseApi';
 import { ResultPayload } from './dto/ResultPayload';
-import { LoginIdRQ } from './rq/LoginIdRQ';
-import { LoginRQ } from './rq/LoginRQ';
-import { ResetPasswordRQ } from './rq/ResetPasswordRQ';
 import { ActionResult, IActionResult } from '@etsoo/shared';
-import { SignoutRQ } from './rq/SignoutRQ';
-import { GetLogInUrlRQ } from './rq/GetLogInUrlRQ';
+import { RefreshTokenProps, RefreshTokenResult } from '../app/IApp';
 import { TokenRQ } from './rq/TokenRQ';
 import { ApiRefreshTokenDto } from './dto/ApiRefreshTokenDto';
-import { RefreshTokenProps, RefreshTokenResult } from '../app/IApp';
+import { GetLogInUrlRQ } from './rq/GetLogInUrlRQ';
+import { LoginRQ } from './rq/LoginRQ';
+import { LoginIdRQ } from './rq/LoginIdRQ';
 import { RefreshTokenRQ } from './rq/RefreshTokenRQ';
+import { ResetPasswordRQ } from './rq/ResetPasswordRQ';
+import { SignoutRQ } from './rq/SignoutRQ';
 import { SwitchOrgRQ } from './rq/SwitchOrgRQ';
+import { AuthRequest } from './rq/AuthRequest';
 
 /**
  * Authentication API
@@ -31,6 +32,15 @@ export class AuthApi extends BaseApi {
      */
     apiRefreshToken(rq: TokenRQ, payload?: IApiPayload<ApiRefreshTokenDto>) {
         return this.api.put('Auth/ApiRefreshToken', rq, payload);
+    }
+
+    /**
+     * Authorization request
+     * @param auth Authorization request data
+     * @param payload Payload
+     */
+    authRequest(auth: AuthRequest, payload?: IApiPayload<string>) {
+        return this.api.post('Auth/AuthRequest', auth, payload);
     }
 
     /**

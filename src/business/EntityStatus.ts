@@ -1,6 +1,6 @@
 /**
  * Standard entity status enum
- * @see com.etsoo.CoreFramework.Business.EntityStatus
+ * C# com.etsoo.CoreFramework.Business.EntityStatus
  * Labels also included within i18n
  */
 export enum EntityStatus {

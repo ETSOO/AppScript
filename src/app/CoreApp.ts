@@ -26,7 +26,7 @@ import { AddressRegion } from '../address/AddressRegion';
 import { BridgeUtils } from '../bridges/BridgeUtils';
 import { DataPrivacy } from '../business/DataPrivacy';
 import { EntityStatus } from '../business/EntityStatus';
-import { InitCallDto } from '../erp/dto/InitCallDto';
+import { InitCallDto } from '../api/dto/InitCallDto';
 import { ActionResultError } from '../result/ActionResultError';
 import { InitCallResult, InitCallResultData } from '../result/InitCallResult';
 import { IUser } from '../state/User';
@@ -46,9 +46,9 @@ import { UserRole } from './UserRole';
 import type CryptoJS from 'crypto-js';
 import { Currency } from '../business/Currency';
 import { ExternalEndpoint } from './ExternalSettings';
-import { ApiRefreshTokenDto } from '../erp/dto/ApiRefreshTokenDto';
-import { AuthApi } from '../erp/AuthApi';
-import { ApiRefreshTokenRQ } from '../erp/rq/ApiRefreshTokenRQ';
+import { ApiRefreshTokenDto } from '../api/dto/ApiRefreshTokenDto';
+import { ApiRefreshTokenRQ } from '../api/rq/ApiRefreshTokenRQ';
+import { AuthApi } from '../api/AuthApi';
 
 type CJType = typeof CryptoJS;
 let CJ: CJType;
@@ -476,6 +476,15 @@ export abstract class CoreApp<
                 ? url
                 : '/' + url)
         );
+    }
+
+    /**
+     * Create Auth API
+     * @param api Specify the API to use
+     * @returns Result
+     */
+    protected createAuthApi(api?: IApi) {
+        return new AuthApi(this, api);
     }
 
     /**
@@ -1948,7 +1957,7 @@ export abstract class CoreApp<
         props.token ??= this.getCacheToken();
 
         // Call refresh token API
-        let data = await new AuthApi(this).refreshToken<IActionResult<U>>(
+        let data = await this.createAuthApi().refreshToken<IActionResult<U>>(
             props
         );
 
@@ -2045,7 +2054,7 @@ export abstract class CoreApp<
         }
 
         // Call the API quietly, no loading bar and no error popup
-        const data = await new AuthApi(this).exchangeToken(
+        const data = await this.createAuthApi().exchangeToken(
             { token },
             {
                 showLoading: false,
@@ -2119,7 +2128,7 @@ export abstract class CoreApp<
         rq.appId ??= this.settings.appId;
 
         // Call the API quietly, no loading bar and no error popup
-        return new AuthApi(this, api).apiRefreshToken(rq, {
+        return this.createAuthApi(api).apiRefreshToken(rq, {
             showLoading: false,
             onError: (error) => {
                 console.error(
@@ -2229,7 +2238,7 @@ export abstract class CoreApp<
 
         const token = this.getCacheToken();
         if (token) {
-            const result = await new AuthApi(this).signout(
+            const result = await this.createAuthApi().signout(
                 {
                     deviceId: this.deviceId,
                     token

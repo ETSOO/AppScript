@@ -1,5 +1,5 @@
-import { LoginIdRQ } from './LoginIdRQ';
 import { AuthRequest } from './AuthRequest';
+import { LoginIdRQ } from './LoginIdRQ';
 
 /**
  * Login request data
