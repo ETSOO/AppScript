@@ -2,18 +2,18 @@
  * Address district
  */
 export type AddressDistrict = {
-    /**
-     * Id
-     */
-    id: number;
+  /**
+   * Id
+   */
+  id: number;
 
-    /**
-     * Number id
-     */
-    num?: string;
+  /**
+   * Number id
+   */
+  num?: string;
 
-    /**
-     * Name
-     */
-    label: string;
+  /**
+   * Name
+   */
+  label: string;
 };

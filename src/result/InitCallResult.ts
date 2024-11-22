@@ -1,33 +1,33 @@
-import { IActionResult } from '@etsoo/shared';
+import { IActionResult } from "@etsoo/shared";
 
 /**
  * Init call result data
  */
 export interface InitCallResultData {
-    /**
-     * Device id
-     */
-    deviceId?: string;
+  /**
+   * Device id
+   */
+  deviceId?: string;
 
-    /**
-     * Secret passphrase
-     */
-    passphrase?: string;
+  /**
+   * Secret passphrase
+   */
+  passphrase?: string;
 
-    /**
-     * Previous secret passphrase
-     */
-    previousPassphrase?: string;
+  /**
+   * Previous secret passphrase
+   */
+  previousPassphrase?: string;
 
-    /**
-     * Actual seconds gap
-     */
-    seconds?: number;
+  /**
+   * Actual seconds gap
+   */
+  seconds?: number;
 
-    /**
-     * Valid seconds gap
-     */
-    validSeconds?: number;
+  /**
+   * Valid seconds gap
+   */
+  validSeconds?: number;
 }
 
 /**

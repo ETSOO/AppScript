@@ -1,10 +1,10 @@
-import { DataTypes, ExtendUtils } from '@etsoo/shared';
-import { BridgeHostName, IBridgeHost } from './IBridgeHost';
+import { DataTypes, ExtendUtils } from "@etsoo/shared";
+import { BridgeHostName, IBridgeHost } from "./IBridgeHost";
 
 // Call handler type
 type CallHandlerType = (
-    name: string,
-    ...args: unknown[]
+  name: string,
+  ...args: unknown[]
 ) => PromiseLike<DataTypes.StringRecord | void>;
 
 /**
@@ -12,107 +12,102 @@ type CallHandlerType = (
  * https://inappwebview.dev/docs/javascript/communication/
  */
 export class FlutterHost implements IBridgeHost {
-    /**
-     * Name
-     */
-    readonly name = BridgeHostName.Flutter;
+  /**
+   * Name
+   */
+  readonly name = BridgeHostName.Flutter;
 
-    /**
-     * Start Url
-     */
-    private startUrl: string | null | undefined;
+  /**
+   * Start Url
+   */
+  private startUrl: string | null | undefined;
 
-    /**
-     * Cached commands
-     */
-    private cachedCommands: Record<string, unknown[]> = {};
+  /**
+   * Cached commands
+   */
+  private cachedCommands: Record<string, unknown[]> = {};
 
-    /**
-     * Constructor
-     * @param callHandler Call handler
-     */
-    constructor(private host: { callHandler?: CallHandlerType }) {
-        window.addEventListener(
-            'flutterInAppWebViewPlatformReady',
-            (_event) => {
-                if (this.host.callHandler == null) return;
+  /**
+   * Constructor
+   * @param callHandler Call handler
+   */
+  constructor(private host: { callHandler?: CallHandlerType }) {
+    window.addEventListener("flutterInAppWebViewPlatformReady", (_event) => {
+      if (this.host.callHandler == null) return;
 
-                for (const key in this.cachedCommands) {
-                    // Args
-                    const args = this.cachedCommands[key];
+      for (const key in this.cachedCommands) {
+        // Args
+        const args = this.cachedCommands[key];
 
-                    // Execute
-                    this.host.callHandler(key, ...args);
+        // Execute
+        this.host.callHandler(key, ...args);
 
-                    // Remove the key
-                    delete this.cachedCommands[key];
-                }
-            }
-        );
+        // Remove the key
+        delete this.cachedCommands[key];
+      }
+    });
+  }
+
+  cacheCommand(name: string, ...args: unknown[]): void {
+    this.cachedCommands[name] = args;
+  }
+
+  changeCulture(locale: string): void {
+    if (this.host.callHandler) this.host.callHandler("changeCulture", locale);
+    else this.cacheCommand("changeCulture", locale);
+  }
+
+  closable(): boolean {
+    return false;
+  }
+
+  exit(): void {
+    if (this.host.callHandler) this.host.callHandler("exit");
+    else this.cacheCommand("exit");
+  }
+
+  async getLabels<T extends string>(...keys: T[]) {
+    // Try 500 miliseconds
+    let count = 5;
+    while (this.host.callHandler == null) {
+      count--;
+      await ExtendUtils.sleep(100);
+
+      if (count === 0) break;
     }
 
-    cacheCommand(name: string, ...args: unknown[]): void {
-        this.cachedCommands[name] = args;
-    }
+    const init: any = {};
 
-    changeCulture(locale: string): void {
-        if (this.host.callHandler)
-            this.host.callHandler('changeCulture', locale);
-        else this.cacheCommand('changeCulture', locale);
-    }
+    if (this.host.callHandler == null) return init;
 
-    closable(): boolean {
-        return false;
-    }
+    const result = (await this.host.callHandler("getLabels")) ?? {};
 
-    exit(): void {
-        if (this.host.callHandler) this.host.callHandler('exit');
-        else this.cacheCommand('exit');
-    }
+    return keys.reduce(
+      (a, v) => ({
+        ...a,
+        [v]: result[v] ?? ""
+      }),
+      init
+    );
+  }
 
-    async getLabels<T extends string>(...keys: T[]) {
-        // Try 500 miliseconds
-        let count = 5;
-        while (this.host.callHandler == null) {
-            count--;
-            await ExtendUtils.sleep(100);
+  getStartUrl(): string | null | undefined {
+    return this.startUrl;
+  }
 
-            if (count === 0) break;
-        }
+  loadApp(name: string, startUrl?: string): void {
+    this.startUrl = startUrl;
+    if (this.host.callHandler) this.host.callHandler("loadApp", name, startUrl);
+    else this.cacheCommand("loadApp", name, startUrl);
+  }
 
-        const init: any = {};
+  userAuthorization(authorized: boolean): void {
+    if (this.host.callHandler)
+      this.host.callHandler("userAuthorization", authorized);
+    else this.cacheCommand("userAuthorization", authorized);
+  }
 
-        if (this.host.callHandler == null) return init;
+  onUpdate(func: (app: string, version: string) => void) {}
 
-        const result = (await this.host.callHandler('getLabels')) ?? {};
-
-        return keys.reduce(
-            (a, v) => ({
-                ...a,
-                [v]: result[v] ?? ''
-            }),
-            init
-        );
-    }
-
-    getStartUrl(): string | null | undefined {
-        return this.startUrl;
-    }
-
-    loadApp(name: string, startUrl?: string): void {
-        this.startUrl = startUrl;
-        if (this.host.callHandler)
-            this.host.callHandler('loadApp', name, startUrl);
-        else this.cacheCommand('loadApp', name, startUrl);
-    }
-
-    userAuthorization(authorized: boolean): void {
-        if (this.host.callHandler)
-            this.host.callHandler('userAuthorization', authorized);
-        else this.cacheCommand('userAuthorization', authorized);
-    }
-
-    onUpdate(func: (app: string, version: string) => void) {}
-
-    setTitle(title: string) {}
+  setTitle(title: string) {}
 }

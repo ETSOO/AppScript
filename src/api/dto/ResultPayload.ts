@@ -1,10 +1,10 @@
-import { IApiPayload } from '@etsoo/restclient';
+import { IApiPayload } from "@etsoo/restclient";
 import {
-    IActionResult,
-    IdActionResult,
-    IdMsgActionResult,
-    MsgActionResult
-} from '@etsoo/shared';
+  IActionResult,
+  IdActionResult,
+  IdMsgActionResult,
+  MsgActionResult
+} from "@etsoo/shared";
 
 /**
  * Action result payload

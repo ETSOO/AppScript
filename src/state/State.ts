@@ -1,9 +1,9 @@
 /**
  * State data interface
  */
- export interface IState {}
+export interface IState {}
 
- /**
-  * State action interface
-  */
- export interface IAction {}
+/**
+ * State action interface
+ */
+export interface IAction {}

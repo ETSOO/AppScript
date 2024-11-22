@@ -1,38 +1,38 @@
-import { DataTypes } from '@etsoo/shared';
-import { AddressRegion } from '../address/AddressRegion';
-import { IExternalSettings } from './ExternalSettings';
+import { DataTypes } from "@etsoo/shared";
+import { AddressRegion } from "../address/AddressRegion";
+import { IExternalSettings } from "./ExternalSettings";
 
 /**
  * App settings interface
  */
 export interface IAppSettings extends IExternalSettings {
-    /**
-     * Supported country/region ids
-     */
-    readonly regions: string[];
+  /**
+   * Supported country/region ids
+   */
+  readonly regions: string[];
 
-    /**
-     * Supported cultures
-     */
-    readonly cultures: DataTypes.CultureDefinition[];
+  /**
+   * Supported cultures
+   */
+  readonly cultures: DataTypes.CultureDefinition[];
 
-    /**
-     * Detected culture
-     */
-    readonly detectedCulture: string;
+  /**
+   * Detected culture
+   */
+  readonly detectedCulture: string;
 
-    /**
-     * Time zone
-     */
-    timeZone?: string;
+  /**
+   * Time zone
+   */
+  timeZone?: string;
 
-    /**
-     * Current country or region
-     */
-    currentRegion: AddressRegion;
+  /**
+   * Current country or region
+   */
+  currentRegion: AddressRegion;
 
-    /**
-     * Current culture
-     */
-    currentCulture: DataTypes.CultureDefinition;
+  /**
+   * Current culture
+   */
+  currentCulture: DataTypes.CultureDefinition;
 }

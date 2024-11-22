@@ -72,10 +72,7 @@ export * from "./custom/CustomFieldData";
 export * from "./def/ListItem";
 
 // i18n
-export * from "./i18n/CultureUtils";
-export * from "./i18n/en";
-export * from "./i18n/zhHans";
-export * from "./i18n/zhHant";
+export * from "./i18n/Culture";
 
 // @etsoo/restclient
 export {

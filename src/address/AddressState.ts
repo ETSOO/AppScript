@@ -2,18 +2,18 @@
  * Address state
  */
 export type AddressState = {
-    /**
-     * Id
-     */
-    id: string;
+  /**
+   * Id
+   */
+  id: string;
 
-    /**
-     * Abbreviation
-     */
-    abbr?: string;
+  /**
+   * Abbreviation
+   */
+  abbr?: string;
 
-    /**
-     * Name
-     */
-    label: string;
+  /**
+   * Name
+   */
+  label: string;
 };

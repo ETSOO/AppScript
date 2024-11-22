@@ -1,26 +1,26 @@
 export type ResetPasswordRQ = {
-    /**
-     * Email or mobile
-     */
-    id: string;
+  /**
+   * Email or mobile
+   */
+  id: string;
 
-    /**
-     * Verification code id
-     */
-    codeId: string;
+  /**
+   * Verification code id
+   */
+  codeId: string;
 
-    /**
-     * Device id
-     */
-    deviceId: string;
+  /**
+   * Device id
+   */
+  deviceId: string;
 
-    /**
-     * New password
-     */
-    password: string;
+  /**
+   * New password
+   */
+  password: string;
 
-    /**
-     * Country or region
-     */
-    region: string;
+  /**
+   * Country or region
+   */
+  region: string;
 };

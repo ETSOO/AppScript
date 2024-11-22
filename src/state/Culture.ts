@@ -1,5 +1,5 @@
-import { DataTypes } from '@etsoo/shared';
-import { IState } from './State';
+import { DataTypes } from "@etsoo/shared";
+import { IState } from "./State";
 
 /**
  * Culture resources state, simple i18n solution
@@ -12,5 +12,5 @@ export interface ICulture extends DataTypes.CultureDefinition, IState {}
  * Culture get delegate
  */
 export interface ICultureGet {
-    (key: string): string | undefined;
+  (key: string): string | undefined;
 }

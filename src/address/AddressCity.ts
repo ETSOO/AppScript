@@ -2,18 +2,18 @@
  * Address city
  */
 export type AddressCity = {
-    /**
-     * Id
-     */
-    id: number;
+  /**
+   * Id
+   */
+  id: number;
 
-    /**
-     * Number id
-     */
-    num?: string;
+  /**
+   * Number id
+   */
+  num?: string;
 
-    /**
-     * Name
-     */
-    label: string;
+  /**
+   * Name
+   */
+  label: string;
 };

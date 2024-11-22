@@ -4,48 +4,48 @@
  * Labels also included within i18n
  */
 export enum EntityStatus {
-    /**
-     * Normal
-     */
-    Normal = 0,
+  /**
+   * Normal
+   */
+  Normal = 0,
 
-    /**
-     * Flaged
-     */
-    Flaged = 9,
+  /**
+   * Flaged
+   */
+  Flaged = 9,
 
-    /**
-     * Approved
-     */
-    Approved = 100,
+  /**
+   * Approved
+   */
+  Approved = 100,
 
-    /**
-     * Doing
-     */
-    Doing = 110,
+  /**
+   * Doing
+   */
+  Doing = 110,
 
-    /**
-     * Audited
-     */
-    Audited = 120,
+  /**
+   * Audited
+   */
+  Audited = 120,
 
-    /**
-     * Inactivated
-     */
-    Inactivated = 200,
+  /**
+   * Inactivated
+   */
+  Inactivated = 200,
 
-    /**
-     * Completed
-     */
-    Completed = 250,
+  /**
+   * Completed
+   */
+  Completed = 250,
 
-    /**
-     * Archived
-     */
-    Archived = 254,
+  /**
+   * Archived
+   */
+  Archived = 254,
 
-    /**
-     * Deleted
-     */
-    Deleted = 255
+  /**
+   * Deleted
+   */
+  Deleted = 255
 }

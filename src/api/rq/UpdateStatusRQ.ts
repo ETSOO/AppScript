@@ -1,17 +1,17 @@
-import { IdType } from '@etsoo/shared';
-import { EntityStatus } from '../../business/EntityStatus';
+import { IdType } from "@etsoo/shared";
+import { EntityStatus } from "../../business/EntityStatus";
 
 /**
  * Update status request data
  */
 export type UpdateStatusRQ = {
-    /**
-     * Id
-     */
-    id: IdType;
+  /**
+   * Id
+   */
+  id: IdType;
 
-    /**
-     * New status
-     */
-    status: EntityStatus;
+  /**
+   * New status
+   */
+  status: EntityStatus;
 };

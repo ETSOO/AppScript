@@ -2,13 +2,13 @@
  * Get log in url request data
  */
 export type GetLogInUrlRQ = {
-    /**
-     * Region
-     */
-    region: string;
+  /**
+   * Region
+   */
+  region: string;
 
-    /**
-     * Device id
-     */
-    device: string;
+  /**
+   * Device id
+   */
+  device: string;
 };
