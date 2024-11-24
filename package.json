@@ -1,6 +1,6 @@
 {
   "name": "@etsoo/appscript",
-  "version": "1.5.66",
+  "version": "1.5.67",
   "description": "Applications shared TypeScript framework",
   "main": "lib/cjs/index.js",
   "module": "lib/mjs/index.js",
@@ -71,6 +71,6 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.6.3"
+    "typescript": "^5.7.2"
   }
 }
