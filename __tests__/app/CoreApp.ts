@@ -127,6 +127,18 @@ test("Tests for formatResult", () => {
   );
 });
 
+test("Tests for formatResult with type", () => {
+  const result: IActionResult = {
+    ok: false,
+    type: "TokenExpired",
+    title: "您的令牌已过期",
+    data: {}
+  };
+
+  const formatted = app.formatResult(result);
+  expect(formatted).toBe("您的令牌已过期 (TokenExpired)");
+});
+
 test("Tests for formatResult with custom label", () => {
   const result: IActionResult = {
     ok: false,
