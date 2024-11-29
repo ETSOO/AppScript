@@ -85,6 +85,7 @@
   "help": "帮助",
   "hideIt": "隐藏",
   "id": "编号",
+  "imageSizeTooSmall": "图片尺寸过小",
   "info": "信息",
   "item": "项目",
   "itemExists": "'{0}'已经存在",

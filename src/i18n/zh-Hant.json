@@ -85,6 +85,7 @@
   "help": "幫助",
   "hideIt": "隱藏",
   "id": "編號",
+  "imageSizeTooSmall": "圖片尺寸過小",
   "info": "信息",
   "item": "項目",
   "itemExists": "'{0}'已经存在",

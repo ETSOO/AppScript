@@ -85,6 +85,7 @@
   "help": "Help",
   "hideIt": "Hide it",
   "id": "Number#",
+  "imageSizeTooSmall": "The image size is too small",
   "info": "Info",
   "item": "Item",
   "itemExists": "'{0}' already exists",
