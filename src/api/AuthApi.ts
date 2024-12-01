@@ -48,19 +48,27 @@ export class AuthApi extends BaseApi {
    * Change password
    * @param oldPassword Ole password
    * @param password New password
+   * @param isSecure Is secure or not
    * @param payload Payload
    * @returns Result
    */
   changePassword(
     oldPassword: string,
     password: string,
+    isSecure?: boolean,
     payload?: ResultPayload
   ) {
-    const rq: ChangePasswordRQ = {
-      deviceId: this.app.deviceId,
-      oldPassword: this.app.encrypt(this.app.hash(oldPassword)),
-      password: this.app.encrypt(this.app.hash(password))
-    };
+    const rq: ChangePasswordRQ =
+      isSecure === false
+        ? {
+            oldPassword: this.app.hash(oldPassword),
+            password: this.app.hash(password)
+          }
+        : {
+            deviceId: this.app.deviceId,
+            oldPassword: this.app.encrypt(this.app.hash(oldPassword)),
+            password: this.app.encrypt(this.app.hash(password))
+          };
     return this.api.put("Auth/ChangePassword", rq, payload);
   }
 
