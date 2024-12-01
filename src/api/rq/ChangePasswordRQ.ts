@@ -1,9 +1,15 @@
 export type ChangePasswordRQ = {
   /**
+   * Application id
+   * 应用编号
+   */
+  appId: number;
+
+  /**
    * Device id
    * 设备编号
    */
-  deviceId?: string;
+  deviceId: string;
 
   /**
    * Current password
