@@ -22,6 +22,7 @@ export * from "./api/dto/ResultPayload";
 
 export * from "./api/rq/ApiRefreshTokenRQ";
 export * from "./api/rq/AuthRequest";
+export * from "./api/rq/ChangePasswordRQ";
 export * from "./api/rq/GetLogInUrlRQ";
 export * from "./api/rq/LoginIdRQ";
 export * from "./api/rq/LoginRQ";

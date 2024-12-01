@@ -14,6 +14,7 @@ import { ResetPasswordRQ } from "./rq/ResetPasswordRQ";
 import { SignoutRQ } from "./rq/SignoutRQ";
 import { SwitchOrgRQ } from "./rq/SwitchOrgRQ";
 import { AuthRequest } from "./rq/AuthRequest";
+import { ChangePasswordRQ } from "./rq/ChangePasswordRQ";
 
 /**
  * Authentication API
@@ -41,6 +42,26 @@ export class AuthApi extends BaseApi {
    */
   authRequest(auth: AuthRequest, payload?: IApiPayload<string>) {
     return this.api.post("Auth/AuthRequest", auth, payload);
+  }
+
+  /**
+   * Change password
+   * @param oldPassword Ole password
+   * @param password New password
+   * @param payload Payload
+   * @returns Result
+   */
+  changePassword(
+    oldPassword: string,
+    password: string,
+    payload?: ResultPayload
+  ) {
+    const rq: ChangePasswordRQ = {
+      deviceId: this.app.deviceId,
+      oldPassword: this.app.encrypt(this.app.hash(oldPassword)),
+      password: this.app.encrypt(this.app.hash(password))
+    };
+    return this.api.put("Auth/ChangePassword", rq, payload);
   }
 
   /**
