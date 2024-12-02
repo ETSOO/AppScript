@@ -5,11 +5,6 @@ export type ResetPasswordRQ = {
   id: string;
 
   /**
-   * Verification code id
-   */
-  codeId: string;
-
-  /**
    * Device id
    */
   deviceId: string;
