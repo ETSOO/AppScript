@@ -21,5 +21,5 @@ export type QueryPagingData = {
   /**
    * Order by fields
    */
-  orderBy?: Record<string, boolean>;
+  orderBy?: Map<string, boolean>;
 };
