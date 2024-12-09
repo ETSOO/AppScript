@@ -8,9 +8,9 @@ import { EntityStatus } from "../../business/EntityStatus";
  */
 export type StatusQueryRQ<T extends IdType = number> = QueryRQ<T> & {
   /**
-   * Disabled or not, null for all, true for disabled (> EntityStatus.Approved), false for enabled (<= 100)
+   * Enabled or not, null for all, true for enabled (<= EntityStatus.Approved), false for disabled (> 100)
    */
-  disabled?: boolean;
+  enabled?: boolean;
 
   /**
    * Status
