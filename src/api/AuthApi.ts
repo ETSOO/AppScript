@@ -218,9 +218,27 @@ export class AuthApi extends BaseApi {
   /**
    * Switch organization
    * @param rq Request data
+   * @param tokenKey Refresh token key
    * @param payload Payload
    */
-  switchOrg(rq: SwitchOrgRQ, payload?: ResultPayload) {
-    return this.app.api.put("Auth/SwitchOrg", rq, payload);
+  async switchOrg<T extends IUser>(
+    rq: SwitchOrgRQ,
+    payload?: IApiPayload<IActionResult<T>>,
+    tokenKey?: string
+  ) {
+    // Default values
+    payload ??= {};
+    tokenKey ??= AuthApi.HeaderTokenField;
+
+    // Call the API
+    const result = await this.api.post("Auth/SwitchOrg", rq, payload);
+
+    // Get the refresh token
+    const refreshToken = result?.ok
+      ? this.app.getResponseToken(payload.response, tokenKey)
+      : null;
+
+    // Return the result
+    return [result, refreshToken];
   }
 }

@@ -10,5 +10,5 @@ export type SwitchOrgRQ = {
   /**
    * From organization id
    */
-  fromOrganizationId: number;
+  fromOrganizationId?: number;
 };
