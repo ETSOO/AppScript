@@ -225,7 +225,7 @@ export class AuthApi extends BaseApi {
     rq: SwitchOrgRQ,
     payload?: IApiPayload<IActionResult<T>>,
     tokenKey?: string
-  ) {
+  ): Promise<[IActionResult<T> | undefined, string | null]> {
     // Default values
     payload ??= {};
     tokenKey ??= AuthApi.HeaderTokenField;
