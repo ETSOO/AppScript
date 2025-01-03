@@ -11,4 +11,9 @@ export type SwitchOrgRQ = {
    * From organization id
    */
   fromOrganizationId?: number;
+
+  /**
+   * Core system access token
+   */
+  token: string;
 };

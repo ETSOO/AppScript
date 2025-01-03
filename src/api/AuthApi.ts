@@ -231,7 +231,7 @@ export class AuthApi extends BaseApi {
     tokenKey ??= AuthApi.HeaderTokenField;
 
     // Call the API
-    const result = await this.api.post("Auth/SwitchOrg", rq, payload);
+    const result = await this.api.put("Auth/SwitchOrg", rq, payload);
 
     // Get the refresh token
     const refreshToken = result?.ok
