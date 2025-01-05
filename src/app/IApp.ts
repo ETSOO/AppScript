@@ -95,8 +95,9 @@ export type AppLoginParams = {
 export type AppTryLoginParams = AppLoginParams & {
   /**
    * Callback on failure
+   * @param type Failure type
    */
-  onFailure?: () => void;
+  onFailure?: (type: string) => void;
 
   /**
    * Callback on success
