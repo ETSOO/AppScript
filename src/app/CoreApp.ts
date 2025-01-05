@@ -317,14 +317,7 @@ export abstract class CoreApp<
   /**
    * Get persisted fields
    */
-  protected get persistedFields() {
-    return [
-      this.fields.deviceId,
-      this.fields.devicePassphrase,
-      this.fields.serversideDeviceId,
-      this.fields.keepLogin
-    ];
-  }
+  protected readonly persistedFields: string[];
 
   /**
    * Protected constructor
@@ -399,6 +392,14 @@ export abstract class CoreApp<
       (a, v) => ({ ...a, [v]: "smarterp-" + v + "-" + name }),
       {} as any
     );
+
+    // Persisted fields
+    this.persistedFields = [
+      this.fields.deviceId,
+      this.fields.devicePassphrase,
+      this.fields.serversideDeviceId,
+      this.fields.keepLogin
+    ];
 
     // Device id
     this._deviceId = storage.getData(this.fields.deviceId, "");
