@@ -727,16 +727,13 @@ export interface IApp {
   pageExit(): void;
 
   /**
-   * Refresh token with result
+   * Refresh token
    * @param props Props
    * @param callback Callback
-   * @param api API
    */
   refreshToken(
     props?: RefreshTokenProps,
-    callback?: (
-      result?: boolean | IActionResult | [IUser, string]
-    ) => boolean | void
+    callback?: (result?: boolean | IActionResult) => boolean | void
   ): Promise<void>;
 
   /**

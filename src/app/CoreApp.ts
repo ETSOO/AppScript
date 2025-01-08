@@ -1902,15 +1902,13 @@ export abstract class CoreApp<
   abstract freshCountdownUI(callback?: () => PromiseLike<unknown>): void;
 
   /**
-   * Refresh token with result
+   * Refresh token
    * @param props Props
    * @param callback Callback
    */
   async refreshToken(
     props?: RefreshTokenProps,
-    callback?: (
-      result?: boolean | IActionResult | [U, string]
-    ) => boolean | void | Promise<boolean>
+    callback?: (result?: boolean | IActionResult) => boolean | void
   ) {
     // Check props
     props ??= {};
@@ -1938,18 +1936,11 @@ export abstract class CoreApp<
             title: this.get("noData")
           };
         } else {
-          // Callback first
-          if (callback && (await callback([result.data, token])) === false) {
-            return;
-          }
+          // Further processing
+          await this.refreshTokenSucceed(result.data, token);
 
-          // User login
-          this.userLogin(result.data, token);
-
-          // Callback after
-          if (callback) {
-            await callback(true);
-          }
+          // Callback
+          callback?.(true);
 
           // Exit
           return;
@@ -1983,6 +1974,16 @@ export abstract class CoreApp<
         if (callback) callback(false);
       });
     }
+  }
+
+  /**
+   * Refresh token with success
+   * @param user User data
+   * @param token Refresh token
+   */
+  protected async refreshTokenSucceed(user: U, token: string) {
+    // User login
+    this.userLogin(user, token);
   }
 
   /**
