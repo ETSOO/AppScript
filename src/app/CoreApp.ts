@@ -1937,10 +1937,7 @@ export abstract class CoreApp<
           };
         } else {
           // Further processing
-          await this.refreshTokenSucceed(result.data, token);
-
-          // Callback
-          callback?.(true);
+          await this.refreshTokenSucceed(result.data, token, callback);
 
           // Exit
           return;
@@ -1980,10 +1977,18 @@ export abstract class CoreApp<
    * Refresh token with success
    * @param user User data
    * @param token Refresh token
+   * @param callback Callback
    */
-  protected async refreshTokenSucceed(user: U, token: string) {
+  protected async refreshTokenSucceed(
+    user: U,
+    token: string,
+    callback?: (result?: boolean | IActionResult) => boolean | void
+  ) {
     // User login
     this.userLogin(user, token);
+
+    // Callback
+    callback?.(true);
   }
 
   /**
