@@ -1908,7 +1908,9 @@ export abstract class CoreApp<
    */
   async refreshToken(
     props?: RefreshTokenProps,
-    callback?: (result?: boolean | IActionResult) => boolean | void
+    callback?: (
+      result?: boolean | IActionResult | [U, string]
+    ) => boolean | void | Promise<boolean>
   ) {
     // Check props
     props ??= {};
@@ -1936,10 +1938,18 @@ export abstract class CoreApp<
             title: this.get("noData")
           };
         } else {
+          // Callback first
+          if (callback && (await callback([result.data, token])) === false) {
+            return;
+          }
+
           // User login
           this.userLogin(result.data, token);
 
-          if (callback) callback(true);
+          // Callback after
+          if (callback) {
+            await callback(true);
+          }
 
           // Exit
           return;

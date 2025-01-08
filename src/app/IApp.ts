@@ -734,7 +734,9 @@ export interface IApp {
    */
   refreshToken(
     props?: RefreshTokenProps,
-    callback?: (result?: boolean | IActionResult) => boolean | void
+    callback?: (
+      result?: boolean | IActionResult | [IUser, string]
+    ) => boolean | void
   ): Promise<void>;
 
   /**
