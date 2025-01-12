@@ -48,6 +48,8 @@ test("Tests for encrypt / decrypt", async () => {
   const input = "Hello, world!";
   const passphrase = "My password";
 
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
   // Act
   const encrypted = app.encrypt(input, passphrase);
   const plain = app.decrypt(encrypted, passphrase);
@@ -58,6 +60,8 @@ test("Tests for encryptEnhanced / decryptEnhanced", async () => {
   // Arrange
   const input = "Hello, world!";
   const passphrase = "My password";
+
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
   // Act
   const encrypted = app.encryptEnhanced(input, passphrase);

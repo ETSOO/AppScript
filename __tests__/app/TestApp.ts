@@ -56,7 +56,7 @@ var container = new NotificationContainerTest((update) => {});
 
 // Is local test (integration test)
 // Make sure your local environment is ready
-export const isLocalTest = process.env.NODE_ENV === "local";
+export const isLocalTest = vi.stubEnv("NODE_ENV", "local");
 
 // Test application class
 export class TestApp extends CoreApp<
