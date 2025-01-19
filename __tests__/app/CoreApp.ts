@@ -90,6 +90,14 @@ test("Tests for formatFullName", () => {
   expect(app.formatFullName("Xiao", "Garry")).toBe("Garry Xiao");
 });
 
+test("Tests for getRoleLabel", () => {
+  const labels = app.getRoleLabel(
+    UserRole.User | UserRole.Manager | UserRole.Admin,
+    "-"
+  );
+  expect(labels).toBe("User-Manager-Admin");
+});
+
 test("Tests for getRoles", () => {
   const roles = app.getRoles(UserRole.User | UserRole.Manager | UserRole.Admin);
   expect(roles.length).toBe(3);

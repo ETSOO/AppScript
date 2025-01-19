@@ -1735,10 +1735,27 @@ export abstract class CoreApp<
   }
 
   /**
-   * Get roles
-   * @param role Combination role value
+   * Get role label
+   * @param role Role value
+   * @param joinChar Join char
+   * @returns Label(s)
    */
-  getRoles(role: number) {
+  getRoleLabel(role: number | null | undefined, joinChar?: string) {
+    if (role == null) return "";
+
+    joinChar ??= ", ";
+
+    const roles = this.getRoles(role);
+    return roles.map((r) => r.label).join(joinChar);
+  }
+
+  /**
+   * Get roles
+   * @param role Combination role value, null for all roles
+   */
+  getRoles(role?: number) {
+    if (role == null) return this.getEnumList(UserRole, "role");
+
     return this.getEnumList(UserRole, "role", (id, _key) => {
       if ((id & role) > 0) return id;
     });

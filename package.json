@@ -1,6 +1,6 @@
 {
   "name": "@etsoo/appscript",
-  "version": "1.5.90",
+  "version": "1.5.91",
   "description": "Applications shared TypeScript framework",
   "main": "lib/cjs/index.js",
   "module": "lib/mjs/index.js",
@@ -50,6 +50,6 @@
     "@vitejs/plugin-react": "^4.3.4",
     "jsdom": "^26.0.0",
     "typescript": "^5.7.3",
-    "vitest": "^2.1.8"
+    "vitest": "^3.0.2"
   }
 }

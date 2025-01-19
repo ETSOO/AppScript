@@ -611,10 +611,18 @@ export interface IApp {
   getRegions(): AddressRegion[];
 
   /**
-   * Get roles
-   * @param role Combination role value
+   * Get role label
+   * @param role Role value
+   * @param joinChar Join char
+   * @returns Label(s)
    */
-  getRoles(role: number): ListType[];
+  getRoleLabel(role: number | null | undefined, joinChar?: string): string;
+
+  /**
+   * Get roles
+   * @param role Combination role value, null for all roles
+   */
+  getRoles(role?: number): ListType[];
 
   /**
    * Get status label
