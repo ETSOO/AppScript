@@ -668,7 +668,14 @@ export interface IApp {
   hashHex(message: string, passphrase?: string): string;
 
   /**
-   * Check use has the specific role permission or not
+   * Check user has the minimum role permission or not
+   * @param role Minumum role
+   * @returns Result
+   */
+  hasMinPermission(role: UserRole): boolean;
+
+  /**
+   * Check user has the specific role permission or not
    * @param roles Roles to check
    * @returns Result
    */
@@ -698,10 +705,10 @@ export interface IApp {
   isFinanceUser(): boolean;
 
   /**
-   * Is HR user
+   * Is Manager user
    * @returns Result
    */
-  isHRUser(): boolean;
+  isManagerUser(): boolean;
 
   /**
    * Is valid password, override to implement custom check

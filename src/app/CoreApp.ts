@@ -1828,7 +1828,18 @@ export abstract class CoreApp<
   }
 
   /**
-   * Check use has the specific role permission or not
+   * Check user has the minimum role permission or not
+   * @param role Minumum role
+   * @returns Result
+   */
+  hasMinPermission(role: UserRole) {
+    const userRole = this.userData?.role;
+    if (userRole == null) return false;
+    return userRole >= role;
+  }
+
+  /**
+   * Check user has the specific role permission or not
    * @param roles Roles to check
    * @returns Result
    */
@@ -1851,7 +1862,7 @@ export abstract class CoreApp<
    * @returns Result
    */
   isAdminUser() {
-    return this.hasPermission([UserRole.Admin, UserRole.Founder]);
+    return this.hasMinPermission(UserRole.Admin);
   }
 
   /**
@@ -1863,11 +1874,11 @@ export abstract class CoreApp<
   }
 
   /**
-   * Is HR user
+   * Is Manager user
    * @returns Result
    */
-  isHRUser() {
-    return this.hasPermission(UserRole.HRManager) || this.isAdminUser();
+  isManagerUser() {
+    return this.hasMinPermission(UserRole.Manager);
   }
 
   /**

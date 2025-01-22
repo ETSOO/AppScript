@@ -101,7 +101,7 @@ test("Tests for getRoleLabel", () => {
 test("Tests for getRoles", () => {
   const roles = app.getRoles(UserRole.User | UserRole.Manager | UserRole.Admin);
   expect(roles.length).toBe(3);
-  expect(roles.map((r) => r.id)).toEqual([8, 128, 8192]);
+  expect(roles.map((r) => r.id)).toEqual([16, 128, 8192]);
 });
 
 test("Tests for getStatusList", () => {
