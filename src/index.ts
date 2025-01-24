@@ -19,10 +19,12 @@ export * from "./api/dto/IdLabelPrimaryDto";
 export * from "./api/dto/InitCallDto";
 export * from "./api/dto/PinDto";
 export * from "./api/dto/ResultPayload";
+export * from "./api/dto/UserIdentifierType";
 
 export * from "./api/rq/ApiRefreshTokenRQ";
 export * from "./api/rq/AuthRequest";
 export * from "./api/rq/ChangePasswordRQ";
+export * from "./api/rq/CheckUserIdentifierRQ";
 export * from "./api/rq/GetLogInUrlRQ";
 export * from "./api/rq/LoginIdRQ";
 export * from "./api/rq/LoginRQ";
@@ -54,7 +56,6 @@ export * from "./bridges/BridgeUtils";
 export * from "./bridges/IBridgeHost";
 
 // business
-export * from "./business/ApiService";
 export * from "./business/BusinessTax";
 export * from "./business/BusinessUtils";
 export * from "./business/CultureItem";

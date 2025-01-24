@@ -2,7 +2,7 @@ import { IApiPayload } from "@etsoo/restclient";
 import { IUser } from "../state/User";
 import { BaseApi } from "./BaseApi";
 import { ResultPayload } from "./dto/ResultPayload";
-import { ActionResult, IActionResult } from "@etsoo/shared";
+import { ActionResult, DataTypes, IActionResult } from "@etsoo/shared";
 import { RefreshTokenProps, RefreshTokenResult } from "../app/IApp";
 import { TokenRQ } from "./rq/TokenRQ";
 import { ApiRefreshTokenDto } from "./dto/ApiRefreshTokenDto";
@@ -15,6 +15,7 @@ import { SignoutRQ } from "./rq/SignoutRQ";
 import { SwitchOrgRQ } from "./rq/SwitchOrgRQ";
 import { AuthRequest } from "./rq/AuthRequest";
 import { ChangePasswordRQ } from "./rq/ChangePasswordRQ";
+import { CheckUserIdentifierRQ } from "./rq/CheckUserIdentifierRQ";
 
 /**
  * Authentication API
@@ -63,6 +64,26 @@ export class AuthApi extends BaseApi {
       password: this.app.encrypt(this.app.hash(password))
     };
     return this.api.put("Auth/ChangePassword", rq, payload);
+  }
+
+  /**
+   * Check user identifier
+   * @param type User identifier type
+   * @param openid Open ID
+   * @param payload Payload
+   * @returns Result
+   */
+  checkUserIdentifier(
+    type: CheckUserIdentifierRQ["type"],
+    openid: CheckUserIdentifierRQ["openid"],
+    payload?: IApiPayload<DataTypes.TristateEnum>
+  ) {
+    const rq: CheckUserIdentifierRQ = {
+      type,
+      openid: this.app.encrypt(openid),
+      deviceId: this.app.deviceId
+    };
+    return this.api.post("Auth/CheckUserIdentifier", rq, payload);
   }
 
   /**
