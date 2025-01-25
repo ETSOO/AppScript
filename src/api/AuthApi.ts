@@ -81,7 +81,8 @@ export class AuthApi extends BaseApi {
     const rq: CheckUserIdentifierRQ = {
       type,
       openid: this.app.encrypt(openid),
-      deviceId: this.app.deviceId
+      deviceId: this.app.deviceId,
+      region: this.app.region
     };
     return this.api.post("Auth/CheckUserIdentifier", rq, payload);
   }

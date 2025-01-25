@@ -22,4 +22,10 @@ export type CheckUserIdentifierRQ = {
    * 设备编号
    */
   deviceId: string;
+
+  /**
+   * Region
+   * 区域
+   */
+  region: string;
 };
