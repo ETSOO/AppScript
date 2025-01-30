@@ -1473,8 +1473,8 @@ export abstract class CoreApp<
     options?: DateUtils.FormatOptions,
     timeZone?: string
   ) {
-    const { currentCulture, timeZone: defaultTimeZone } = this.settings;
-    timeZone ??= defaultTimeZone;
+    const { currentCulture } = this.settings;
+    timeZone ??= this.getTimeZone();
     return DateUtils.format(input, currentCulture.name, options, timeZone);
   }
 
@@ -1796,9 +1796,8 @@ export abstract class CoreApp<
    * Get time zone
    * @returns Time zone
    */
-  getTimeZone(): string | undefined {
-    // settings.timeZone = Utils.getTimeZone()
-    return this.settings.timeZone ?? this.ipData?.timezone;
+  getTimeZone() {
+    return this.settings.timeZone ?? Utils.getTimeZone(this.ipData?.timezone);
   }
 
   /**

@@ -22,7 +22,7 @@ export interface IAppSettings extends IExternalSettings {
   readonly detectedCulture: string;
 
   /**
-   * Time zone
+   * Time zone, set a static value for all clients
    */
   timeZone?: string;
 

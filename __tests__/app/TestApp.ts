@@ -104,9 +104,6 @@ export class TestApp extends CoreApp<
         // Supported regions
         regions: supportedRegions,
 
-        // Browser's time zone
-        timeZone: Utils.getTimeZone(),
-
         // Current country or region
         currentRegion: AddressUtils.getRegion(
           supportedRegions,

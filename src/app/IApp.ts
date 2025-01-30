@@ -649,7 +649,7 @@ export interface IApp {
    * Get time zone
    * @returns Time zone
    */
-  getTimeZone(): string | undefined;
+  getTimeZone(): string;
 
   /**
    * Hash message, SHA3 or HmacSHA512, 512 as Base64

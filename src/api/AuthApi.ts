@@ -10,7 +10,7 @@ import { GetLogInUrlRQ } from "./rq/GetLogInUrlRQ";
 import { LoginRQ } from "./rq/LoginRQ";
 import { LoginIdRQ } from "./rq/LoginIdRQ";
 import { RefreshTokenRQ } from "./rq/RefreshTokenRQ";
-import { ResetPasswordRQ } from "./rq/ResetPasswordRQ";
+import { ResetPasswordInputRQ, ResetPasswordRQ } from "./rq/ResetPasswordRQ";
 import { SignoutRQ } from "./rq/SignoutRQ";
 import { SwitchOrgRQ } from "./rq/SwitchOrgRQ";
 import { AuthRequest } from "./rq/AuthRequest";
@@ -223,8 +223,14 @@ export class AuthApi extends BaseApi {
    * @param payload Payload
    * @returns Result
    */
-  resetPassword(rq: ResetPasswordRQ, payload?: ResultPayload) {
-    return this.api.put("Auth/ResetPassword", rq, payload);
+  resetPassword(rq: ResetPasswordInputRQ, payload?: ResultPayload) {
+    const data: ResetPasswordRQ = {
+      ...rq,
+      deviceId: this.app.deviceId,
+      region: this.app.region,
+      timezone: this.app.getTimeZone()
+    };
+    return this.api.put("Auth/ResetPassword", data, payload);
   }
 
   /**

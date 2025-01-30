@@ -13,7 +13,8 @@ function EnhanceApp<TBase extends DataTypes.MConstructor<TestApp>>(
 
 const appClass = EnhanceApp(TestApp);
 const app = new appClass();
-app.changeCulture(app.settings.cultures[0]);
+
+await app.changeCulture(app.settings.cultures[0]);
 
 test("Test for domain replacement", () => {
   expect(app.settings.endpoint).toBe("http://localhost:9000/api/");

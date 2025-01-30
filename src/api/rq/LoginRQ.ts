@@ -11,17 +11,22 @@ export type LoginRQ = LoginIdRQ & {
   pwd: string;
 
   /**
+   * Time zone
+   */
+  timezone: string;
+
+  /**
    * Organization
    */
   org?: number;
-
-  /**
-   * Time zone
-   */
-  timezone?: string;
 
   /**
    * Authorization request data
    */
   auth?: AuthRequest;
 };
+
+/**
+ * Login input request data
+ */
+export type LoginInputRQ = Pick<LoginRQ, "id" | "pwd" | "org" | "auth">;
