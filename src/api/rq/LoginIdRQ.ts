@@ -16,4 +16,9 @@ export type LoginIdRQ = {
    * Country or region
    */
   region: string;
+
+  /**
+   * Time zone
+   */
+  timeZone: string;
 };

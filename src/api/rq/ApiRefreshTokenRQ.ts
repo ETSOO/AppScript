@@ -1,14 +1,11 @@
+import { TokenRQ } from "./TokenRQ";
+
 /**
  * API Refresh Token Request data
  */
-export type ApiRefreshTokenRQ = {
-  /**
-   * Refresh token
-   */
-  token: string;
-
+export type ApiRefreshTokenRQ = TokenRQ & {
   /**
    * Application ID, 0 for core system
    */
-  appId?: number;
+  appId: number;
 };

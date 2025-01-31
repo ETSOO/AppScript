@@ -6,4 +6,9 @@ export type TokenRQ = {
    * Refresh token
    */
   token: string;
+
+  /**
+   * Time zone
+   */
+  timeZone: string;
 };

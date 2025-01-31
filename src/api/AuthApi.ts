@@ -147,7 +147,8 @@ export class AuthApi extends BaseApi {
     const rq: LoginIdRQ = {
       id,
       deviceId,
-      region
+      region,
+      timeZone: this.app.getTimeZone()
     };
     return this.api.post("Auth/LoginId", rq, payload);
   }
@@ -180,7 +181,8 @@ export class AuthApi extends BaseApi {
 
     // Reqest data
     const rq: RefreshTokenRQ = {
-      deviceId: this.app.deviceId
+      deviceId: this.app.deviceId,
+      timeZone: this.app.getTimeZone()
     };
 
     // Payload

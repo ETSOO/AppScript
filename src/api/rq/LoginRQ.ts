@@ -11,11 +11,6 @@ export type LoginRQ = LoginIdRQ & {
   pwd: string;
 
   /**
-   * Time zone
-   */
-  timezone: string;
-
-  /**
    * Organization
    */
   org?: number;

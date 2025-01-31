@@ -61,7 +61,7 @@ type ApiRefreshTokenFunction = (
   rq: ApiRefreshTokenRQ
 ) => Promise<[string, number] | undefined>;
 
-// API task data
+// API task data, [api, token expires in seconds, token expires countdown seconds, app id, refresh token function, token]
 type ApiTaskData = [IApi, number, number, ApiRefreshTokenFunction, string?];
 
 // System API name
@@ -352,7 +352,7 @@ export abstract class CoreApp<
       if (this.lastCalled) {
         // Call refreshToken to update access token
         await this.refreshToken(
-          { token: rq.token, showLoading: false },
+          { token: rq.token, timeZone: rq.timeZone, showLoading: false },
           (result) => {
             if (result === true) return;
             console.log(`CoreApp.${this.name}.RefreshToken`, result);
@@ -1938,7 +1938,7 @@ export abstract class CoreApp<
     callback?: (result?: boolean | IActionResult) => boolean | void
   ) {
     // Check props
-    props ??= {};
+    props ??= { timeZone: this.getTimeZone() };
     props.token ??= this.getCacheToken();
 
     // Call refresh token API
@@ -2052,7 +2052,7 @@ export abstract class CoreApp<
 
     // Call the API quietly, no loading bar and no error popup
     const data = await this.createAuthApi().exchangeToken(
-      { token },
+      { token, timeZone: this.getTimeZone() },
       {
         showLoading: false,
         onError: (error) => {
@@ -2162,6 +2162,12 @@ export abstract class CoreApp<
       // Exit when not authorized
       if (!this.authorized) return;
 
+      // App id
+      const appId = this.settings.appId;
+
+      // Timezone
+      const timeZone = this.getTimeZone();
+
       // APIs
       for (const name in this.apis) {
         // Get the API
@@ -2176,7 +2182,7 @@ export abstract class CoreApp<
         // Ready to trigger
         if (api[2] === 0) {
           // Refresh token
-          api[3](api[0], { token: api[4] }).then((data) => {
+          api[3](api[0], { appId, token: api[4], timeZone }).then((data) => {
             if (data == null) {
               // Failed, try it again in 2 seconds
               api[2] = 2;

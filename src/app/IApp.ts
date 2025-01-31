@@ -115,6 +115,11 @@ export interface RefreshTokenProps {
   token?: string;
 
   /**
+   * Time zone
+   */
+  timeZone: string;
+
+  /**
    * API URL
    */
   api?: string;
