@@ -4,7 +4,7 @@ import { BaseApi } from "./BaseApi";
 import { ResultPayload } from "./dto/ResultPayload";
 import { ActionResult, DataTypes, IActionResult } from "@etsoo/shared";
 import { RefreshTokenProps, RefreshTokenResult } from "../app/IApp";
-import { TokenRQ } from "./rq/TokenRQ";
+import { TokenInputRQ, TokenRQ } from "./rq/TokenRQ";
 import { ApiRefreshTokenDto } from "./dto/ApiRefreshTokenDto";
 import { GetLogInUrlRQ } from "./rq/GetLogInUrlRQ";
 import { LoginRQ } from "./rq/LoginRQ";
@@ -32,8 +32,9 @@ export class AuthApi extends BaseApi {
    * @param payload Payload
    * @returns Result
    */
-  apiRefreshToken(rq: TokenRQ, payload?: IApiPayload<ApiRefreshTokenDto>) {
-    return this.api.put("Auth/ApiRefreshToken", rq, payload);
+  apiRefreshToken(rq: TokenInputRQ, payload?: IApiPayload<ApiRefreshTokenDto>) {
+    const data: TokenRQ = { ...rq, timeZone: this.app.getTimeZone() };
+    return this.api.put("Auth/ApiRefreshToken", data, payload);
   }
 
   /**
@@ -93,8 +94,9 @@ export class AuthApi extends BaseApi {
    * @param payload Payload
    * @returns Result
    */
-  exchangeToken(rq: TokenRQ, payload?: IApiPayload<ApiRefreshTokenDto>) {
-    return this.api.put("Auth/ExchangeToken", rq, payload);
+  exchangeToken(rq: TokenInputRQ, payload?: IApiPayload<ApiRefreshTokenDto>) {
+    const data: TokenRQ = { ...rq, timeZone: this.app.getTimeZone() };
+    return this.api.put("Auth/ExchangeToken", data, payload);
   }
 
   /**

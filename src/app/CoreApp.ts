@@ -352,7 +352,7 @@ export abstract class CoreApp<
       if (this.lastCalled) {
         // Call refreshToken to update access token
         await this.refreshToken(
-          { token: rq.token, timeZone: rq.timeZone, showLoading: false },
+          { token: rq.token, showLoading: false },
           (result) => {
             if (result === true) return;
             console.log(`CoreApp.${this.name}.RefreshToken`, result);
@@ -1938,7 +1938,7 @@ export abstract class CoreApp<
     callback?: (result?: boolean | IActionResult) => boolean | void
   ) {
     // Check props
-    props ??= { timeZone: this.getTimeZone() };
+    props ??= {};
     props.token ??= this.getCacheToken();
 
     // Call refresh token API
@@ -2052,7 +2052,7 @@ export abstract class CoreApp<
 
     // Call the API quietly, no loading bar and no error popup
     const data = await this.createAuthApi().exchangeToken(
-      { token, timeZone: this.getTimeZone() },
+      { token },
       {
         showLoading: false,
         onError: (error) => {
@@ -2165,9 +2165,6 @@ export abstract class CoreApp<
       // App id
       const appId = this.settings.appId;
 
-      // Timezone
-      const timeZone = this.getTimeZone();
-
       // APIs
       for (const name in this.apis) {
         // Get the API
@@ -2182,7 +2179,7 @@ export abstract class CoreApp<
         // Ready to trigger
         if (api[2] === 0) {
           // Refresh token
-          api[3](api[0], { appId, token: api[4], timeZone }).then((data) => {
+          api[3](api[0], { appId, token: api[4] }).then((data) => {
             if (data == null) {
               // Failed, try it again in 2 seconds
               api[2] = 2;

@@ -1,9 +1,9 @@
-import { TokenRQ } from "./TokenRQ";
+import { TokenInputRQ } from "./TokenRQ";
 
 /**
  * API Refresh Token Request data
  */
-export type ApiRefreshTokenRQ = TokenRQ & {
+export type ApiRefreshTokenRQ = TokenInputRQ & {
   /**
    * Application ID, 0 for core system
    */
