@@ -1,6 +1,11 @@
 import { ApiDataError, ApiMethod } from "@etsoo/restclient";
 import { DataTypes, IActionResult } from "@etsoo/shared";
-import { EntityStatus, UserRole } from "../../src";
+import {
+  EntityStatus,
+  ExternalEndpoint,
+  ExternalSettings,
+  UserRole
+} from "../../src";
 import { TestApp } from "./TestApp";
 
 // Arrange
@@ -16,12 +21,58 @@ const app = new appClass();
 
 await app.changeCulture(app.settings.cultures[0]);
 
-test("Test for domain replacement", () => {
+test("Test for domain substitution", () => {
   expect(app.settings.endpoint).toBe("http://localhost:9000/api/");
 
   expect(app.settings.endpoints?.core.endpoint).toBe(
     "https://localhost:9001/api/"
   );
+});
+
+test("Test for formatApp", () => {
+  expect(
+    ExternalSettings.formatApp(
+      "admin.app.local",
+      "core",
+      "https://{hostname}/api/"
+    )
+  ).toBe("https://core.app.local/api/");
+
+  expect(
+    ExternalSettings.formatApp("localhost", "admin", "https://{hostname}/api/")
+  ).toBe("https://localhost/api/");
+
+  // Custom sub domain match
+  ExternalSettings.subDomainMatch = /app(?=\.)/i;
+
+  expect(
+    ExternalSettings.formatApp(
+      "admin.app.local",
+      "core",
+      "https://{hostname}/api/"
+    )
+  ).toBe("https://admin.core.local/api/");
+});
+
+test("Test for formatHost with endpoints", () => {
+  // Reset sub domain match
+  ExternalSettings.subDomainMatch = /(?<=\/\/)[0-9a-z]+(?=\.)/i;
+
+  const endpoints: Record<string, ExternalEndpoint> = {
+    core: {
+      endpoint: "https://{hostname}/api/",
+      webUrl: "https://{hostname}/"
+    }
+  };
+
+  const result = ExternalSettings.formatHost(endpoints, "admin.app.local");
+
+  expect(result).toStrictEqual({
+    core: {
+      endpoint: "https://core.app.local/api/",
+      webUrl: "https://core.app.local/"
+    }
+  });
 });
 
 test("Test for properties", () => {

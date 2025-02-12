@@ -37,7 +37,7 @@ export interface IExternalSettings extends ExternalEndpoint {
    * Endpoints to other services
    */
   readonly endpoints?: Record<
-    "core" | "accounting" | "crm" | "calandar" | "task" | string,
+    "core" | "admin" | "finance" | "crm" | "oa" | "agile" | string,
     ExternalEndpoint
   >;
 }
@@ -47,42 +47,84 @@ export interface IExternalSettings extends ExternalEndpoint {
  */
 export namespace ExternalSettings {
   /**
-   * Create instance
+   * Sub domain match regular expression
    */
-  export function create<T extends IExternalSettings = IExternalSettings>():
-    | T
-    | undefined {
-    if ("settings" in globalThis) {
-      const settings = Reflect.get(globalThis, "settings");
-      if (typeof settings === "object") {
-        if (typeof window !== "undefined") {
-          // Host name
-          const hostname = globalThis.location.hostname;
+  export let subDomainMatch: RegExp = /(?<=\/\/)[0-9a-z]+(?=\.)/i;
 
-          // replace {hostname}
-          format(settings, hostname);
-        }
+  /**
+   * Create settings instance
+   * @param settings Settings
+   * @returns Result
+   */
+  export function create<T extends IExternalSettings = IExternalSettings>(
+    settings: unknown
+  ): T {
+    // Default settings reading from globalThis
+    settings ??= Reflect.get(globalThis, "settings");
 
-        return settings as T;
-      }
+    if (
+      settings != null &&
+      typeof settings === "object" &&
+      "appId" in settings &&
+      "endpoint" in settings
+    ) {
+      return settings as T;
     }
-    return undefined;
+
+    throw new Error("No external settings found");
   }
 
-  export function format(settings: any, hostname?: string) {
+  /**
+   * Format the app
+   * @param hostname Hostname
+   * @param app App key
+   * @param endpoint Endpoint
+   * @returns Result
+   */
+  export function formatApp(hostname: string, app: string, endpoint: string) {
+    return formatHost(endpoint, hostname).replace(subDomainMatch, app);
+  }
+
+  /**
+   * Format the host
+   * @param setting Setting
+   * @param hostname Hostname
+   * @returns Result
+   */
+  export function formatHost(setting: string, hostname?: string | null): string;
+
+  export function formatHost(
+    setting: Record<string, ExternalEndpoint>,
+    hostname?: string | null
+  ): Record<string, ExternalEndpoint>;
+
+  export function formatHost(
+    setting: undefined,
+    hostname?: string | null
+  ): undefined;
+
+  export function formatHost(
+    setting?: string | Record<string, ExternalEndpoint>,
+    hostname?: string | null
+  ): string | Record<string, ExternalEndpoint> | undefined {
+    // No setting
+    if (setting == null) return undefined;
+
     // Default hostname
-    if (!hostname) hostname = "localhost";
+    hostname ??= globalThis.location.hostname;
 
-    // replace {hostname}
-    for (const key in settings) {
-      const value = settings[key];
-      if (typeof value === "string") {
-        settings[key] = value.replace("{hostname}", hostname);
-      } else if (typeof value === "object") {
-        format(value, hostname);
-      }
+    if (typeof setting === "string") {
+      return setting.replace("{hostname}", hostname);
+    } else {
+      return Object.fromEntries(
+        Object.entries(setting).map(([key, value]) => [
+          key,
+          {
+            endpoint: formatApp(hostname, key, value.endpoint),
+            webUrl: formatApp(hostname, key, value.webUrl)
+          }
+        ])
+      );
     }
-
-    return settings;
   }
 }

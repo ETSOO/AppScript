@@ -16,7 +16,7 @@ import {
   InitCallResultData,
   IUser
 } from "../../src";
-import { DataTypes, DomUtils, Utils, WindowStorage } from "@etsoo/shared";
+import { DataTypes, DomUtils, WindowStorage } from "@etsoo/shared";
 
 // Detected country or region
 const { detectedCountry } = DomUtils;
@@ -72,7 +72,9 @@ export class TestApp extends CoreApp<
    */
   constructor() {
     super(
-      ExternalSettings.format({
+      {
+        appId: 0,
+
         /**
          * Endpoint of the API service
          */
@@ -115,13 +117,23 @@ export class TestApp extends CoreApp<
         currentCulture: DomUtils.getCulture(
           supportedCultures,
           detectedCulture
-        )![0]
-      }),
+        )[0]
+      },
       createClient(),
       container,
       new WindowStorage(),
       "SmartERP"
     );
+  }
+
+  // Example of local format settings
+  protected override formatSettings(settings: IAppSettings): IAppSettings {
+    const { endpoint, endpoints, ...rest } = settings;
+    return {
+      ...rest,
+      endpoint: ExternalSettings.formatHost(endpoint, "localhost"),
+      endpoints: ExternalSettings.formatHost(endpoints, "localhost")
+    };
   }
 
   freshCountdownUI(callback?: () => PromiseLike<unknown>): void {

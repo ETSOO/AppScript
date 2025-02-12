@@ -55,7 +55,6 @@ $ yarn add @etsoo/appscript
 #### ExternalSettings.ts
 
 - IExternalSettings - External settings items
-- IExternalSettingsHost - External settings host passed by external script
 
 #### UserRole.ts
 

@@ -336,15 +336,15 @@ export abstract class CoreApp<
     name: string,
     debug: boolean = false
   ) {
-    if (settings?.regions?.length === 0) {
-      throw new Error("No regions defined");
-    }
-    this.settings = settings;
+    // Format settings
+    this.settings = this.formatSettings(settings);
 
-    const region = AddressRegion.getById(settings.regions[0]);
+    // Current region
+    const region = AddressRegion.getById(this.settings.regions[0]);
     if (region == null) {
       throw new Error("No default region defined");
     }
+
     this.defaultRegion = region;
 
     // Current system refresh token
@@ -431,6 +431,15 @@ export abstract class CoreApp<
         this.setup();
       }
     );
+  }
+
+  /**
+   * Format settings
+   * @param settings Original settings
+   * @returns Result
+   */
+  protected formatSettings(settings: S) {
+    return settings;
   }
 
   private getDeviceId() {
