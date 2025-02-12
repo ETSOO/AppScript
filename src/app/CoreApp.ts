@@ -365,9 +365,12 @@ export abstract class CoreApp<
       return undefined;
     };
 
+    // Destruct the settings
+    const { currentCulture, currentRegion, endpoint, webUrl } = this.settings;
+
     if (api) {
       // Base URL of the API
-      api.baseUrl = this.settings.endpoint;
+      api.baseUrl = endpoint;
       api.name = systemApi;
       this.setApi(api, refresh);
       this.api = api;
@@ -375,8 +378,8 @@ export abstract class CoreApp<
       this.api = this.createApi(
         systemApi,
         {
-          endpoint: settings.endpoint,
-          webUrl: settings.webUrl
+          endpoint,
+          webUrl
         },
         refresh
       );
@@ -407,8 +410,6 @@ export abstract class CoreApp<
     // Embedded
     this._embedded =
       this.storage.getData<boolean>(this.fields.embedded) ?? false;
-
-    const { currentCulture, currentRegion } = settings;
 
     // Load resources
     Promise.all([loadCrypto(), this.changeCulture(currentCulture)]).then(

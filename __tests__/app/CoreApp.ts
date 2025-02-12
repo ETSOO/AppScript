@@ -22,10 +22,10 @@ const app = new appClass();
 await app.changeCulture(app.settings.cultures[0]);
 
 test("Test for domain substitution", () => {
-  expect(app.settings.endpoint).toBe("http://localhost:9000/api/");
+  expect(app.settings.endpoint).toBe("http://admin.etsoo.com:9000/api/");
 
   expect(app.settings.endpoints?.core.endpoint).toBe(
-    "https://localhost:9001/api/"
+    "https://core.etsoo.com:9001/api/"
   );
 });
 

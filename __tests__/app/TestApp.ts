@@ -11,7 +11,6 @@ import {
   CoreApp,
   createClient,
   Culture,
-  ExternalSettings,
   IAppSettings,
   InitCallResultData,
   IUser
@@ -87,6 +86,8 @@ export class TestApp extends CoreApp<
           }
         },
 
+        hostname: "admin.etsoo.com",
+
         /**
          * App root url
          */
@@ -124,19 +125,6 @@ export class TestApp extends CoreApp<
       new WindowStorage(),
       "SmartERP"
     );
-  }
-
-  // Example of local format settings
-  protected override formatSettings(settings: IAppSettings): IAppSettings {
-    const { endpoint, endpoints, ...rest } = settings;
-    return {
-      ...rest,
-      endpoint: ExternalSettings.formatHost(endpoint, "localhost"),
-      endpoints:
-        endpoints == null
-          ? undefined
-          : ExternalSettings.formatHost(endpoints, "localhost")
-    };
   }
 
   freshCountdownUI(callback?: () => PromiseLike<unknown>): void {
