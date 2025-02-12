@@ -34,6 +34,12 @@ export interface IExternalSettings extends ExternalEndpoint {
   readonly appId: number;
 
   /**
+   * Default hostname for substitution
+   * 用于替换的默认主机名
+   */
+  hostname?: string;
+
+  /**
    * Endpoints to other services
    */
   readonly endpoints?: Record<
@@ -57,18 +63,27 @@ export namespace ExternalSettings {
    * @returns Result
    */
   export function create<T extends IExternalSettings = IExternalSettings>(
-    settings: unknown
+    settings?: unknown,
+    hostname?: string
   ): T {
     // Default settings reading from globalThis
     settings ??= Reflect.get(globalThis, "settings");
 
-    if (
-      settings != null &&
-      typeof settings === "object" &&
-      "appId" in settings &&
-      "endpoint" in settings
-    ) {
-      return settings as T;
+    if (settings) {
+      if (typeof settings === "string") {
+        settings = JSON.parse(settings);
+      }
+
+      if (
+        settings != null &&
+        typeof settings === "object" &&
+        "appId" in settings &&
+        "endpoint" in settings
+      ) {
+        const s = settings as T;
+        if (hostname) s.hostname = hostname;
+        return s;
+      }
     }
 
     throw new Error("No external settings found");
@@ -91,7 +106,7 @@ export namespace ExternalSettings {
    * @param hostname Hostname
    * @returns Result
    */
-  export function formatHost(setting: string, hostname?: string | null): string;
+  export function formatHost(setting: string, hostname: string): string;
 
   export function formatHost(
     setting: Record<string, ExternalEndpoint>,
@@ -99,17 +114,9 @@ export namespace ExternalSettings {
   ): Record<string, ExternalEndpoint>;
 
   export function formatHost(
-    setting: undefined,
+    setting: string | Record<string, ExternalEndpoint>,
     hostname?: string | null
-  ): undefined;
-
-  export function formatHost(
-    setting?: string | Record<string, ExternalEndpoint>,
-    hostname?: string | null
-  ): string | Record<string, ExternalEndpoint> | undefined {
-    // No setting
-    if (setting == null) return undefined;
-
+  ): string | Record<string, ExternalEndpoint> {
     // Default hostname
     hostname ??= globalThis.location.hostname;
 

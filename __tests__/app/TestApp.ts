@@ -132,7 +132,10 @@ export class TestApp extends CoreApp<
     return {
       ...rest,
       endpoint: ExternalSettings.formatHost(endpoint, "localhost"),
-      endpoints: ExternalSettings.formatHost(endpoints, "localhost")
+      endpoints:
+        endpoints == null
+          ? undefined
+          : ExternalSettings.formatHost(endpoints, "localhost")
     };
   }
 

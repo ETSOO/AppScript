@@ -45,7 +45,7 @@ import {
 import { UserRole } from "./UserRole";
 import type CryptoJS from "crypto-js";
 import { Currency } from "../business/Currency";
-import { ExternalEndpoint } from "./ExternalSettings";
+import { ExternalEndpoint, ExternalSettings } from "./ExternalSettings";
 import { ApiRefreshTokenDto } from "../api/dto/ApiRefreshTokenDto";
 import { ApiRefreshTokenRQ } from "../api/rq/ApiRefreshTokenRQ";
 import { AuthApi } from "../api/AuthApi";
@@ -438,8 +438,24 @@ export abstract class CoreApp<
    * @param settings Original settings
    * @returns Result
    */
-  protected formatSettings(settings: S) {
-    return settings;
+  protected formatSettings(settings: S): S {
+    const {
+      endpoint,
+      webUrl,
+      endpoints,
+      hostname = globalThis.location.hostname,
+      ...rest
+    } = settings;
+    return {
+      ...rest,
+      hostname,
+      endpoint: ExternalSettings.formatHost(endpoint, hostname),
+      webUrl: ExternalSettings.formatHost(webUrl, hostname),
+      endpoints:
+        endpoints == null
+          ? undefined
+          : ExternalSettings.formatHost(endpoints, hostname)
+    } as S;
   }
 
   private getDeviceId() {
