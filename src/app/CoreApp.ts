@@ -294,6 +294,13 @@ export abstract class CoreApp<
   }
 
   /**
+   * Get core API name
+   */
+  protected get coreName() {
+    return "core";
+  }
+
+  /**
    * Last called with token refresh
    */
   protected lastCalled = false;
@@ -2112,11 +2119,8 @@ export abstract class CoreApp<
   /**
    * Exchange intergration tokens for all APIs
    * @param coreData Core system's token data to exchange
-   * @param coreName Core system's name, default is 'core'
    */
-  exchangeTokenAll(coreData: ApiRefreshTokenDto, coreName?: string) {
-    coreName ??= "core";
-
+  exchangeTokenAll(coreData: ApiRefreshTokenDto) {
     for (const name in this.apis) {
       // Ignore the system API as it has its own logic with refreshToken
       if (name === systemApi) continue;
@@ -2125,7 +2129,7 @@ export abstract class CoreApp<
       const api = data[0];
 
       // The core API
-      if (name === coreName) {
+      if (name === this.coreName) {
         api.authorize(coreData.tokenType, coreData.accessToken);
         this.updateApi(data, coreData.refreshToken, coreData.expiresIn);
       } else {

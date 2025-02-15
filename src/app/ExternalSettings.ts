@@ -43,7 +43,7 @@ export interface IExternalSettings extends ExternalEndpoint {
    * Endpoints to other services
    */
   readonly endpoints?: Record<
-    "core" | "admin" | "finance" | "crm" | "oa" | "agile" | string,
+    "platform" | "core" | "admin" | "finance" | "crm" | "oa" | "agile" | string,
     ExternalEndpoint
   >;
 }

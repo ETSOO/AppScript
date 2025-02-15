@@ -454,9 +454,8 @@ export interface IApp {
   /**
    * Exchange intergration tokens for all APIs
    * @param coreData Core system's token data to exchange
-   * @param coreName Core system's name, default is 'core'
    */
-  exchangeTokenAll(coreData: ApiRefreshTokenDto, coreName?: string): void;
+  exchangeTokenAll(coreData: ApiRefreshTokenDto): void;
 
   /**
    * Format date to string
