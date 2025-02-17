@@ -7,6 +7,12 @@ import { IExternalSettings } from "./ExternalSettings";
  */
 export interface IAppSettings extends IExternalSettings {
   /**
+   * Application id
+   * 程序编号
+   */
+  readonly appId: number;
+
+  /**
    * Supported country/region ids
    */
   readonly regions: string[];

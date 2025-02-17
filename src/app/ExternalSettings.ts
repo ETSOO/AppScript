@@ -28,12 +28,6 @@ export interface IExternalSettings extends ExternalEndpoint {
   readonly homepage: string;
 
   /**
-   * Application id
-   * 程序编号
-   */
-  readonly appId: number;
-
-  /**
    * Default hostname for substitution
    * 用于替换的默认主机名
    */
@@ -77,8 +71,8 @@ export namespace ExternalSettings {
       if (
         settings != null &&
         typeof settings === "object" &&
-        "appId" in settings &&
-        "endpoint" in settings
+        "endpoint" in settings &&
+        "webUrl" in settings
       ) {
         const s = settings as T;
         if (hostname) s.hostname = hostname;
