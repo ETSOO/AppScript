@@ -101,16 +101,15 @@ export class AuthApi extends BaseApi {
 
   /**
    * Get log in url
-   * @param rq Request data
    * @param payload Payload
    * @param apiHost API host
    * @returns Result
    */
-  getLogInUrl(
-    rq: GetLogInUrlRQ,
-    payload?: IApiPayload<string>,
-    apiHost?: string
-  ) {
+  getLogInUrl(payload?: IApiPayload<string>, apiHost?: string) {
+    const rq: GetLogInUrlRQ = {
+      region: this.app.region,
+      device: this.app.deviceId
+    };
     return this.api.get(`${apiHost ?? ""}Auth/GetLogInUrl`, rq, payload);
   }
 
