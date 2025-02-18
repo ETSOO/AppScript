@@ -103,10 +103,15 @@ export class AuthApi extends BaseApi {
    * Get log in url
    * @param rq Request data
    * @param payload Payload
+   * @param apiHost API host
    * @returns Result
    */
-  getLogInUrl(rq: GetLogInUrlRQ, payload?: IApiPayload<string>) {
-    return this.api.get("Auth/GetLogInUrl", rq, payload);
+  getLogInUrl(
+    rq: GetLogInUrlRQ,
+    payload?: IApiPayload<string>,
+    apiHost?: string
+  ) {
+    return this.api.get(`${apiHost ?? ""}Auth/GetLogInUrl`, rq, payload);
   }
 
   /**
