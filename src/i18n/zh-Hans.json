@@ -121,6 +121,7 @@
   "name": "姓名",
   "nameB": "名称",
   "networkError": "本地网络故障，无法链接到远程服务器",
+  "networkFailure": "网络连接失败，请重试！",
   "newPassword": "新密码",
   "newPasswordRequired": "请输入新密码",
   "newPasswordTip": "请设置一个和现在的密码不一样的新密码",

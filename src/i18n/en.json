@@ -121,6 +121,7 @@
   "name": "Name",
   "nameB": "Name",
   "networkError": "The local network is faulty and cannot connect to the remote server",
+  "networkFailure": "Network connection failed, please try again!",
   "newPassword": "New password",
   "newPasswordRequired": "Please enter your new password",
   "newPasswordTip": "New password should be different",
