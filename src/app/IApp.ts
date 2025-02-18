@@ -716,6 +716,13 @@ export interface IApp {
   isValidPassword(password: string): boolean;
 
   /**
+   * Load URL
+   * @param url URL
+   * @param targetOrigin Target origin
+   */
+  loadUrl(url: string, targetOrigin?: string): void;
+
+  /**
    * Navigate to Url or delta
    * @param url Url or delta
    * @param options Options

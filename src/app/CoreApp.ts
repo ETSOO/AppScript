@@ -1914,6 +1914,24 @@ export abstract class CoreApp<
   }
 
   /**
+   * Load URL
+   * @param url URL
+   * @param targetOrigin Target origin
+   */
+  loadUrl(url: string, targetOrigin?: string) {
+    // Is it embeded?
+    if (this.embedded && targetOrigin) {
+      globalThis.parent.postMessage([this.coreName + "Url", url], targetOrigin);
+    } else {
+      if (BridgeUtils.host == null) {
+        globalThis.location.href = url;
+      } else {
+        BridgeUtils.host.loadApp(this.coreName, url);
+      }
+    }
+  }
+
+  /**
    * Navigate to Url or delta
    * @param url Url or delta
    * @param options Options
