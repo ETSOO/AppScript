@@ -510,6 +510,26 @@ export abstract class CoreApp<
   }
 
   /**
+   * Check current app is in same session
+   * @param callback Callback
+   */
+  async checkSession(callback: (isSame: boolean) => Promise<void | false>) {
+    // Session name
+    const sessionName = this.addIdentifier("same-session");
+
+    // Current session
+    const isSame = this.storage.getData<boolean>(sessionName) === true;
+
+    // Callback
+    const result = await callback(isSame);
+
+    if (!isSame && result !== false) {
+      // Set the session when the callback does not return false
+      this.storage.setData(sessionName, true);
+    }
+  }
+
+  /**
    * Create Auth API
    * @param api Specify the API to use
    * @returns Result

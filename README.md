@@ -140,8 +140,6 @@ $ yarn add @etsoo/appscript
 - InitCallResultData - Init call result data
 - InitCallResult - Init call result
 
-### erp - SmartERP APIs
-
 ### state - State management
 
 #### Culture.ts

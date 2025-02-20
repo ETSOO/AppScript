@@ -348,6 +348,14 @@ export interface IApp {
   checkLanguage(language?: string): string;
 
   /**
+   * Check current app is in same session
+   * @param callback Callback
+   */
+  checkSession(
+    callback: (isSame: boolean) => Promise<void | false>
+  ): Promise<void>;
+
+  /**
    * Clear cache data
    */
   clearCacheData(): void;

@@ -260,3 +260,15 @@ test("Tests for isValidPassword", () => {
   expect(app.isValidPassword("abcd3")).toBeFalsy();
   expect(app.isValidPassword("1234abcd")).toBeTruthy();
 });
+
+test("Tests for checkSesession", async () => {
+  await app.checkSession((isSame) => {
+    expect(isSame).toBeFalsy();
+    return Promise.resolve();
+  });
+
+  await app.checkSession((isSame) => {
+    expect(isSame).toBeTruthy();
+    return Promise.resolve();
+  });
+});
