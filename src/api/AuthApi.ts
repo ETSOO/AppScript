@@ -125,18 +125,12 @@ export class AuthApi extends BaseApi {
    * @param tokenKey Refresh token key
    * @returns Result
    */
-  async login<T extends IUser, A extends AuthRequest | undefined>(
+  async login<T extends IUser>(
     rq: LoginInputRQ,
-    auth: A,
-    payload?: IApiPayload<
-      IActionResult<A extends undefined ? T : LoginInputAuthResult>
-    >,
+    payload?: IApiPayload<IActionResult<T | LoginInputAuthResult>>,
     tokenKey?: string
   ): Promise<
-    [
-      IActionResult<A extends undefined ? T : LoginInputAuthResult> | undefined,
-      string | null
-    ]
+    [IActionResult<T | LoginInputAuthResult> | undefined, string | null]
   > {
     // Default values
     payload ??= {};
@@ -144,7 +138,6 @@ export class AuthApi extends BaseApi {
 
     const data: LoginRQ = {
       ...rq,
-      auth,
       deviceId: this.app.deviceId,
       region: this.app.region,
       timeZone: this.app.getTimeZone()

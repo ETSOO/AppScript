@@ -14,6 +14,11 @@ export type LoginInputRQ = LoginIdInputRQ & {
    * Organization
    */
   org?: number;
+
+  /**
+   * Authorization request data
+   */
+  auth?: AuthRequest;
 };
 
 /**
@@ -29,10 +34,4 @@ export type LoginInputAuthResult = {
 /**
  * Login request data
  */
-export type LoginRQ = LoginIdRQ &
-  LoginInputRQ & {
-    /**
-     * Authorization request data
-     */
-    auth?: AuthRequest;
-  };
+export type LoginRQ = LoginIdRQ & LoginInputRQ;
