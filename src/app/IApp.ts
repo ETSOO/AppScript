@@ -766,6 +766,12 @@ export interface IApp {
   ): Promise<void>;
 
   /**
+   * Save refresh token to cache
+   * @param token Refresh token
+   */
+  saveCacheToken(token: string | undefined): void;
+
+  /**
    * Setup Api error handler
    * @param api Api
    * @param handlerFor401 Handler for 401 error

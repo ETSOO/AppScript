@@ -1120,8 +1120,7 @@ export abstract class CoreApp<
 
     // Overwrite the current value
     if (refreshToken !== "") {
-      if (refreshToken != null) refreshToken = this.encrypt(refreshToken);
-      this.storage.setData(this.fields.headerToken, refreshToken);
+      this.saveCacheToken(refreshToken);
     }
 
     // Reset tryLogin state
@@ -2220,6 +2219,15 @@ export abstract class CoreApp<
 
     // Return the new refresh token and access token expiration seconds
     return [data.refreshToken, data.expiresIn];
+  }
+
+  /**
+   * Save refresh token to cache
+   * @param token Refresh token
+   */
+  saveCacheToken(token: string | undefined) {
+    if (token != null) token = this.encrypt(token);
+    this.storage.setData(this.fields.headerToken, token);
   }
 
   /**
