@@ -7,7 +7,7 @@ import { RefreshTokenProps, RefreshTokenResult } from "../app/IApp";
 import { TokenInputRQ, TokenRQ } from "./rq/TokenRQ";
 import { ApiRefreshTokenDto } from "./dto/ApiRefreshTokenDto";
 import { GetLogInUrlRQ } from "./rq/GetLogInUrlRQ";
-import { LoginRQ } from "./rq/LoginRQ";
+import { LoginInputAuthResult, LoginInputRQ, LoginRQ } from "./rq/LoginRQ";
 import { LoginIdRQ } from "./rq/LoginIdRQ";
 import { RefreshTokenRQ } from "./rq/RefreshTokenRQ";
 import { ResetPasswordInputRQ, ResetPasswordRQ } from "./rq/ResetPasswordRQ";
@@ -125,17 +125,33 @@ export class AuthApi extends BaseApi {
    * @param tokenKey Refresh token key
    * @returns Result
    */
-  protected async loginBase<T extends IUser>(
-    rq: LoginRQ,
-    payload?: IApiPayload<IActionResult<T>>,
+  async login<T extends IUser, A extends AuthRequest | undefined>(
+    rq: LoginInputRQ,
+    auth: A,
+    payload?: IApiPayload<
+      IActionResult<A extends undefined ? T : LoginInputAuthResult>
+    >,
     tokenKey?: string
-  ): Promise<[IActionResult<T> | undefined, string | null]> {
+  ): Promise<
+    [
+      IActionResult<A extends undefined ? T : LoginInputAuthResult> | undefined,
+      string | null
+    ]
+  > {
     // Default values
     payload ??= {};
     tokenKey ??= AuthApi.HeaderTokenField;
 
+    const data: LoginRQ = {
+      ...rq,
+      auth,
+      deviceId: this.app.deviceId,
+      region: this.app.region,
+      timeZone: this.app.getTimeZone()
+    };
+
     // Call the API
-    const result = await this.api.post("Auth/Login", rq, payload);
+    const result = await this.api.post("Auth/Login", data, payload);
 
     // Get the refresh token
     const refreshToken = result?.ok

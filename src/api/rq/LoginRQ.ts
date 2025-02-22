@@ -1,10 +1,10 @@
 import { AuthRequest } from "./AuthRequest";
-import { LoginIdRQ } from "./LoginIdRQ";
+import { LoginIdInputRQ, LoginIdRQ } from "./LoginIdRQ";
 
 /**
- * Login request data
+ * Login input request data
  */
-export type LoginRQ = LoginIdRQ & {
+export type LoginInputRQ = LoginIdInputRQ & {
   /**
    * Password
    */
@@ -14,14 +14,25 @@ export type LoginRQ = LoginIdRQ & {
    * Organization
    */
   org?: number;
-
-  /**
-   * Authorization request data
-   */
-  auth?: AuthRequest;
 };
 
 /**
- * Login input request data
+ * Login input auth result
  */
-export type LoginInputRQ = Pick<LoginRQ, "id" | "pwd" | "org" | "auth">;
+export type LoginInputAuthResult = {
+  /**
+   * Redirect URI
+   */
+  uri: string;
+};
+
+/**
+ * Login request data
+ */
+export type LoginRQ = LoginIdRQ &
+  LoginInputRQ & {
+    /**
+     * Authorization request data
+     */
+    auth?: AuthRequest;
+  };
