@@ -271,4 +271,11 @@ test("Tests for checkSesession", async () => {
     expect(isSame).toBeTruthy();
     return Promise.resolve();
   });
+
+  app.clearSession();
+
+  await app.checkSession((isSame) => {
+    expect(isSame).toBeFalsy();
+    return Promise.resolve();
+  });
 });

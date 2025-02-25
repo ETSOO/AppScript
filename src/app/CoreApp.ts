@@ -530,6 +530,13 @@ export abstract class CoreApp<
   }
 
   /**
+   * Clear user session
+   */
+  clearSession() {
+    this.storage.setData(this.addIdentifier("same-session"), undefined);
+  }
+
+  /**
    * Create Auth API
    * @param api Specify the API to use
    * @returns Result

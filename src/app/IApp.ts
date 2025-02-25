@@ -371,6 +371,11 @@ export interface IApp {
   clearDeviceId(): void;
 
   /**
+   * Clear user session
+   */
+  clearSession(): void;
+
+  /**
    * Create API client, override to implement custom client creation by name
    * @param name Client name
    * @param item External endpoint item
