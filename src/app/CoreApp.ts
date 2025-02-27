@@ -2367,7 +2367,7 @@ export abstract class CoreApp<
    */
   async tryLogin(data?: AppTryLoginParams) {
     // Check status
-    if (this._isTryingLogin) return false;
+    if (this._isTryingLogin || this.deviceId === "") return false;
     this._isTryingLogin = true;
 
     return true;
