@@ -16,6 +16,7 @@ import { SwitchOrgRQ } from "./rq/SwitchOrgRQ";
 import { AuthRequest } from "./rq/AuthRequest";
 import { ChangePasswordRQ } from "./rq/ChangePasswordRQ";
 import { CheckUserIdentifierRQ } from "./rq/CheckUserIdentifierRQ";
+import { AdminSupportRQ } from "./rq/AdminSupportRQ";
 
 /**
  * Authentication API
@@ -25,6 +26,19 @@ export class AuthApi extends BaseApi {
    * Header token field name
    */
   static HeaderTokenField = "Etsoo-Refresh-Token";
+
+  /**
+   * Admin support
+   * @param rq Request data
+   * @param payload Payload
+   * @returns Result
+   */
+  adminSupport(
+    rq: AdminSupportRQ,
+    payload?: IApiPayload<IActionResult<LoginInputAuthResult>>
+  ) {
+    return this.api.post("Auth/AdminSupport", rq, payload);
+  }
 
   /**
    * API refresh token

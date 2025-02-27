@@ -21,6 +21,7 @@ export * from "./api/dto/PinDto";
 export * from "./api/dto/ResultPayload";
 export * from "./api/dto/UserIdentifierType";
 
+export * from "./api/rq/AdminSupportRQ";
 export * from "./api/rq/ApiRefreshTokenRQ";
 export * from "./api/rq/AuthRequest";
 export * from "./api/rq/ChangePasswordRQ";
