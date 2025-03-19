@@ -87,6 +87,7 @@
   "help": "Help",
   "hideIt": "Hide it",
   "id": "Number#",
+  "idError": "The passed ID is wrong!",
   "imageSizeTooSmall": "The image size is too small",
   "info": "Info",
   "item": "Item",

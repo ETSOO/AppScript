@@ -60,6 +60,10 @@ $ yarn add @etsoo/appscript
 
 - Standard user roles
 
+#### IdentityType.ts
+
+- Standard user identity types
+
 ### bridges - Works with Electron
 
 #### BridgeUtils.ts
