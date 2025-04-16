@@ -37,6 +37,7 @@ export * from "./api/rq/ResetPasswordRQ";
 export * from "./api/rq/SignoutRQ";
 export * from "./api/rq/StatusQueryRQ";
 export * from "./api/rq/SwitchOrgRQ";
+export * from "./api/rq/TokenAuthRQ";
 export * from "./api/rq/TokenRQ";
 export * from "./api/rq/UpdateModel";
 export * from "./api/rq/UpdateStatusRQ";
