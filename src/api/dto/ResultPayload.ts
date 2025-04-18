@@ -27,6 +27,11 @@ export type StringIdResultPayload = IApiPayload<IdActionResult<string>>;
 export type IdMsgResultPayload = IApiPayload<IdMsgActionResult>;
 
 /**
+ * String id and message action result payload
+ */
+export type StringIdMsgResultPayload = IApiPayload<IdMsgActionResult<string>>;
+
+/**
  * Message action result payload
  */
 export type MsgResultPayload = IApiPayload<MsgActionResult>;
