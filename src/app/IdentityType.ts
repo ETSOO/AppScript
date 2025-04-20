@@ -40,32 +40,20 @@ export enum IdentityTypeFlags {
   Customer = 2,
 
   /**
-   * User or customer
-   * 用户或客户
-   */
-  UserOrCustomer = 3,
-
-  /**
    * Supplier
    * 供应商
    */
   Supplier = 4,
 
   /**
-   * User or supplier
-   * 用户或供应商
+   * Contact
+   * 联系人
    */
-  UserOrSupplier = 5,
+  Contact = 8,
 
   /**
-   * Customer or supplier
-   * 客户或供应商
+   * Orgnization
+   * 机构
    */
-  CustomerOrSupplier = 6,
-
-  /**
-   * User or customer or supplier
-   * 用户或客户或供应商
-   */
-  UserOrCustomerOrSupplier = 7
+  Org = 16
 }
