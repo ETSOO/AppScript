@@ -1,54 +1,48 @@
 /**
- * Culture item for multilingual labels
+ * Culture item
+ * 文化项目
+ * @see com.etsoo.Utils.Serialization.Country.CultureItem
  */
 export type CultureItem = {
   /**
-   * Target id
-   */
-  id: number;
-
-  /**
-   * Culture, like zh-Hans
-   */
-  culture: string;
-
-  /**
-   * Title /  label
-   */
-  title: string;
-
-  /**
-   * Description
-   */
-  description?: string;
-
-  /**
-   * JSON data related
-   */
-  jsonData?: string;
-};
-
-/**
- * Culture grid item for editing
- */
-export type CultureGridItem = {
-  /**
-   * Culture
+   * Id, like zh-Hans-CN
+   * 编号，如zh-Hans-CN
    */
   id: string;
 
   /**
-   * Title /  label
+   * Two characters id, like zh
+   * 两个字符编号
    */
-  title: string;
+  id2: string;
 
   /**
-   * Description
+   * Three characters id, like zho
+   * 三个字符编号
    */
-  description?: string;
+  id3: string;
 
   /**
-   * JSON data related
+   * Parent culture, like zh-Hans
+   * 父文化
    */
-  jsonData?: string;
+  parent: string;
+
+  /**
+   * Name
+   * 名称
+   */
+  name: string;
+
+  /**
+   * Native name, like 中文(简体，中国)
+   * 原生名
+   */
+  nativeName: string;
+
+  /**
+   * English name, like Chinese (Simplified, China)
+   * 英文名
+   */
+  englishName: string;
 };
