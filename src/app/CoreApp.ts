@@ -1229,10 +1229,24 @@ export abstract class CoreApp<
       // Set static resources back
       culture.resources = resources;
     }
+
+    // Load system custom resources
+    await this.loadCustomResources(resources, name);
+
     this.updateRegionLabel();
 
     return resources;
   }
+
+  /**
+   * Load custom resources, override to implement custom resources
+   * @param resources Resources
+   * @param culture Culture name
+   */
+  protected loadCustomResources(
+    resources: DataTypes.StringRecord,
+    culture: string
+  ): Promise<void> | void {}
 
   /**
    * Update current region label

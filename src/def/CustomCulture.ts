@@ -1,16 +1,11 @@
 /**
- * Custom culture
+ * Custom culture data
  */
-export type CustomCulture = {
+export type CustomCultureData = {
   /**
    * Target id
    */
   id: string;
-
-  /**
-   * Culture, like zh-Hans
-   */
-  culture: string;
 
   /**
    * Organization id
@@ -32,4 +27,14 @@ export type CustomCulture = {
    * Use Utils.parseString of @etsoo/shared to parse the string to JSON object
    */
   jsonData?: string;
+};
+
+/**
+ * Custom culture
+ */
+export type CustomCulture = CustomCultureData & {
+  /**
+   * Culture, like zh-Hans
+   */
+  culture: string;
 };

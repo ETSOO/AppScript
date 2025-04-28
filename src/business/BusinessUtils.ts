@@ -1,9 +1,12 @@
-import { ListType } from "@etsoo/shared";
+import { DataTypes, ListType } from "@etsoo/shared";
+import { CustomCultureData } from "../def/CustomCulture";
 
 /**
  * Business utils
  */
 export namespace BusinessUtils {
+  let resourcesCache: DataTypes.StringRecord = {};
+
   /**
    * Format avatar title
    * @param title Title
@@ -61,5 +64,48 @@ export namespace BusinessUtils {
     }
 
     return months;
+  }
+
+  /**
+   * Merge custom resources to target collection
+   * @param target Target collection merges to
+   * @param resources New resources to merge
+   */
+  export function mergeCustomResources(
+    target: DataTypes.StringRecord,
+    resources: CustomCultureData[]
+  ) {
+    for (const item of resources) {
+      if (item.organizationId) {
+        // Backup
+        const backup = target[item.id];
+        if (
+          backup != null &&
+          (typeof backup !== "object" || !("organizationId" in backup))
+        ) {
+          resourcesCache[item.id] = backup;
+        }
+      }
+
+      if (item.description || item.jsonData) {
+        const { id, ...rest } = item;
+        target[item.id] = rest;
+      } else {
+        target[item.id] = item.title;
+      }
+    }
+  }
+
+  export function restoreResources(target?: DataTypes.StringRecord) {
+    // Clear cache if no target
+    if (target == null) {
+      resourcesCache = {};
+      return;
+    }
+
+    // Restore resources
+    for (const key in resourcesCache) {
+      target[key] = resourcesCache[key];
+    }
   }
 }
