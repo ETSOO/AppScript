@@ -78,20 +78,20 @@ export namespace BusinessUtils {
     for (const item of resources) {
       if (item.organizationId) {
         // Backup
-        const backup = target[item.id];
+        const backup = target[item.key];
         if (
           backup != null &&
           (typeof backup !== "object" || !("organizationId" in backup))
         ) {
-          resourcesCache[item.id] = backup;
+          resourcesCache[item.key] = backup;
         }
       }
 
       if (item.description || item.jsonData) {
-        const { id, ...rest } = item;
-        target[item.id] = rest;
+        const { key, ...rest } = item;
+        target[key] = rest;
       } else {
-        target[item.id] = item.title;
+        target[item.key] = item.title;
       }
     }
   }

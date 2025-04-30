@@ -3,9 +3,9 @@
  */
 export type CustomCultureData = {
   /**
-   * Target id
+   * Key
    */
-  id: string;
+  key: string;
 
   /**
    * Organization id
