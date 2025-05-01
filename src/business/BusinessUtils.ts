@@ -67,6 +67,25 @@ export namespace BusinessUtils {
   }
 
   /**
+   * Check if the item is a custom culture data
+   * @param item Item to check
+   * @param hasOrgId Has orgId or not
+   * @returns Result
+   */
+  export function isCustomCultureData(
+    item: unknown,
+    hasOrgId: boolean = false
+  ): item is CustomCultureData {
+    return (
+      item != null &&
+      typeof item === "object" &&
+      "key" in item &&
+      "title" in item &&
+      (!hasOrgId || "orgId" in item)
+    );
+  }
+
+  /**
    * Merge custom resources to target collection
    * @param target Target collection merges to
    * @param resources New resources to merge
@@ -76,13 +95,10 @@ export namespace BusinessUtils {
     resources: CustomCultureData[]
   ) {
     for (const item of resources) {
-      if (item.organizationId) {
+      if (item.orgId) {
         // Backup
         const backup = target[item.key];
-        if (
-          backup != null &&
-          (typeof backup !== "object" || !("organizationId" in backup))
-        ) {
+        if (backup != null && !isCustomCultureData(backup, true)) {
           resourcesCache[item.key] = backup;
         }
       }

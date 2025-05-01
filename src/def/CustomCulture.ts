@@ -10,7 +10,7 @@ export type CustomCultureData = {
   /**
    * Organization id
    */
-  organizationId?: number;
+  orgId?: number;
 
   /**
    * Title /  label
