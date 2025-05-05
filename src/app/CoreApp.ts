@@ -420,7 +420,7 @@ export abstract class CoreApp<
 
     // Load resources
     Promise.all([loadCrypto(), this.changeCulture(currentCulture)]).then(
-      ([cj, _resources]) => {
+      ([cj]) => {
         CJ = cj.default;
 
         // Debug
@@ -1203,10 +1203,9 @@ export abstract class CoreApp<
    */
   async changeCulture(culture: DataTypes.CultureDefinition) {
     // Name
-    const { name } = culture;
+    const { name, resources } = culture;
 
     // Same?
-    let resources = culture.resources;
     if (this._culture === name && typeof resources === "object")
       return resources;
 
@@ -1220,22 +1219,29 @@ export abstract class CoreApp<
     // Set the culture
     this._culture = name;
 
+    let loadedResources: DataTypes.StringRecord;
+    if (typeof resources !== "object") {
+      // Load resources
+      loadedResources = await resources();
+
+      // Load system custom resources
+      await this.loadCustomResources(loadedResources, name);
+
+      // Set static resources back
+      culture.resources = loadedResources;
+    } else {
+      loadedResources = resources;
+
+      // Load system custom resources
+      await this.loadCustomResources(loadedResources, name);
+    }
+
     // Hold the current resources
     this.settings.currentCulture = culture;
 
-    if (typeof resources !== "object") {
-      resources = await resources();
-
-      // Set static resources back
-      culture.resources = resources;
-    }
-
-    // Load system custom resources
-    await this.loadCustomResources(resources, name);
-
     this.updateRegionLabel();
 
-    return resources;
+    return loadedResources;
   }
 
   /**

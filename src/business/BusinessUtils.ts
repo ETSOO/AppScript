@@ -112,6 +112,10 @@ export namespace BusinessUtils {
     }
   }
 
+  /**
+   * Restore resources to target collection
+   * @param target Target collection to restore resources to, null to clear cache
+   */
   export function restoreResources(target?: DataTypes.StringRecord) {
     // Clear cache if no target
     if (target == null) {
