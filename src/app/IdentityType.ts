@@ -28,6 +28,12 @@ export enum IdentityType {
  */
 export enum IdentityTypeFlags {
   /**
+   * None
+   * 无标识
+   */
+  None = 0,
+
+  /**
    * User
    * 用户
    */
@@ -55,5 +61,11 @@ export enum IdentityTypeFlags {
    * Orgnization
    * 机构
    */
-  Org = 16
+  Org = 16,
+
+  /**
+   * Department
+   * 部门
+   */
+  Dept = 32
 }
