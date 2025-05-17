@@ -1127,7 +1127,11 @@ export abstract class CoreApp<
 
     // Overwrite the current value
     if (refreshToken !== "") {
-      this.saveCacheToken(refreshToken);
+      if (refreshToken == null) {
+        this.clearCacheToken();
+      } else {
+        this.saveCacheToken(refreshToken);
+      }
     }
 
     // Reset tryLogin state
@@ -1293,6 +1297,7 @@ export abstract class CoreApp<
    * Clear cached token
    */
   clearCacheToken() {
+    this.saveCacheToken(undefined);
     this.storage.setPersistedData(this.fields.headerToken, undefined);
   }
 
