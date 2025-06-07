@@ -67,10 +67,9 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
     rq: RQ,
     payload?: IApiPayload<R[]>
   ) {
-    let { queryPaging, ...rest } = rq;
     return this.api.post(
       `${this.flag}/List`,
-      { queryPaging: BusinessUtils.formatQueryPaging(queryPaging), ...rest },
+      BusinessUtils.formatQuery(rq),
       payload
     );
   }
@@ -100,10 +99,9 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
     RQ extends QueryRQ<T>,
     R extends object
   >(rq: RQ, payload?: IApiPayload<R[]>, queryKey: string = "") {
-    let { queryPaging, ...rest } = rq;
     return this.api.post(
       `${this.flag}/Query${queryKey}`,
-      { queryPaging: BusinessUtils.formatQueryPaging(queryPaging), ...rest },
+      BusinessUtils.formatQuery(rq),
       payload
     );
   }

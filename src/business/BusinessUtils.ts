@@ -1,6 +1,7 @@
-import { DataTypes, ListType } from "@etsoo/shared";
+import { DataTypes, IdType, ListType } from "@etsoo/shared";
 import { CustomCultureData } from "../def/CustomCulture";
 import { QueryPagingData } from "../api/rq/QueryPagingData";
+import { QueryRQ } from "../api/rq/QueryRQ";
 
 /**
  * Business utils
@@ -48,17 +49,16 @@ export namespace BusinessUtils {
   }
 
   /**
-   * Format query paging data
-   * @param query Query paging data or batch size
+   * Format query, dealing with paging data
+   * @param rq Query
    * @returns Result
    */
-  export function formatQueryPaging(
-    query: QueryPagingData | number | undefined
-  ) {
-    if (typeof query === "number") {
-      query = { currentPage: 0, batchSize: query };
+  export function formatQuery<T extends IdType>(rq: QueryRQ<T>) {
+    let { queryPaging, ...rest } = rq;
+    if (typeof queryPaging === "number") {
+      queryPaging = { currentPage: 0, batchSize: queryPaging };
     }
-    return query;
+    return { queryPaging, ...rest };
   }
 
   /**
