@@ -1,5 +1,5 @@
 import { ApiDataError, ApiMethod } from "@etsoo/restclient";
-import { DataTypes, IActionResult } from "@etsoo/shared";
+import { DataTypes, ExtendUtils, IActionResult } from "@etsoo/shared";
 import {
   EntityStatus,
   ExternalEndpoint,
@@ -19,6 +19,10 @@ function EnhanceApp<TBase extends DataTypes.MConstructor<TestApp>>(
 const appClass = EnhanceApp(TestApp);
 const app = new appClass();
 
+// First make sure the default culture (here is 'en') is loaded
+await ExtendUtils.sleep(50);
+
+// Then change the culture to the first one (here is 'zh-CN')
 await app.changeCulture(app.settings.cultures[0]);
 
 test("Test for domain substitution", () => {

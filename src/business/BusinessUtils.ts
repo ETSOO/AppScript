@@ -1,5 +1,6 @@
 import { DataTypes, ListType } from "@etsoo/shared";
 import { CustomCultureData } from "../def/CustomCulture";
+import { QueryPagingData } from "../api/rq/QueryPagingData";
 
 /**
  * Business utils
@@ -44,6 +45,20 @@ export namespace BusinessUtils {
     if (flen <= maxChars) return firstLetters;
 
     return defaultTitle;
+  }
+
+  /**
+   * Format query paging data
+   * @param query Query paging data or batch size
+   * @returns Result
+   */
+  export function formatQueryPaging(
+    query: QueryPagingData | number | undefined
+  ) {
+    if (typeof query === "number") {
+      query = { currentPage: 0, batchSize: query };
+    }
+    return query;
   }
 
   /**

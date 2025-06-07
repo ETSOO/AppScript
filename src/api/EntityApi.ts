@@ -6,6 +6,7 @@ import { ResultPayload } from "./dto/ResultPayload";
 import { MergeRQ } from "./rq/MergeRQ";
 import { QueryRQ } from "./rq/QueryRQ";
 import { UpdateStatusRQ } from "./rq/UpdateStatusRQ";
+import { BusinessUtils } from "../business/BusinessUtils";
 /**
  * Entity API
  * Follow com.etsoo.CoreFramework.Services.EntityServiceBase
@@ -67,12 +68,9 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
     payload?: IApiPayload<R[]>
   ) {
     let { queryPaging, ...rest } = rq;
-    if (typeof queryPaging === "number") {
-      queryPaging = { currentPage: 0, batchSize: queryPaging };
-    }
     return this.api.post(
       `${this.flag}/List`,
-      { queryPaging, ...rest },
+      { queryPaging: BusinessUtils.formatQueryPaging(queryPaging), ...rest },
       payload
     );
   }
@@ -102,7 +100,12 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
     RQ extends QueryRQ<T>,
     R extends object
   >(rq: RQ, payload?: IApiPayload<R[]>, queryKey: string = "") {
-    return this.api.post(`${this.flag}/Query${queryKey}`, rq, payload);
+    let { queryPaging, ...rest } = rq;
+    return this.api.post(
+      `${this.flag}/Query${queryKey}`,
+      { queryPaging: BusinessUtils.formatQueryPaging(queryPaging), ...rest },
+      payload
+    );
   }
 
   /**
