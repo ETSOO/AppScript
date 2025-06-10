@@ -1,6 +1,5 @@
 import { DataTypes, IdType, ListType } from "@etsoo/shared";
 import { CustomCultureData } from "../def/CustomCulture";
-import { QueryPagingData } from "../api/rq/QueryPagingData";
 import { QueryRQ } from "../api/rq/QueryRQ";
 
 /**

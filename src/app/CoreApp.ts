@@ -1748,6 +1748,7 @@ export abstract class CoreApp<
       filter.forEach((id) => {
         if (typeof id !== "number") return;
         const key = DataTypes.getEnumKey(em, id);
+        if (key == null) return;
         const label = this.get<string>(getKey(key)) ?? key;
         list.push({ id, label });
       });
