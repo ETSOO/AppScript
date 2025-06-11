@@ -1942,15 +1942,19 @@ export abstract class CoreApp<
   }
 
   /**
-   * Is admin user
+   * Is admin roles
    * @returns Result
    */
   isAdminUser() {
-    return this.hasMinPermission(UserRole.Admin);
+    return this.hasPermission([
+      UserRole.Executive,
+      UserRole.Admin,
+      UserRole.Founder
+    ]);
   }
 
   /**
-   * Is Finance user
+   * Is Finance roles
    * @returns Result
    */
   isFinanceUser() {
@@ -1958,11 +1962,36 @@ export abstract class CoreApp<
   }
 
   /**
-   * Is Manager user
+   * Is HR manager roles
+   * @returns Result
+   */
+  isHRUser() {
+    return this.hasPermission(UserRole.HRManager) || this.isAdminUser();
+  }
+
+  /**
+   * Is Manager roles, exclude API user from frontend
    * @returns Result
    */
   isManagerUser() {
-    return this.hasMinPermission(UserRole.Manager);
+    return (
+      this.hasPermission([
+        UserRole.Manager,
+        UserRole.HRManager,
+        UserRole.Director
+      ]) || this.isFinanceUser()
+    );
+  }
+
+  /**
+   * Is user roles
+   * @returns Result
+   */
+  isUser() {
+    return (
+      this.hasPermission([UserRole.User, UserRole.Leader]) ||
+      this.isManagerUser()
+    );
   }
 
   /**

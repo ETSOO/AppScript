@@ -705,22 +705,34 @@ export interface IApp {
   ): Promise<void>;
 
   /**
-   * Is admin user
+   * Is admin roles
    * @returns Result
    */
   isAdminUser(): boolean;
 
   /**
-   * Is Finance user
+   * Is Finance roles
    * @returns Result
    */
   isFinanceUser(): boolean;
 
   /**
-   * Is Manager user
+   * Is HR manager roles
+   * @returns Result
+   */
+  isHRUser(): boolean;
+
+  /**
+   * Is Manager roles
    * @returns Result
    */
   isManagerUser(): boolean;
+
+  /**
+   * Is user roles
+   * @returns Result
+   */
+  isUser(): boolean;
 
   /**
    * Is valid password, override to implement custom check

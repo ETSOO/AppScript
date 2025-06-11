@@ -10,12 +10,6 @@ export enum UserRole {
   Guest = 1,
 
   /**
-   * Outsourcing
-   * 外包
-   */
-  Outsourcing = 2,
-
-  /**
    * Operator
    * 操作员
    */
@@ -37,13 +31,19 @@ export enum UserRole {
    * Team leader
    * 团队负责人
    */
-  Leader = 64,
+  Leader = 32,
 
   /**
    * Manager
    * 经理
    */
-  Manager = 128,
+  Manager = 64,
+
+  /**
+   * HR Manager
+   * 人事经理
+   */
+  HRManager = 128,
 
   /**
    * Finance
@@ -52,16 +52,16 @@ export enum UserRole {
   Finance = 256,
 
   /**
+   * Director
+   * 总监
+   */
+  Director = 512,
+
+  /**
    * Executives
    * 高管
    */
-  Executive = 512,
-
-  /**
-   * Shareholder
-   * 股东
-   */
-  Shareholder = 1024,
+  Executive = 1024,
 
   /**
    * API
