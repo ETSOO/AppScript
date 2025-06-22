@@ -95,6 +95,7 @@
   "item": "Item",
   "itemExists": "'{0}' already exists",
   "jsonData": "Extended data",
+  "jsonDataError": "JSON format error",
   "key": "Key",
   "keywords": "Keywords",
   "loading": "Loading...",
