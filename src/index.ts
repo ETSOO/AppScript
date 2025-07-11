@@ -13,6 +13,7 @@ export * from "./address/AddressUtils";
 // api
 export * from "./api/dto/AntiforgeryRequestToken";
 export * from "./api/dto/ApiRefreshTokenDto";
+export * from "./api/dto/AppActionData";
 export * from "./api/dto/AuditLineDto";
 export * from "./api/dto/IdLabelDto";
 export * from "./api/dto/IdLabelPrimaryDto";
