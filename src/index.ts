@@ -19,6 +19,7 @@ export * from "./api/dto/IdLabelDto";
 export * from "./api/dto/IdLabelPrimaryDto";
 export * from "./api/dto/InitCallDto";
 export * from "./api/dto/PinDto";
+export * from "./api/dto/PlaceLocation";
 export * from "./api/dto/ResultPayload";
 export * from "./api/dto/UserIdentifierType";
 
