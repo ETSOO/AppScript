@@ -142,4 +142,44 @@ export namespace BusinessUtils {
       target[key] = resourcesCache[key];
     }
   }
+
+  /**
+   * Setup paging keysets
+   * @param data Paging data
+   * @param lastItem Last item of the query
+   * @param idField Id field in data
+   * @param fields Fields map
+   */
+  export function setupPagingKeysets<T, K extends IdType = number>(
+    data: QueryRQ<K>,
+    lastItem: T | undefined,
+    idField: keyof T & string,
+    fields?: Record<string, string | null | undefined>
+  ) {
+    // If the id field is not set for ordering, add it with descending
+    if (typeof data.queryPaging === "object") {
+      const orderBy = (data.queryPaging.orderBy ??= []);
+      const idUpper = idField.toUpperCase();
+      if (!orderBy.find((o) => o.field.toUpperCase() === idUpper)) {
+        orderBy.push({ field: idField, desc: true, unique: true });
+      }
+
+      // Format order fields, like 'name' to 'Contact.Name' when 'Contact' is a reference table name in Entity Framework
+      if (fields) {
+        data.queryPaging.orderBy?.forEach((f) => {
+          f.field = fields[f.field] ?? f.field;
+        });
+      }
+
+      // Set the paging keysets
+      if (lastItem) {
+        const keysets = orderBy.map((o) => Reflect.get(lastItem, o.field));
+        data.queryPaging.keysets = keysets;
+      } else {
+        data.queryPaging.keysets = undefined;
+      }
+    }
+
+    return data;
+  }
 }
