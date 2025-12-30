@@ -24,7 +24,9 @@ export enum IdentityType {
 
 /**
  * Identity type flags
- * 标识类型组合
+ * Remove contact definition, because contact is a relationship, not an identity
+ * com.etsoo.CoreFramework.Business.IdentityTypeFlags
+ * 标识类型带标志，删除联系人定义，因为联系人是一种关系，不是身份
  */
 export enum IdentityTypeFlags {
   /**
@@ -50,12 +52,6 @@ export enum IdentityTypeFlags {
    * 供应商
    */
   Supplier = 4,
-
-  /**
-   * Contact
-   * 联系人
-   */
-  Contact = 8,
 
   /**
    * Orgnization
