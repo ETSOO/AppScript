@@ -124,6 +124,8 @@
   "more": "更多",
   "more1": "更多...",
   "moreTag": "({0}+)",
+  "moveDown": "下移",
+  "moveUp": "上移",
   "name": "姓名",
   "nameB": "名称",
   "networkError": "本地网络故障，无法链接到远程服务器",

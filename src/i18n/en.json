@@ -124,6 +124,8 @@
   "more": "More",
   "more1": "More...",
   "moreTag": "{0} more",
+  "moveDown": "Down",
+  "moveUp": "Up",
   "name": "Name",
   "nameB": "Name",
   "networkError": "The local network is faulty and cannot connect to the remote server",
