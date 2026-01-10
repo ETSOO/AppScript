@@ -76,7 +76,7 @@ export enum ProductOtherUnit {
 /**
  * Product units enum
  * Repeat options take range 10 - 39
- * @see com.etsoo.CoreFramework.Business.ProductUnit
+ * C#, com.etsoo.CoreFramework.Business.ProductUnit
  */
 export const ProductUnit = {
   ...ProductBaseUnit,

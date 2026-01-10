@@ -1,6 +1,7 @@
 import { DataTypes, IdType, ListType } from "@etsoo/shared";
 import { CustomCultureData } from "../def/CustomCulture";
 import { QueryRQ } from "../api/rq/QueryRQ";
+import { AssetUnits, ProductUnit } from "./ProductUnit";
 
 /**
  * Business utils
@@ -78,6 +79,19 @@ export namespace BusinessUtils {
     }
 
     return months;
+  }
+
+  /**
+   * Is asset unit
+   * @param unit Product unit
+   * @returns Result
+   */
+  export function isAssetUnit(unit: ProductUnit): unit is AssetUnits {
+    return (
+      unit === AssetUnits.TIME ||
+      unit === AssetUnits.MONEY ||
+      (unit >= AssetUnits.HOUR && unit <= AssetUnits.HALFYEAR)
+    );
   }
 
   /**
