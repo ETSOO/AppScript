@@ -1,16 +1,23 @@
 import { IdType, ListType2 } from "@etsoo/shared";
 
 /**
+ * Custom field space values
+ * 自定义字段空间值
+ */
+export const CustomFieldSpaceValues = [
+  "quater",
+  "five",
+  "half",
+  "half1",
+  "seven",
+  "full"
+] as const;
+
+/**
  * Custom field space (12 columns)
  * 自定义字段空间（12列）
  */
-export type CustomFieldSpace =
-  | "quater"
-  | "half"
-  | "half1"
-  | "full"
-  | "five"
-  | "seven";
+export type CustomFieldSpace = (typeof CustomFieldSpaceValues)[number];
 
 /**
  * Custom field data
