@@ -92,6 +92,7 @@
   "idError": "传递的编号错误！",
   "imageSizeTooSmall": "图片尺寸过小",
   "info": "信息",
+  "invalidNaming": "无效的命名",
   "item": "项目",
   "itemExists": "'{0}'已经存在",
   "jsonData": "扩展数据",

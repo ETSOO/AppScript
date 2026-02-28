@@ -92,6 +92,7 @@
   "idError": "傳遞的編號錯誤！",
   "imageSizeTooSmall": "圖片尺寸過小",
   "info": "信息",
+  "invalidNaming": "無效的命名",
   "item": "項目",
   "itemExists": "'{0}'已經存在",
   "jsonData": "擴充資料",

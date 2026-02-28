@@ -92,6 +92,7 @@
   "idError": "The passed ID is wrong!",
   "imageSizeTooSmall": "The image size is too small",
   "info": "Info",
+  "invalidNaming": "Invalid naming",
   "item": "Item",
   "itemExists": "'{0}' already exists",
   "jsonData": "Extended data",
