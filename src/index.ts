@@ -70,7 +70,6 @@ export * from "./business/EntityStatus";
 export * from "./business/MapApiProvider";
 export * from "./business/ProductUnit";
 export * from "./business/RepeatOption";
-export * from "./business/ShoppingCart";
 
 // custom
 export * from "./custom/CustomField";

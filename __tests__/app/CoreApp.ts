@@ -49,7 +49,7 @@ test("Test for formatApp", () => {
   ).toBe("https://localhost/api/");
 
   // Custom sub domain match
-  ExternalSettings.subDomainMatch = /app(?=\.)/i;
+  ExternalSettings.updateSubDomainMatch(/app(?=\.)/i);
 
   expect(
     ExternalSettings.formatApp(
@@ -62,7 +62,7 @@ test("Test for formatApp", () => {
 
 test("Test for formatHost with endpoints", () => {
   // Reset sub domain match
-  ExternalSettings.subDomainMatch = /(?<=\/\/)[0-9a-z]+(?=\.)/i;
+  ExternalSettings.updateSubDomainMatch(/(?<=\/\/)[0-9a-z]+(?=\.)/i);
 
   const endpoints: Record<string, ExternalEndpoint> = {
     core: {

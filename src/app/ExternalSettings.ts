@@ -49,7 +49,7 @@ export namespace ExternalSettings {
   /**
    * Sub domain match regular expression
    */
-  export let subDomainMatch: RegExp = /(?<=\/\/)[0-9a-z]+(?=\.)/i;
+  let subDomainMatch: RegExp = /(?<=\/\/)[0-9a-z]+(?=\.)/i;
 
   /**
    * Create settings instance
@@ -127,5 +127,13 @@ export namespace ExternalSettings {
         ])
       );
     }
+  }
+
+  /**
+   * Update sub domain match regex
+   * @param regex New regex
+   */
+  export function updateSubDomainMatch(regex: RegExp) {
+    subDomainMatch = regex;
   }
 }

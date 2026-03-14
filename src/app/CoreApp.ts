@@ -100,8 +100,7 @@ export abstract class CoreApp<
   S extends IAppSettings,
   N,
   C extends NotificationCallProps
-> implements ICoreApp<U, S, N, C>
-{
+> implements ICoreApp<U, S, N, C> {
   /**
    * Settings
    */
@@ -504,8 +503,8 @@ export abstract class CoreApp<
       (endSlash
         ? Utils.trimStart(url, "/")
         : url.startsWith("/")
-        ? url
-        : "/" + url)
+          ? url
+          : "/" + url)
     );
   }
 
