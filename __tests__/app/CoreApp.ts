@@ -25,7 +25,7 @@ await ExtendUtils.sleep(50);
 // Then change the culture to the first one (here is 'zh-CN')
 await app.changeCulture(app.settings.cultures[0]);
 
-await ExtendUtils.sleep(50);
+await ExtendUtils.sleep(100);
 
 test("Test for domain substitution", () => {
   expect(app.settings.endpoint).toBe("http://admin.etsoo.com:9000/api/");

@@ -883,7 +883,7 @@ export abstract class CoreApp<
    */
   checkDeviceResult(result: IActionResult): boolean {
     if (
-      result.type === "DataProcessingFailed" ||
+      (result.type === "DataProcessingFailed" && result.field !== "Token") ||
       (result.type === "NoValidData" && result.field === "Device")
     )
       return true;
