@@ -64,6 +64,7 @@
   "defaultItem": "默認",
   "delete": "刪除",
   "deleteConfirm": "確定要永久刪除此{0}嗎？",
+  "deleteConfirm1": "確定要永久刪除此 '{0}' 嗎？",
   "description": "描述",
   "district": "區/縣",
   "done": "完成",
