@@ -17,7 +17,11 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
    * @param flag Identity flag, like 'Product' for product APIs
    * @param app Application
    */
-  constructor(protected flag: string, app: T, api?: IApi) {
+  constructor(
+    protected flag: string,
+    app: T,
+    api?: IApi
+  ) {
     super(app, api);
   }
 
@@ -31,7 +35,7 @@ export class EntityApi<T extends IApp = IApp> extends BaseApi<T> {
     data: object,
     payload?: IApiPayload<R>
   ) {
-    return this.api.put(`${this.flag}/Create`, data, payload);
+    return this.api.post(`${this.flag}/Create`, data, payload);
   }
 
   /**
