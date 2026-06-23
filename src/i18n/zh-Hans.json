@@ -109,6 +109,7 @@
   "message": "留言",
   "mobile": "手机号码",
   "mobilePhones": "手机号码",
+  "month": "月份",
   "monthLabel": "{0}个月",
   "months": [
     "1月",
@@ -230,6 +231,7 @@
   "title": "标题",
   "tokenExpiry": "您的会话即将过期。点击 取消 按钮继续使用",
   "type": "类型",
+  "year": "年份",
   "yes": "是",
   "uid": "通用标识",
   "unknownError": "未知错误",
