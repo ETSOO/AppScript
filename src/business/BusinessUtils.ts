@@ -82,6 +82,14 @@ export namespace BusinessUtils {
   }
 
   /**
+   * Get sign seconds from timestamp (AppActionData) string
+   * @param timestamp Timestamp string
+   */
+  export function getSignSeconds(timestamp: string) {
+    return Math.floor(Date.now() / 1000 - parseFloat(timestamp));
+  }
+
+  /**
    * Is asset unit
    * @param unit Product unit
    * @returns Result
