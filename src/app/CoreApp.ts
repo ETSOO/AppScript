@@ -872,8 +872,8 @@ export abstract class CoreApp<
    * @param data Data
    * @returns Result
    */
-  protected async apiInitCall(data: InitCallDto) {
-    return await this.api.put<InitCallResult>(this.initCallApi, data);
+  protected async apiInitCall<D>(data: InitCallDto) {
+    return await this.api.put<InitCallResult<D>>(this.initCallApi, data);
   }
 
   /**
@@ -905,7 +905,10 @@ export abstract class CoreApp<
    * @param resetKeys Reset all keys first
    * @returns Result
    */
-  async initCall(callback?: (result: boolean) => void, resetKeys?: boolean) {
+  async initCall<D extends Record<string, unknown> = {}>(
+    callback?: (ok: boolean, data?: InitCallResultData & D) => void,
+    resetKeys?: boolean
+  ) {
     // Reset keys
     if (resetKeys) {
       this.clearDeviceId();
@@ -927,20 +930,21 @@ export abstract class CoreApp<
     const timestamp = new Date().getTime();
 
     // Request data
-    const data: InitCallDto = {
+    const rq: InitCallDto = {
       timestamp,
       identifier,
       deviceId: this.deviceId ? this.deviceId : undefined
     };
 
-    const result = await this.apiInitCall(data);
+    const result = await this.apiInitCall<D>(rq);
     if (result == null) {
       // API error will popup
       if (callback) callback(false);
       return;
     }
 
-    if (result.data == null) {
+    const data = result.data;
+    if (data == null) {
       // Popup no data error
       this.notifier.alert(this.get<string>("noData")!);
       if (callback) callback(false);
@@ -948,8 +952,8 @@ export abstract class CoreApp<
     }
 
     if (!result.ok) {
-      const seconds = result.data.seconds;
-      const validSeconds = result.data.validSeconds;
+      const seconds = data.seconds;
+      const validSeconds = data.validSeconds;
       if (
         result.title === "timeDifferenceInvalid" &&
         seconds != null &&
@@ -972,12 +976,12 @@ export abstract class CoreApp<
       return;
     }
 
-    const updateResult = await this.initCallUpdate(result.data, data.timestamp);
-    if (!updateResult) {
+    const ok = await this.initCallUpdate(data, rq.timestamp);
+    if (!ok) {
       this.notifier.alert(this.get<string>("noData")! + "(Update)");
     }
 
-    if (callback) callback(updateResult);
+    if (callback) callback(ok, data);
   }
 
   /**

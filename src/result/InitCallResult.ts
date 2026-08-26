@@ -33,4 +33,4 @@ export interface InitCallResultData {
 /**
  * Init call result
  */
-export type InitCallResult = IActionResult<InitCallResultData>;
+export type InitCallResult<D> = IActionResult<InitCallResultData & D>;
