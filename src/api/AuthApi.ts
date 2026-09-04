@@ -67,17 +67,21 @@ export class AuthApi extends BaseApi {
    * @param payload Payload
    * @returns Result
    */
-  changePassword(
+  async changePassword(
     oldPassword: string,
     password: string,
     payload?: ResultPayload
   ) {
+    const oldHash = await this.app.hash(oldPassword);
+    const newHash = await this.app.hash(password);
+
     const rq: ChangePasswordRQ = {
       appId: this.app.settings.appId,
       deviceId: this.app.deviceId,
-      oldPassword: this.app.encrypt(this.app.hash(oldPassword)),
-      password: this.app.encrypt(this.app.hash(password))
+      oldPassword: await this.app.encrypt(oldHash),
+      password: await this.app.encrypt(newHash)
     };
+
     return this.api.put("Auth/ChangePassword", rq, payload);
   }
 
@@ -88,17 +92,20 @@ export class AuthApi extends BaseApi {
    * @param payload Payload
    * @returns Result
    */
-  checkUserIdentifier(
+  async checkUserIdentifier(
     type: CheckUserIdentifierRQ["type"],
     openid: CheckUserIdentifierRQ["openid"],
     payload?: IApiPayload<DataTypes.TristateEnum>
   ) {
+    const openidEncrypted = await this.app.encrypt(openid);
+
     const rq: CheckUserIdentifierRQ = {
       type,
-      openid: this.app.encrypt(openid),
+      openid: openidEncrypted,
       deviceId: this.app.deviceId,
       region: this.app.region
     };
+
     return this.api.post("Auth/CheckUserIdentifier", rq, payload);
   }
 
@@ -194,15 +201,18 @@ export class AuthApi extends BaseApi {
    * @param payload Payload
    * @returns Result
    */
-  loginId(id: string, payload?: ResultPayload) {
+  async loginId(id: string, payload?: ResultPayload) {
     const { deviceId, region } = this.app;
-    id = this.app.encrypt(id);
+
+    const idEncrypted = await this.app.encrypt(id);
+
     const rq: LoginIdRQ = {
-      id,
+      id: idEncrypted,
       deviceId,
       region,
       timeZone: this.app.getTimeZone()
     };
+
     return this.api.post("Auth/LoginId", rq, payload);
   }
 

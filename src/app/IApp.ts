@@ -396,7 +396,10 @@ export interface IApp {
    * @param passphrase Secret passphrase
    * @returns Pure text
    */
-  decrypt(messageEncrypted: string, passphrase?: string): string | undefined;
+  decrypt(
+    messageEncrypted: string,
+    passphrase?: string
+  ): Promise<string | null>;
 
   /**
    * Enhanced decrypt message
@@ -409,7 +412,7 @@ export interface IApp {
     messageEncrypted: string,
     passphrase?: string,
     durationSeconds?: number
-  ): string | undefined;
+  ): Promise<string | null>;
 
   /**
    * Detect IP data, call only one time
@@ -441,7 +444,11 @@ export interface IApp {
    * @param iterations Iterations, 1000 times, 1 - 99
    * @returns Result
    */
-  encrypt(message: string, passphrase?: string, iterations?: number): string;
+  encrypt(
+    message: string,
+    passphrase?: string,
+    iterations?: number
+  ): Promise<string>;
 
   /**
    * Enhanced encrypt message
@@ -454,7 +461,7 @@ export interface IApp {
     message: string,
     passphrase?: string,
     iterations?: number
-  ): string;
+  ): Promise<string>;
 
   /**
    * Exchange token data
@@ -664,20 +671,19 @@ export interface IApp {
   getTimeZone(): string;
 
   /**
-   * Hash message, SHA3 or HmacSHA512, 512 as Base64
-   * https://cryptojs.gitbook.io/docs/
+   * Hash message, SHA256 or HmacSHA512, as Base64
    * @param message Message
    * @param passphrase Secret passphrase
    */
-  hash(message: string, passphrase?: string): string;
+  hash(message: string, passphrase?: string): Promise<string>;
 
   /**
-   * Hash message Hex, SHA3 or HmacSHA512, 512 as Base64
+   * Hash message Hex, SHA256 or HmacSHA512, as Base64
    * https://cryptojs.gitbook.io/docs/
    * @param message Message
    * @param passphrase Secret passphrase
    */
-  hashHex(message: string, passphrase?: string): string;
+  hashHex(message: string, passphrase?: string): Promise<string>;
 
   /**
    * Check user has the minimum role permission or not
@@ -786,7 +792,7 @@ export interface IApp {
    * Save refresh token to cache
    * @param token Refresh token
    */
-  saveCacheToken(token: string | undefined): void;
+  saveCacheToken(token: string | undefined): Promise<void>;
 
   /**
    * Setup Api error handler

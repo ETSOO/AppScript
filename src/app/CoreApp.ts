@@ -43,17 +43,12 @@ import {
   RefreshTokenProps
 } from "./IApp";
 import { UserRole } from "./UserRole";
-import type CryptoJS from "crypto-js";
 import { Currency } from "../business/Currency";
 import { ExternalEndpoint, ExternalSettings } from "./ExternalSettings";
 import { ApiRefreshTokenDto } from "../api/dto/ApiRefreshTokenDto";
 import { ApiRefreshTokenRQ } from "../api/rq/ApiRefreshTokenRQ";
 import { AuthApi } from "../api/AuthApi";
-
-type CJType = typeof CryptoJS;
-let CJ: CJType;
-
-const loadCrypto = () => import("crypto-js");
+import { CryptoUtil } from "./CryptoUtil";
 
 // API refresh token function interface
 type ApiRefreshTokenFunction = (
@@ -418,26 +413,21 @@ export abstract class CoreApp<
       this.storage.getData<boolean>(this.fields.embedded) ?? false;
 
     // Load resources
-    Promise.all([loadCrypto(), this.changeCulture(currentCulture)]).then(
-      ([cj]) => {
-        CJ = cj.default;
-
-        // Debug
-        if (this.debug) {
-          console.debug(
-            "CoreApp.constructor.ready",
-            this._deviceId,
-            this.fields,
-            cj,
-            currentCulture,
-            currentRegion
-          );
-        }
-
-        this.changeRegion(currentRegion);
-        this.setup();
+    this.changeCulture(currentCulture).then(() => {
+      // Debug
+      if (this.debug) {
+        console.debug(
+          "CoreApp.constructor.ready",
+          this._deviceId,
+          this.fields,
+          currentCulture,
+          currentRegion
+        );
       }
-    );
+
+      this.changeRegion(currentRegion);
+      this.setup();
+    });
   }
 
   /**
@@ -579,7 +569,10 @@ export abstract class CoreApp<
     );
     if (passphraseEncrypted) {
       // this.name to identifier different app's secret
-      const passphraseDecrypted = this.decrypt(passphraseEncrypted, this.name);
+      const passphraseDecrypted = await this.decrypt(
+        passphraseEncrypted,
+        this.name
+      );
       if (passphraseDecrypted != null) {
         // Add the device to the list
         devices.push(d);
@@ -988,7 +981,7 @@ export abstract class CoreApp<
    * Update passphrase
    * @param passphrase Secret passphrase
    */
-  protected updatePassphrase(passphrase: string) {
+  protected async updatePassphrase(passphrase: string) {
     // Previous passphrase
     const prev = this.passphrase;
 
@@ -1012,12 +1005,12 @@ export abstract class CoreApp<
         }
 
         const enhanced = currentValue.indexOf("!") >= 8;
-        let newValueSource: string | undefined;
+        let newValueSource: string | null;
 
         if (enhanced) {
-          newValueSource = this.decryptEnhanced(currentValue, prev, 12);
+          newValueSource = await this.decryptEnhanced(currentValue, prev, 12);
         } else {
-          newValueSource = this.decrypt(currentValue, prev);
+          newValueSource = await this.decrypt(currentValue, prev);
         }
 
         if (newValueSource == null || newValueSource === "") {
@@ -1049,7 +1042,10 @@ export abstract class CoreApp<
 
     // Decrypt
     // Should be done within 120 seconds after returning from the backend
-    const passphrase = this.decrypt(data.passphrase, timestamp.toString());
+    const passphrase = await this.decrypt(
+      data.passphrase,
+      timestamp.toString()
+    );
     if (passphrase == null) return false;
 
     // Update device id and cache it
@@ -1065,12 +1061,15 @@ export abstract class CoreApp<
 
     // Previous passphrase
     if (data.previousPassphrase) {
-      const prev = this.decrypt(data.previousPassphrase, timestamp.toString());
+      const prev = await this.decrypt(
+        data.previousPassphrase,
+        timestamp.toString()
+      );
       this.passphrase = prev ?? "";
     }
 
     // Update passphrase
-    this.updatePassphrase(passphrase);
+    await this.updatePassphrase(passphrase);
 
     return true;
   }
@@ -1311,32 +1310,8 @@ export abstract class CoreApp<
    * @returns Pure text
    */
   decrypt(messageEncrypted: string, passphrase?: string) {
-    // Iterations
-    const iterations = parseInt(messageEncrypted.substring(0, 2), 10);
-    if (isNaN(iterations)) return undefined;
-
-    const { PBKDF2, algo, enc, AES, pad, mode } = CJ;
-
-    try {
-      const salt = enc.Hex.parse(messageEncrypted.substring(2, 34));
-      const iv = enc.Hex.parse(messageEncrypted.substring(34, 66));
-      const encrypted = messageEncrypted.substring(66);
-
-      const key = PBKDF2(passphrase ?? this.passphrase, salt, {
-        keySize: 8, // 256 / 32
-        hasher: algo.SHA256,
-        iterations: 1000 * iterations
-      });
-
-      return AES.decrypt(encrypted, key, {
-        iv,
-        padding: pad.Pkcs7,
-        mode: mode.CBC
-      }).toString(enc.Utf8);
-    } catch (e) {
-      console.error(`CoreApp.decrypt ${messageEncrypted} error`, e);
-      return undefined;
-    }
+    const secret = passphrase ?? this.passphrase;
+    return CryptoUtil.decryptStr(messageEncrypted, secret);
   }
 
   /**
@@ -1346,7 +1321,7 @@ export abstract class CoreApp<
    * @param durationSeconds Duration seconds, <= 12 will be considered as month
    * @returns Pure text
    */
-  decryptEnhanced(
+  async decryptEnhanced(
     messageEncrypted: string,
     passphrase?: string,
     durationSeconds?: number
@@ -1355,33 +1330,28 @@ export abstract class CoreApp<
     const pos = messageEncrypted.indexOf("!");
 
     // Miliseconds chars are longer than 8
-    if (pos < 8 || messageEncrypted.length <= 66) return undefined;
+    if (pos < 8 || messageEncrypted.length <= 66) return null;
 
     const timestamp = messageEncrypted.substring(0, pos);
 
-    try {
-      if (durationSeconds != null && durationSeconds > 0) {
-        const milseconds = Utils.charsToNumber(timestamp);
-        if (isNaN(milseconds) || milseconds < 1) return undefined;
-        const timespan = new Date().substract(new Date(milseconds));
-        if (
-          (durationSeconds <= 12 && timespan.totalMonths > durationSeconds) ||
-          (durationSeconds > 12 && timespan.totalSeconds > durationSeconds)
-        )
-          return undefined;
-      }
-
-      const message = messageEncrypted.substring(pos + 1);
-      passphrase = this.encryptionEnhance(
-        passphrase ?? this.passphrase,
-        timestamp
-      );
-
-      return this.decrypt(message, passphrase);
-    } catch (e) {
-      console.error(`CoreApp.decryptEnhanced ${messageEncrypted} error`, e);
-      return undefined;
+    if (durationSeconds != null && durationSeconds > 0) {
+      const milseconds = Utils.charsToNumber(timestamp);
+      if (isNaN(milseconds) || milseconds < 1) return null;
+      const timespan = new Date().substract(new Date(milseconds));
+      if (
+        (durationSeconds <= 12 && timespan.totalMonths > durationSeconds) ||
+        (durationSeconds > 12 && timespan.totalSeconds > durationSeconds)
+      )
+        return null;
     }
+
+    const message = messageEncrypted.substring(pos + 1);
+    passphrase = this.encryptionEnhance(
+      passphrase ?? this.passphrase,
+      timestamp
+    );
+
+    return this.decrypt(message, passphrase);
   }
 
   /**
@@ -1477,28 +1447,8 @@ export abstract class CoreApp<
   encrypt(message: string, passphrase?: string, iterations?: number) {
     // Default 1 * 1000
     iterations ??= 1;
-
-    const { lib, PBKDF2, algo, enc, AES, pad, mode } = CJ;
-
-    const bits = 16; // 128 / 8
-    const salt = lib.WordArray.random(bits);
-    const key = PBKDF2(passphrase ?? this.passphrase, salt, {
-      keySize: 8, // 256 / 32
-      hasher: algo.SHA256,
-      iterations: 1000 * iterations
-    });
-    const iv = lib.WordArray.random(bits);
-
-    return (
-      iterations.toString().padStart(2, "0") +
-      salt.toString(enc.Hex) +
-      iv.toString(enc.Hex) +
-      AES.encrypt(message, key, {
-        iv,
-        padding: pad.Pkcs7,
-        mode: mode.CBC
-      }).toString() // enc.Base64
-    );
+    const secret = passphrase ?? this.passphrase;
+    return CryptoUtil.encrypt(message, secret, iterations);
   }
 
   /**
@@ -1508,7 +1458,11 @@ export abstract class CoreApp<
    * @param iterations Iterations, 1000 times, 1 - 99
    * @returns Result
    */
-  encryptEnhanced(message: string, passphrase?: string, iterations?: number) {
+  async encryptEnhanced(
+    message: string,
+    passphrase?: string,
+    iterations?: number
+  ) {
     // Timestamp
     const timestamp = Utils.numberToChars(new Date().getTime());
 
@@ -1517,7 +1471,7 @@ export abstract class CoreApp<
       timestamp
     );
 
-    const result = this.encrypt(message, passphrase, iterations);
+    const result = await this.encrypt(message, passphrase, iterations);
 
     return timestamp + "!" + result;
   }
@@ -1895,10 +1849,7 @@ export abstract class CoreApp<
    * @param passphrase Secret passphrase
    */
   hash(message: string, passphrase?: string) {
-    const { SHA3, enc, HmacSHA512 } = CJ;
-    if (passphrase == null)
-      return SHA3(message, { outputLength: 512 }).toString(enc.Base64);
-    else return HmacSHA512(message, passphrase).toString(enc.Base64);
+    return CryptoUtil.hash64(message, passphrase);
   }
 
   /**
@@ -1908,10 +1859,7 @@ export abstract class CoreApp<
    * @param passphrase Secret passphrase
    */
   hashHex(message: string, passphrase?: string) {
-    const { SHA3, enc, HmacSHA512 } = CJ;
-    if (passphrase == null)
-      return SHA3(message, { outputLength: 512 }).toString(enc.Hex);
-    else return HmacSHA512(message, passphrase).toString(enc.Hex);
+    return CryptoUtil.hashHex(message, passphrase);
   }
 
   /**
@@ -2290,8 +2238,8 @@ export abstract class CoreApp<
    * Save refresh token to cache
    * @param token Refresh token
    */
-  saveCacheToken(token: string | undefined) {
-    if (token != null) token = this.encrypt(token);
+  async saveCacheToken(token: string | undefined) {
+    if (token != null) token = await this.encrypt(token);
     this.storage.setData(this.fields.headerToken, token);
   }
 

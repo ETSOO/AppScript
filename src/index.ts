@@ -51,6 +51,7 @@ export * from "./api/EntityApi";
 // app
 export * from "./app/AppSettings";
 export * from "./app/CoreApp";
+export * from "./app/CryptoUtil";
 export * from "./app/ExternalSettings";
 export * from "./app/IApp";
 export * from "./app/IdentityType";

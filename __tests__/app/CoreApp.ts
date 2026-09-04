@@ -101,16 +101,29 @@ test("Tests for addRootUrl", () => {
   expect(app.addRootUrl("home")).toBe("/cms/home");
 });
 
+test("Tests for static decrypt", async () => {
+  // Arrange
+  // C# result
+  const encrypted =
+    "010B2D7062A83EEF579B6F12E1DB870CD03C431DCA69D3207B5993E0CCDC301921dClH12hq/I/v9fL4zxBB2A==";
+  const input = "Hello, world!";
+  const passphrase = "My password";
+
+  // Act
+  const plain = await app.decrypt(encrypted, passphrase);
+
+  expect(plain).toEqual(input);
+});
+
 test("Tests for encrypt / decrypt", async () => {
   // Arrange
   const input = "Hello, world!";
   const passphrase = "My password";
 
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
   // Act
-  const encrypted = app.encrypt(input, passphrase);
-  const plain = app.decrypt(encrypted, passphrase);
+  const encrypted = await app.encrypt(input, passphrase);
+  const plain = await app.decrypt(encrypted, passphrase);
+
   expect(plain).toEqual(input);
 });
 
@@ -119,11 +132,9 @@ test("Tests for encryptEnhanced / decryptEnhanced", async () => {
   const input = "Hello, world!";
   const passphrase = "My password";
 
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
   // Act
-  const encrypted = app.encryptEnhanced(input, passphrase);
-  const plain = app.decryptEnhanced(encrypted, passphrase);
+  const encrypted = await app.encryptEnhanced(input, passphrase);
+  const plain = await app.decryptEnhanced(encrypted, passphrase);
   expect(plain).toEqual(input);
 });
 
