@@ -989,7 +989,7 @@ export abstract class CoreApp<
     this.passphrase = passphrase;
     this.storage.setData(
       this.fields.devicePassphrase,
-      this.encrypt(passphrase, this.name)
+      await this.encrypt(passphrase, this.name)
     );
 
     if (prev) {
@@ -1020,8 +1020,8 @@ export abstract class CoreApp<
         }
 
         const newValue = enhanced
-          ? this.encryptEnhanced(newValueSource)
-          : this.encrypt(newValueSource);
+          ? await this.encryptEnhanced(newValueSource)
+          : await this.encrypt(newValueSource);
 
         this.storage.setData(field, newValue);
       }
