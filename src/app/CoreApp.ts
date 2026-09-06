@@ -1119,7 +1119,7 @@ export abstract class CoreApp<
    * @param schema Access token schema
    * @param refreshToken Refresh token
    */
-  authorize(token?: string, schema?: string, refreshToken?: string) {
+  async authorize(token?: string, schema?: string, refreshToken?: string) {
     // State, when token is null, means logout
     const authorized = token != null;
 
@@ -1132,7 +1132,7 @@ export abstract class CoreApp<
       if (refreshToken == null) {
         this.clearCacheToken();
       } else {
-        this.saveCacheToken(refreshToken);
+        await this.saveCacheToken(refreshToken);
       }
     }
 
@@ -2054,7 +2054,7 @@ export abstract class CoreApp<
         }
       } else if (this.checkDeviceResult(result)) {
         if (callback == null || callback(result) !== true) {
-          this.initCall((ir) => {
+          await this.initCall((ir) => {
             if (!ir) return;
             this.notifier.alert(
               this.get("environmentChanged") ?? "Environment changed",
@@ -2095,7 +2095,7 @@ export abstract class CoreApp<
     callback?: (result?: boolean | IActionResult) => boolean | void
   ) {
     // User login
-    this.userLogin(user, token);
+    await this.userLogin(user, token);
 
     // Callback
     callback?.(true);
@@ -2108,17 +2108,17 @@ export abstract class CoreApp<
     // Done already
     if (this.isReady) return;
 
-    // Ready
-    this.isReady = true;
-
     // Restore
-    this.restore();
+    this.restore().then(() => {
+      // Ready
+      this.isReady = true;
 
-    // Pending actions
-    this.pendings.forEach((p) => p());
+      // Pending actions
+      this.pendings.forEach((p) => p());
 
-    // Setup scheduled tasks
-    this.setupTasks();
+      // Setup scheduled tasks
+      this.setupTasks();
+    });
   }
 
   /**
@@ -2170,7 +2170,7 @@ export abstract class CoreApp<
    * Exchange intergration tokens for all APIs
    * @param coreData Core system's token data to exchange
    */
-  exchangeTokenAll(coreData: ApiRefreshTokenDto) {
+  async exchangeTokenAll(coreData: ApiRefreshTokenDto) {
     for (const name in this.apis) {
       // Ignore the system API as it has its own logic with refreshToken
       if (name === systemApi) continue;
@@ -2183,7 +2183,7 @@ export abstract class CoreApp<
         api.authorize(coreData.tokenType, coreData.accessToken);
         this.updateApi(data, coreData.refreshToken, coreData.expiresIn);
       } else {
-        this.exchangeToken(api, coreData.refreshToken);
+        await this.exchangeToken(api, coreData.refreshToken);
       }
     }
   }
@@ -2422,7 +2422,7 @@ export abstract class CoreApp<
     }
 
     // Authorize
-    this.authorize(user.token, user.tokenScheme, refreshToken);
+    return this.authorize(user.token, user.tokenScheme, refreshToken);
   }
 
   /**
