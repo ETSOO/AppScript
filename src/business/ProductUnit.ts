@@ -18,20 +18,6 @@ export enum ProductBaseUnit {
   SET = 2
 }
 
-enum ProductAssetUnit {
-  /**
-   * Time
-   * 次
-   */
-  TIME = 99,
-
-  /**
-   * Money
-   * 储值
-   */
-  MONEY = 100
-}
-
 /**
  * Product weight units
  * Range 40 - 49
@@ -70,7 +56,19 @@ export enum ProductOtherUnit {
    * Cubic meter
    * 立方米
    */
-  M3 = 50
+  M3 = 50,
+
+  /**
+   * Time
+   * 次
+   */
+  TIME = 99,
+
+  /**
+   * Money
+   * 储值
+   */
+  MONEY = 100
 }
 
 /**
@@ -81,14 +79,12 @@ export enum ProductOtherUnit {
 export const ProductUnit = {
   ...ProductBaseUnit,
   ...RepeatOption,
-  ...ProductAssetUnit,
   ...ProductWeightUnit,
   ...ProductOtherUnit
 };
 export type ProductUnit =
   | ProductBaseUnit
   | RepeatOption
-  | ProductAssetUnit
   | ProductWeightUnit
   | ProductOtherUnit;
 
@@ -96,7 +92,6 @@ export type ProductUnit =
  * Product asset units enum
  */
 export const AssetUnits = {
-  ...RepeatOption,
-  ...ProductAssetUnit
+  ...RepeatOption
 };
-export type AssetUnits = RepeatOption | ProductAssetUnit;
+export type AssetUnits = RepeatOption;

@@ -95,11 +95,7 @@ export namespace BusinessUtils {
    * @returns Result
    */
   export function isAssetUnit(unit: ProductUnit): unit is AssetUnits {
-    return (
-      unit === AssetUnits.TIME ||
-      unit === AssetUnits.MONEY ||
-      (unit >= AssetUnits.HOUR && unit <= AssetUnits.HALFYEAR)
-    );
+    return unit >= AssetUnits.HOUR && unit <= AssetUnits.HALFYEAR;
   }
 
   /**
