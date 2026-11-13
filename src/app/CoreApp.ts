@@ -1211,16 +1211,16 @@ export abstract class CoreApp<
     // Name
     const { name, resources } = culture;
 
+    // Change the API's Content-Language header
+    // .net 5 API, UseRequestLocalization, RequestCultureProviders, ContentLanguageHeaderRequestCultureProvider
+    this.api.setContentLanguage(name);
+
     // Same?
     if (this._culture === name && typeof resources === "object")
       return resources;
 
     // Save the cultrue to local storage
     this.storage.setPersistedData(DomUtils.CultureField, name);
-
-    // Change the API's Content-Language header
-    // .net 5 API, UseRequestLocalization, RequestCultureProviders, ContentLanguageHeaderRequestCultureProvider
-    this.api.setContentLanguage(name);
 
     // Set the culture
     this._culture = name;
