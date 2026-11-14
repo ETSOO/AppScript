@@ -369,6 +369,9 @@ export abstract class CoreApp<
     // Destruct the settings
     const { currentCulture, currentRegion, endpoint, webUrl } = this.settings;
 
+    // Init the culture
+    this._culture = currentCulture.name;
+
     if (api) {
       // Base URL of the API
       api.baseUrl = endpoint;
@@ -677,6 +680,17 @@ export abstract class CoreApp<
   }
 
   /**
+   * Change APIs culture
+   * .net API, UseRequestLocalization, RequestCultureProviders, ContentLanguageHeaderRequestCultureProvider
+   */
+  protected changeApisCulture(culture: string) {
+    for (const name in this.apis) {
+      const api = this.apis[name][0];
+      api.setContentLanguage(culture);
+    }
+  }
+
+  /**
    * Reset all APIs
    */
   protected resetApis() {
@@ -728,6 +742,9 @@ export abstract class CoreApp<
 
     // Global API error handler
     this.setApiErrorHandler(api);
+
+    // Content-Language header
+    api.setContentLanguage(this.culture);
 
     // Setup API countdown
     refresh ??= this.apiRefreshToken.bind(this);
@@ -1211,12 +1228,9 @@ export abstract class CoreApp<
     // Name
     const { name, resources } = culture;
 
-    // Change the API's Content-Language header
-    // .net 5 API, UseRequestLocalization, RequestCultureProviders, ContentLanguageHeaderRequestCultureProvider
-    this.api.setContentLanguage(name);
-
-    // Same?
-    if (this._culture === name && typeof resources === "object")
+    // Check if the app is ready and the culture is the same
+    // So it's always called for initialization
+    if (this.isReady && this._culture === name && typeof resources === "object")
       return resources;
 
     // Save the cultrue to local storage
@@ -1224,6 +1238,8 @@ export abstract class CoreApp<
 
     // Set the culture
     this._culture = name;
+
+    this.changeApisCulture(name);
 
     let loadedResources: DataTypes.StringRecord;
     if (typeof resources !== "object") {
